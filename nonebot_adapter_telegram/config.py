@@ -11,9 +11,12 @@ class Config(BaseModel):
     :配置项:
 
       - ``token`` / ``telegram_token``: telegram bot token
-      - ``api_server`` / ``telegram_api_server``: custom api server
+      - ``proxy`` / ``telegram_proxy``: 自定义代理
+      - ``api_server`` / ``telegram_api_server``: 自定义 API 服务器
+
     """
     token: Optional[str] = Field(default=None, alias="telegram_token")
+    proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
     api_server: Optional[str] = Field(default="https://api.telegram.org/", alias="telegram_api_server")
 
     class Config:
