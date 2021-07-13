@@ -1,13 +1,20 @@
-from typing import Any, Literal, Optional, get_type_hints
+from typing import Optional
+
+from pydantic import Field
+
 from nonebot.typing import overrides
-from pydantic import BaseModel, Field
 from nonebot.adapters import Event as BaseEvent
+from nonebot.utils import DataclassEncoder
 
 from .model import *
 from .message import Message
 
 
 class Event(BaseEvent):
+    class Config:
+        extra = "ignore"
+        json_encoders = {Message: DataclassEncoder}
+
     @overrides(BaseEvent)
     def get_event_description(self) -> str:
         return str(self.dict(by_alias=True, exclude_none=True))
