@@ -1,8 +1,8 @@
-from typing import Any, Literal, Optional, get_type_hints
-from nonebot.typing import overrides
-from pydantic import BaseModel, Field
+from typing import Any, Literal, Optional
+from pydantic import BaseModel
 
 from .message import Message
+
 
 class User(BaseModel):
     id: int
@@ -35,8 +35,87 @@ class User(BaseModel):
     :类型: ``Optional[bool]``
     """
 
-    class Config:
-        extra = "allow"
+
+class ChatMember(BaseModel):
+    status: str
+    user: User
+
+
+class ChatMemberOwner(ChatMember):
+    status: str = "creator"
+    is_anonymous: bool
+    custom_title: str
+
+
+class ChatMemberAdministrator(ChatMember):
+    status: str = "administrator"
+    can_be_edited: bool
+    is_anonymous: bool
+    can_manage_chat: bool
+    can_delete_messages: bool
+    can_manage_voice_chats: bool
+    can_restrict_members: bool
+    can_promote_members: bool
+    can_change_info: bool
+    can_invite_users: bool
+    can_post_messages: Optional[bool]
+    can_edit_messages: Optional[bool]
+    can_pin_messages: Optional[bool]
+    custom_title: Optional[str]
+
+
+class ChatMemberMember(ChatMember):
+    status: str = "member"
+
+
+class ChatMemberRestricted(ChatMember):
+    status: str = "restricted"
+    is_member: bool
+    can_change_info: bool
+    can_invite_users: bool
+    can_pin_messages: bool
+    can_send_messages: bool
+    can_send_media_messages: bool
+    can_send_polls: bool
+    can_send_other_messages: bool
+    can_add_web_page_previews: bool
+    until_date: int
+
+
+class ChatMemberLeft(ChatMember):
+    status: str = "left"
+
+
+class ChatMemberBanned(ChatMember):
+    status: str = "kicked"
+    status: int
+
+
+class ChatInviteLink(BaseModel):
+    invite_link: str
+    creator: User
+    is_primary: bool
+    is_revoked: bool
+    expire_date: Optional[int]
+    member_limit: Optional[int]
+
+
+class ChatPhoto(BaseModel):
+    small_file_id: str
+    small_file_unique_id: str
+    big_file_id: str
+    big_file_unique_id: str
+
+
+class ChatPermissions(BaseModel):
+    can_send_messages: Optional[bool]
+    can_send_media_messages: Optional[bool]
+    can_send_polls: Optional[bool]
+    can_send_other_messages: Optional[bool]
+    can_add_web_page_previews: Optional[bool]
+    can_change_info: Optional[bool]
+    can_invite_users: Optional[bool]
+    can_pin_messages: Optional[bool]
 
 
 class Chat(BaseModel):
@@ -51,10 +130,8 @@ class Chat(BaseModel):
     username: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
-    photo: Optional[Any]
+    photo: Optional[ChatPhoto]
     """
-    TODO
-
     :说明: 聊天图片，仅在使用 get_chat 方法时返回
 
     :类型: ``Optional[ChatPhoto]``
@@ -85,8 +162,6 @@ class Chat(BaseModel):
     """
     permissions: Optional[Any]
     """
-    TODO
-    
     :说明: 成员权限，仅在使用 get_chat 方法时返回
 
     :类型: ``Optional[ChatPermissions]``
@@ -129,6 +204,3 @@ class Chat(BaseModel):
 
     :类型: ``Optional[ChatLocation]``
     """
-
-    class Config:
-        extra = "allow"
