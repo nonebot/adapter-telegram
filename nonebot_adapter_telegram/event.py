@@ -19,6 +19,26 @@ class Event(BaseEvent):
     def get_event_description(self) -> str:
         return str(self.dict(by_alias=True, exclude_none=True))
 
+    @overrides(BaseEvent)
+    def get_message(self) -> Message:
+        raise ValueError("Event has no message!")
+
+    @overrides(BaseEvent)
+    def get_plaintext(self) -> str:
+        raise ValueError("Event has no message!")
+
+    @overrides(BaseEvent)
+    def get_user_id(self) -> str:
+        raise ValueError("Event has no user!")
+
+    @overrides(BaseEvent)
+    def get_session_id(self) -> str:
+        raise ValueError("Event has no session!")
+
+    @overrides(BaseEvent)
+    def is_tome(self) -> bool:
+        return False
+
 
 class MessageEvent(Event):
     message_id: int
@@ -46,15 +66,6 @@ class MessageEvent(Event):
     def get_session_id(self) -> str:
         return str(self.chat.id)
 
-    @overrides(Event)
-    def is_tome(self) -> bool:
-        return False
-
-    @overrides(Event)
-    def get_user_id(self) -> str:
-        raise NotImplementedError
-
-
 class PrivateMessageEvent(MessageEvent):
     from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat]
@@ -66,6 +77,14 @@ class PrivateMessageEvent(MessageEvent):
     @overrides(MessageEvent)
     def get_user_id(self) -> str:
         return str(self.from_.id)
+
+    @overrides(MessageEvent)
+    def get_session_id(self) -> str:
+        return f"private_{self.chat.id}"
+
+    @overrides(MessageEvent)
+    def is_tome(self) -> bool:
+        return True
 
 
 class GroupMessageEvent(MessageEvent):
@@ -80,6 +99,10 @@ class GroupMessageEvent(MessageEvent):
     def get_user_id(self) -> str:
         return str(self.from_.id)
 
+    @overrides(MessageEvent)
+    def get_session_id(self) -> str:
+        return f"group_{self.from_.id}"
+
 
 class ChannelPostEvent(MessageEvent):
     sender_chat: Optional[Chat]
@@ -88,7 +111,7 @@ class ChannelPostEvent(MessageEvent):
         return "message.channel_post"
 
     @overrides(MessageEvent)
-    def get_user_id(self) -> str:
+    def get_session_id(self) -> str:
         return str(self.chat.id)
 
 
@@ -101,28 +124,7 @@ class NoticeEvent(Event):
     def get_event_name(self) -> str:
         return "notice"
 
-    @overrides(Event)
-    def get_message(self) -> Message:
-        return self.message
-
-    @overrides(Event)
-    def get_plaintext(self) -> str:
-        return self.message
-
-    @overrides(Event)
-    def get_user_id(self) -> str:
-        return str(self.chat.id)
-
-    @overrides(Event)
-    def get_session_id(self) -> str:
-        return str(self.chat.id)
-
-    @overrides(Event)
-    def is_tome(self) -> bool:
-        return False
-
-
-class MessageEditedEvent(NoticeEvent):
+class EditedMessageEvent(NoticeEvent):
     message_id: int
     date: int
     edit_date: int
@@ -130,13 +132,56 @@ class MessageEditedEvent(NoticeEvent):
     message: Optional[Message] = None
 
 
-class PrivateMessageEditedEvent(MessageEditedEvent):
-    pass
+class PrivateEditedMessageEvent(EditedMessageEvent):
+    from_: Optional[User] = Field(default=None, alias="from")
+    sender_chat: Optional[Chat]
+
+    @overrides(EditedMessageEvent)
+    def get_event_name(self) -> str:
+        return "notice.edited_message.private"
+
+    @overrides(EditedMessageEvent)
+    def get_user_id(self) -> str:
+        return str(self.from_.id)
 
 
-class GroupMessageEditedEvent(MessageEditedEvent):
-    pass
+class GroupEditedMessageEvent(EditedMessageEvent):
+    from_: Optional[User] = Field(default=None, alias="from")
+    sender_chat: Optional[Chat]
+
+    @overrides(EditedMessageEvent)
+    def get_event_name(self) -> str:
+        return "notice.edited_message.group"
+
+    @overrides(EditedMessageEvent)
+    def get_user_id(self) -> str:
+        return str(self.from_.id)
 
 
-class ChannelPostEditedEvent(MessageEditedEvent):
-    pass
+class EditedChannelPostEvent(EditedMessageEvent):
+    sender_chat: Optional[Chat]
+
+    @overrides(EditedMessageEvent)
+    def get_event_name(self) -> str:
+        return "notice.edited_message.channel_post"
+
+    @overrides(EditedMessageEvent)
+    def get_user_id(self) -> str:
+        return str(self.from_.id)
+
+
+class ChatMemberUpdatedEvent(NoticeEvent):
+    chat: Chat
+    from_: Optional[User] = Field(default=None, alias="from")
+    date: int
+    old_chat_member: ChatMember
+    new_chat_member: ChatMember
+    invite_link: Optional[ChatInviteLink]
+
+    @overrides(EditedMessageEvent)
+    def get_event_name(self) -> str:
+        return "notice.chat_member_updated"
+
+    @overrides(EditedMessageEvent)
+    def get_user_id(self) -> str:
+        return str(self.from_.id)
