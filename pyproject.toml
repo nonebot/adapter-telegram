@@ -15,7 +15,7 @@ classifiers = [
   "Framework :: Robot Framework :: Library",
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3"
+  "Programming Language :: Python :: 3",
 ]
 
 [tool.poetry.dependencies]
@@ -24,7 +24,9 @@ nonebot2 = "^2.0.0-alpha.13"
 httpx = "^0.17.0"
 
 [tool.poetry.dev-dependencies]
+nonebot2 = { git = "https://github.com/nonebot/nonebot2.git", branch = "dev" }
 nb-cli = "^0.4.1"
+black = "^21.7b0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
