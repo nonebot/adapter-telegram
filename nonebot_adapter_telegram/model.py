@@ -188,10 +188,10 @@ class Message(BaseModel):
     left_chat_member: Optional[User]
     new_chat_title: Optional[str]
     new_chat_photo: Optional[List["PhotoSize"]]
-    delete_chat_photo: Optional[True]
-    group_chat_created: Optional[True]
-    supergroup_chat_created: Optional[True]
-    channel_chat_created: Optional[True]
+    delete_chat_photo: Optional[Literal[True]]
+    group_chat_created: Optional[Literal[True]]
+    supergroup_chat_created: Optional[Literal[True]]
+    channel_chat_created: Optional[Literal[True]]
     message_auto_delete_timer_changed: Optional["MessageAutoDeleteTimerChanged"]
     migrate_to_chat_id: Optional[int]
     migrate_from_chat_id: Optional[int]
@@ -410,7 +410,7 @@ class KeyboardButtonPollType(BaseModel):
 
 
 class ReplyKeyboardRemove(BaseModel):
-    remove_keyboard: True
+    remove_keyboard: bool = True
     selective: Optional[bool]
 
 
@@ -447,7 +447,7 @@ class CallbackQuery(BaseModel):
 
 
 class ForceReply(BaseModel):
-    force_reply: True
+    force_reply: bool = True
     input_field_placeholder: Optional[str]
     selective: Optional[bool]
 
