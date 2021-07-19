@@ -20,7 +20,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7.3"
-nonebot2 = "^2.0.0-alpha.13"
+nonebot2 = "^2.0.0-alpha.14"
 httpx = "^0.17.0"
 
 [tool.poetry.dev-dependencies]

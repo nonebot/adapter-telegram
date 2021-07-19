@@ -290,14 +290,14 @@ uvicorn = {version = "^0.13.0", extras = ["standard"]}
 
 [package.extras]
 quart = ["Quart (>=0.14.1,<0.15.0)"]
-aiohttp = ["aiohttp (>=3.7.4,<4.0.0)"]
-all = ["Quart (>=0.14.1,<0.15.0)", "aiohttp (>=3.7.4,<4.0.0)"]
+aiohttp = ["aiohttp[speedups] (>=3.7.4,<4.0.0)"]
+all = ["Quart (>=0.14.1,<0.15.0)", "aiohttp[speedups] (>=3.7.4,<4.0.0)"]
 
 [package.source]
 type = "git"
 url = "https://github.com/nonebot/nonebot2.git"
 reference = "dev"
-resolved_reference = "a740a9cfea0c44704d08c6d267c5a4a02fb75dec"
+resolved_reference = "637c48aea7c28d125595e28dc3529e87450ea400"
 
 [[package]]
 name = "pathspec"
