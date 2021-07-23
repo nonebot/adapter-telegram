@@ -5,10 +5,10 @@ from pydantic import BaseModel, Field
 
 class Update(BaseModel):
     update_id: int
-    message: Optional["Message"]
-    edited_message: Optional["Message"]
-    channel_post: Optional["Message"]
-    edited_channel_post: Optional["Message"]
+    message: Optional["Message_"]
+    edited_message: Optional["Message_"]
+    channel_post: Optional["Message_"]
+    edited_channel_post: Optional["Message_"]
     inline_query: Optional["InlineQuery"]
     chosen_inline_result: Optional["ChosenInlineResult"]
     callback_query: Optional["CallbackQuery"]
@@ -99,11 +99,11 @@ class Chat(BaseModel):
 
     :类型: ``Optional[str]``
     """
-    pinned_message: Optional["Message"]
+    pinned_message: Optional["Message_"]
     """
     :说明: 置顶消息，仅在使用 get_chat 方法时返回
 
-    :类型: ``Optional[Message]``
+    :类型: ``Optional[Message_]``
     """
     permissions: Optional["ChatPermissions"]
     """
@@ -149,7 +149,7 @@ class Chat(BaseModel):
     """
 
 
-class Message(BaseModel):
+class Message_(BaseModel):
     message_id: int
     from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat]
@@ -161,7 +161,7 @@ class Message(BaseModel):
     forward_signature: Optional[str]
     forward_sender_name: Optional[str]
     forward_date: Optional[int]
-    reply_to_message: Optional["Message"]
+    reply_to_message: Optional["Message_"]
     via_bot: Optional[User]
     edit_date: Optional[int]
     media_group_id: Optional[str]
@@ -195,7 +195,7 @@ class Message(BaseModel):
     message_auto_delete_timer_changed: Optional["MessageAutoDeleteTimerChanged"]
     migrate_to_chat_id: Optional[int]
     migrate_from_chat_id: Optional[int]
-    pinned_message: Optional["Message"]
+    pinned_message: Optional["Message_"]
     invoice: Optional["Invoice"]
     successful_payment: Optional["SuccessfulPayment"]
     connected_website: Optional[str]
@@ -439,7 +439,7 @@ class LoginUrl(BaseModel):
 class CallbackQuery(BaseModel):
     id: str
     from_: Optional[User] = Field(default=None, alias="from")
-    message: Optional[Message]
+    message: Optional[Message_]
     inline_message_id: Optional[str]
     chat_instance: Optional[str]
     date: Optional[str]
@@ -552,33 +552,37 @@ class BotCommand(BaseModel):
     description: str
 
 
-class BotCommandScopeDefault(BaseModel):
+class BotCommandScope(BaseModel):
+    type: str
+
+
+class BotCommandScopeDefault(BotCommandScope):
     type: str = "default"
 
 
-class BotCommandScopeAllPrivateChats(BaseModel):
+class BotCommandScopeAllPrivateChats(BotCommandScope):
     type: str = "all_private_chats"
 
 
-class BotCommandScopeAllGroupChats(BaseModel):
+class BotCommandScopeAllGroupChats(BotCommandScope):
     type: str = "all_group_chats"
 
 
-class BotCommandScopeAllChatAdministrators(BaseModel):
+class BotCommandScopeAllChatAdministrators(BotCommandScope):
     type: str = "all_chat_administrators"
 
 
-class BotCommandScopeChat(BaseModel):
+class BotCommandScopeChat(BotCommandScope):
     type: str = "chat"
     chat_id: Union[int, str]
 
 
-class BotCommandScopeChatAdministrators(BaseModel):
+class BotCommandScopeChatAdministrators(BotCommandScope):
     type: str = "chat_administrators"
     chat_id: Union[int, str]
 
 
-class BotCommandScopeChatMember(BaseModel):
+class BotCommandScopeChatMember(BotCommandScope):
     type: str = "chat_member"
     chat_id: Union[int, str]
     user_id: int
@@ -589,58 +593,46 @@ class ResponseParameters(BaseModel):
     retry_after: Optional[int]
 
 
-class InputMediaPhoto(BaseModel):
+class InputMedia(BaseModel):
+    type: str
+    media: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+
+
+class InputMediaPhoto(InputMedia):
     type: str = "photo"
-    media: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
 
 
-class InputMediaVideo(BaseModel):
+class InputMediaVideo(InputMedia):
     type: str = "video"
-    media: str
     thumb: Optional[Union["InputFile", str]]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
     width: Optional[int]
     height: Optional[int]
     duration: Optional[int]
     supports_streaming: Optional[bool]
 
 
-class InputMediaAnimation(BaseModel):
+class InputMediaAnimation(InputMedia):
     type: str = "animation"
-    media: str
     thumb: Optional[Union["InputFile", str]]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
     width: Optional[int]
     height: Optional[int]
     duration: Optional[int]
 
 
-class InputMediaAudio(BaseModel):
+class InputMediaAudio(InputMedia):
     type: str = "audio"
-    media: str
     thumb: Optional[Union["InputFile", str]]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
     duration: Optional[int]
     performer: Optional[str]
     title: Optional[str]
 
 
-class InputMediaDocument(BaseModel):
+class InputMediaDocument(InputMedia):
     type: str = "document"
-    media: str
     thumb: Optional[Union["InputFile", str]]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
     disable_content_type_detection: Optional[bool]
 
 
