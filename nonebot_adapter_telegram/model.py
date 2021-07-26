@@ -390,23 +390,23 @@ class File(BaseModel):
     file_path: Optional[str]
 
 
-class ReplyKeyboardMarkup(BaseModel):
-    keyboard: List[List["KeyboardButton"]]
-    resize_keyboard: Optional[bool]
-    one_time_keyboard: Optional[bool]
-    input_field_placeholder: Optional[str]
-    selective: Optional[bool]
+class KeyboardButtonPollType(BaseModel):
+    type: Optional[str]
 
 
 class KeyboardButton(BaseModel):
     text: str
     request_contact: Optional[bool]
     request_location: Optional[bool]
-    request_poll: Optional["KeyboardButtonPollType"]
+    request_poll: Optional[KeyboardButtonPollType]
 
 
-class KeyboardButtonPollType(BaseModel):
-    type: Optional[str]
+class ReplyKeyboardMarkup(BaseModel):
+    keyboard: List[List[KeyboardButton]]
+    resize_keyboard: Optional[bool]
+    one_time_keyboard: Optional[bool]
+    input_field_placeholder: Optional[str]
+    selective: Optional[bool]
 
 
 class ReplyKeyboardRemove(BaseModel):
@@ -414,14 +414,17 @@ class ReplyKeyboardRemove(BaseModel):
     selective: Optional[bool]
 
 
-class InlineKeyboardMarkup(BaseModel):
-    inline_keyboard: List[List["InlineKeyboardButton"]]
+class LoginUrl(BaseModel):
+    url: str
+    forward_text: Optional[str]
+    bot_username: Optional[str]
+    request_write_access: Optional[bool]
 
 
 class InlineKeyboardButton(BaseModel):
     text: str
     url: Optional[str]
-    login_url: Optional["LoginUrl"]
+    login_url: Optional[LoginUrl]
     callback_date: Optional[str]
     switch_inline_query: Optional[str]
     switch_inline_query_current_chat: Optional[str]
@@ -429,11 +432,8 @@ class InlineKeyboardButton(BaseModel):
     pay: Optional[bool]
 
 
-class LoginUrl(BaseModel):
-    url: str
-    forward_text: Optional[str]
-    bot_username: Optional[str]
-    request_write_access: Optional[bool]
+class InlineKeyboardMarkup(BaseModel):
+    inline_keyboard: List[List[InlineKeyboardButton]]
 
 
 class CallbackQuery(BaseModel):
@@ -593,6 +593,10 @@ class ResponseParameters(BaseModel):
     retry_after: Optional[int]
 
 
+class InputFile(BaseModel):
+    pass
+
+
 class InputMedia(BaseModel):
     type: str
     media: str
@@ -607,7 +611,7 @@ class InputMediaPhoto(InputMedia):
 
 class InputMediaVideo(InputMedia):
     type: str = "video"
-    thumb: Optional[Union["InputFile", str]]
+    thumb: Optional[Union[InputFile, str]]
     width: Optional[int]
     height: Optional[int]
     duration: Optional[int]
@@ -616,7 +620,7 @@ class InputMediaVideo(InputMedia):
 
 class InputMediaAnimation(InputMedia):
     type: str = "animation"
-    thumb: Optional[Union["InputFile", str]]
+    thumb: Optional[Union[InputFile, str]]
     width: Optional[int]
     height: Optional[int]
     duration: Optional[int]
@@ -624,7 +628,7 @@ class InputMediaAnimation(InputMedia):
 
 class InputMediaAudio(InputMedia):
     type: str = "audio"
-    thumb: Optional[Union["InputFile", str]]
+    thumb: Optional[Union[InputFile, str]]
     duration: Optional[int]
     performer: Optional[str]
     title: Optional[str]
@@ -632,12 +636,15 @@ class InputMediaAudio(InputMedia):
 
 class InputMediaDocument(InputMedia):
     type: str = "document"
-    thumb: Optional[Union["InputFile", str]]
+    thumb: Optional[Union[InputFile, str]]
     disable_content_type_detection: Optional[bool]
 
 
-class InputFile(BaseModel):
-    pass
+class MaskPosition(BaseModel):
+    point: str
+    x_shift: float
+    y_shift: float
+    scale: float
 
 
 class Sticker(BaseModel):
@@ -649,7 +656,7 @@ class Sticker(BaseModel):
     thumb: Optional[PhotoSize]
     emoji: Optional[str]
     set_name: Optional[str]
-    mask_position: Optional["MaskPosition"]
+    mask_position: Optional[MaskPosition]
     file_size: Optional[int]
 
 
@@ -662,13 +669,6 @@ class StickerSet(BaseModel):
     thumb: Optional[PhotoSize]
 
 
-class MaskPosition(BaseModel):
-    point: str
-    x_shift: float
-    y_shift: float
-    scale: float
-
-
 class InlineQuery(BaseModel):
     id: str
     from_: User = Field(alias="from")
@@ -676,249 +676,6 @@ class InlineQuery(BaseModel):
     offset: str
     chat_type: Optional[str]
     Location: Optional[Location]
-
-
-class InlineQueryResult(BaseModel):
-    type: str
-    id: str
-    reply_markup: Optional[InlineKeyboardMarkup]
-
-
-class InlineQueryResultArticle(InlineQueryResult):
-    type: str = "article"
-    title: str
-    input_message_content: "InputMessageContent"
-    url: Optional[str]
-    hide_url: Optional[bool]
-    description: Optional[str]
-    thumb_url: Optional[str]
-    thumb_width: Optional[int]
-    thumb_height: Optional[int]
-
-
-class InlineQueryResultPhoto(InlineQueryResult):
-    type: str = "photo"
-    photo_url: str
-    thumb_url: str
-    photo_width: Optional[int]
-    photo_height: Optional[int]
-    title: Optional[str]
-    description: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultGif(InlineQueryResult):
-    type: str = "gif"
-    gif_url: str
-    gif_width: Optional[int]
-    gif_height: Optional[int]
-    gif_duration: Optional[int]
-    thumb_url: str
-    thumb_mime_type: Optional[str]
-    title: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultMpeg4Gif(InlineQueryResult):
-    type: str = "mpeg4_gif"
-    mpeg4_url: str
-    mpeg4_width: Optional[int]
-    mpeg4_height: Optional[int]
-    mpeg4_duration: Optional[int]
-    thumb_url: str
-    thumb_mime_type: Optional[str]
-    title: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultVideo(InlineQueryResult):
-    type: str = "video"
-    video_url: str
-    mime_type: str
-    thumb_url: str
-    title: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    video_width: Optional[int]
-    video_height: Optional[int]
-    video_duration: Optional[int]
-    description: Optional[str]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultAudio(InlineQueryResult):
-    type: str = "audio"
-    audio_url: str
-    title: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    performer: Optional[str]
-    audio_duration: Optional[int]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultVoice(InlineQueryResult):
-    type: str = "voice"
-    voice_url: str
-    title: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    voice_duration: Optional[int]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultDocument(InlineQueryResult):
-    type: str = "document"
-    title: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    document_url: str
-    mime_type: str
-    description: Optional[str]
-    input_message_content: Optional["InputMessageContent"]
-    thumb_url: Optional[str]
-    thumb_width: Optional[int]
-    thumb_height: Optional[int]
-
-
-class InlineQueryResultLocation(InlineQueryResult):
-    type: str = "location"
-    latitude: float
-    longitude: float
-    title: str
-    horizontal_accuracy: Optional[float]
-    live_period: Optional[int]
-    heading: Optional[int]
-    prpximity_alert_radius: Optional[int]
-    input_message_content: Optional["InputMessageContent"]
-    thumb_url: Optional[str]
-    thumb_width: Optional[int]
-    thumb_height: Optional[int]
-
-
-class InlineQueryResultVenue(InlineQueryResult):
-    type: str = "venue"
-    latitude: float
-    longitude: float
-    title: str
-    address: str
-    foursquare_id: Optional[str]
-    foursquare_type: Optional[str]
-    google_place_id: Optional[str]
-    google_place_type: Optional[str]
-    input_message_content: Optional["InputMessageContent"]
-    thumb_url: Optional[str]
-    thumb_width: Optional[int]
-    thumb_height: Optional[int]
-
-
-class InlineQueryResultContact(InlineQueryResult):
-    type: str = "contact"
-    phone_number: str
-    first_name: str
-    last_name: Optional[str]
-    user_id: Optional[int]
-    vcard: Optional[str]
-    input_message_content: Optional["InputMessageContent"]
-    thumb_url: Optional[str]
-    thumb_width: Optional[int]
-    thumb_height: Optional[int]
-
-
-class InlineQueryResultGame(InlineQueryResult):
-    type: str = "game"
-    game_short_name: str
-
-
-class InlineQueryResultCachedPhoto(InlineQueryResult):
-    type: str = "photo"
-    photo_file_id: str
-    title: Optional[str]
-    description: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedGif(InlineQueryResult):
-    type: str = "gif"
-    gif_file_id: str
-    title: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedMpeg4Gif(InlineQueryResult):
-    type: str = "mpeg4_gif"
-    mpeg4_file_id: str
-    title: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedSticker(InlineQueryResult):
-    type: str = "sticker"
-    sticker_file_id: str
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedDocument(InlineQueryResult):
-    type: str = "document"
-    title: str
-    document_file_id: str
-    description: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedVideo(InlineQueryResult):
-    type: str = "video"
-    video_file_id: str
-    title: str
-    description: Optional[str]
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedVoice(InlineQueryResult):
-    type: str = "voice"
-    voice_file_id: str
-    title: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
-
-
-class InlineQueryResultCachedAudio(InlineQueryResult):
-    type: str = "audio"
-    audio_file_id: str
-    caption: Optional[str]
-    parse_mode: Optional[str]
-    caption_entities: Optional[List[MessageEntity]]
-    input_message_content: Optional["InputMessageContent"]
 
 
 class InputMessageContent(BaseModel):
@@ -980,6 +737,249 @@ class InputInvoiceMessageContent(InputMessageContent):
     send_phone_number_to_provider: Optional[bool]
     send_email_to_provider: Optional[bool]
     is_flexible: Optional[bool]
+
+
+class InlineQueryResult(BaseModel):
+    type: str
+    id: str
+    reply_markup: Optional[InlineKeyboardMarkup]
+
+
+class InlineQueryResultArticle(InlineQueryResult):
+    type: str = "article"
+    title: str
+    input_message_content: InputMessageContent
+    url: Optional[str]
+    hide_url: Optional[bool]
+    description: Optional[str]
+    thumb_url: Optional[str]
+    thumb_width: Optional[int]
+    thumb_height: Optional[int]
+
+
+class InlineQueryResultPhoto(InlineQueryResult):
+    type: str = "photo"
+    photo_url: str
+    thumb_url: str
+    photo_width: Optional[int]
+    photo_height: Optional[int]
+    title: Optional[str]
+    description: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultGif(InlineQueryResult):
+    type: str = "gif"
+    gif_url: str
+    gif_width: Optional[int]
+    gif_height: Optional[int]
+    gif_duration: Optional[int]
+    thumb_url: str
+    thumb_mime_type: Optional[str]
+    title: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultMpeg4Gif(InlineQueryResult):
+    type: str = "mpeg4_gif"
+    mpeg4_url: str
+    mpeg4_width: Optional[int]
+    mpeg4_height: Optional[int]
+    mpeg4_duration: Optional[int]
+    thumb_url: str
+    thumb_mime_type: Optional[str]
+    title: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultVideo(InlineQueryResult):
+    type: str = "video"
+    video_url: str
+    mime_type: str
+    thumb_url: str
+    title: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    video_width: Optional[int]
+    video_height: Optional[int]
+    video_duration: Optional[int]
+    description: Optional[str]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultAudio(InlineQueryResult):
+    type: str = "audio"
+    audio_url: str
+    title: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    performer: Optional[str]
+    audio_duration: Optional[int]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultVoice(InlineQueryResult):
+    type: str = "voice"
+    voice_url: str
+    title: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    voice_duration: Optional[int]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultDocument(InlineQueryResult):
+    type: str = "document"
+    title: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    document_url: str
+    mime_type: str
+    description: Optional[str]
+    input_message_content: Optional[InputMessageContent]
+    thumb_url: Optional[str]
+    thumb_width: Optional[int]
+    thumb_height: Optional[int]
+
+
+class InlineQueryResultLocation(InlineQueryResult):
+    type: str = "location"
+    latitude: float
+    longitude: float
+    title: str
+    horizontal_accuracy: Optional[float]
+    live_period: Optional[int]
+    heading: Optional[int]
+    prpximity_alert_radius: Optional[int]
+    input_message_content: Optional[InputMessageContent]
+    thumb_url: Optional[str]
+    thumb_width: Optional[int]
+    thumb_height: Optional[int]
+
+
+class InlineQueryResultVenue(InlineQueryResult):
+    type: str = "venue"
+    latitude: float
+    longitude: float
+    title: str
+    address: str
+    foursquare_id: Optional[str]
+    foursquare_type: Optional[str]
+    google_place_id: Optional[str]
+    google_place_type: Optional[str]
+    input_message_content: Optional[InputMessageContent]
+    thumb_url: Optional[str]
+    thumb_width: Optional[int]
+    thumb_height: Optional[int]
+
+
+class InlineQueryResultContact(InlineQueryResult):
+    type: str = "contact"
+    phone_number: str
+    first_name: str
+    last_name: Optional[str]
+    user_id: Optional[int]
+    vcard: Optional[str]
+    input_message_content: Optional[InputMessageContent]
+    thumb_url: Optional[str]
+    thumb_width: Optional[int]
+    thumb_height: Optional[int]
+
+
+class InlineQueryResultGame(InlineQueryResult):
+    type: str = "game"
+    game_short_name: str
+
+
+class InlineQueryResultCachedPhoto(InlineQueryResult):
+    type: str = "photo"
+    photo_file_id: str
+    title: Optional[str]
+    description: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedGif(InlineQueryResult):
+    type: str = "gif"
+    gif_file_id: str
+    title: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedMpeg4Gif(InlineQueryResult):
+    type: str = "mpeg4_gif"
+    mpeg4_file_id: str
+    title: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedSticker(InlineQueryResult):
+    type: str = "sticker"
+    sticker_file_id: str
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedDocument(InlineQueryResult):
+    type: str = "document"
+    title: str
+    document_file_id: str
+    description: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedVideo(InlineQueryResult):
+    type: str = "video"
+    video_file_id: str
+    title: str
+    description: Optional[str]
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedVoice(InlineQueryResult):
+    type: str = "voice"
+    voice_file_id: str
+    title: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
+
+
+class InlineQueryResultCachedAudio(InlineQueryResult):
+    type: str = "audio"
+    audio_file_id: str
+    caption: Optional[str]
+    parse_mode: Optional[str]
+    caption_entities: Optional[List[MessageEntity]]
+    input_message_content: Optional[InputMessageContent]
 
 
 class ChosenInlineResult(BaseModel):
@@ -1050,11 +1050,6 @@ class PreCheckoutQuery(BaseModel):
     invoice_payload: str
     shipping_option_id: Optional[str]
     order_info: Optional[OrderInfo]
-
-
-class PassportData(BaseModel):
-    data: List["EncryptedPassportElement"]
-    credentials: "EncryptedCredentials"
 
 
 class PassportFile(BaseModel):
@@ -1135,6 +1130,11 @@ class PassportElementErrorUnspecified(PassportElementError):
     element_hash: str
 
 
+class PassportData(BaseModel):
+    data: List[EncryptedPassportElement]
+    credentials: EncryptedCredentials
+
+
 class Game(BaseModel):
     title: str
     description: str
@@ -1152,3 +1152,10 @@ class GameHighScore(BaseModel):
     position: int
     user: User
     score: int
+
+
+# 动态语言的悲哀
+Update.update_forward_refs()
+Chat.update_forward_refs()
+Message_.update_forward_refs()
+InlineKeyboardButton.update_forward_refs()
