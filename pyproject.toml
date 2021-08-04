@@ -21,11 +21,11 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.7.3"
 nonebot2 = "^2.0.0-alpha.14"
-httpx = "^0.17.0"
+httpx = "^0.18.0"
 
 [tool.poetry.dev-dependencies]
 nonebot2 = { git = "https://github.com/nonebot/nonebot2.git", branch = "dev" }
-nb-cli = "^0.4.1"
+nb-cli = "^0.5.0"
 black = "^21.7b0"
 
 [build-system]
