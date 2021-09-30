@@ -8,12 +8,13 @@ from nonebot.adapters import Bot as BaseBot
 from nonebot.typing import overrides
 from nonebot.drivers import Driver, HTTPConnection, HTTPResponse
 
-from .event import *
+from .event import Event
 from .config import Config as TelegramConfig
 from .message import Message, MessageSegment
 
 if TYPE_CHECKING:
     from nonebot.config import Config
+
 
 class Bot(BaseBot):
     """
@@ -42,31 +43,13 @@ class Bot(BaseBot):
     async def check_permission(
         cls, driver: Driver, request: HTTPConnection
     ) -> Tuple[Optional[str], Optional[HTTPResponse]]:
+        # TODO Telegram 的 Webhook 方式完全不带机器人本身的标识符，所以只能默认所有上报都通过
         return cls.telegram_config.token.split(":", maxsplit=1)[0], HTTPResponse(204)
 
     async def handle_message(self, message: bytes):
         try:
-            message = json.loads(message)
-            post_type = list(message.keys())[1]
-            message = message[post_type]
-            if post_type == "message" or post_type == "channel_post":
-                event = MessageEvent.parse_obj(message)
-                if event.chat.type == "private":
-                    event = PrivateMessageEvent.parse_obj(message)
-                elif event.chat.type == "channel":
-                    event = ChannelPostEvent.parse_obj(message)
-                else:
-                    event = GroupMessageEvent.parse_obj(message)
-                event.message = Message(message)
-            elif post_type == "edited_message" or post_type == "edited_channel_post":
-                event = EditedMessageEvent.parse_obj(message)
-                if event.chat.type == "private":
-                    event = PrivateEditedMessageEvent.parse_obj(message)
-                elif event.chat.type == "channel":
-                    event = EditedChannelPostEvent.parse_obj(message)
-                else:
-                    event = GroupEditedMessageEvent.parse_obj(message)
-                event.message = Message(message)
+            message: dict = json.loads(message)
+            event = Event.parse_event(message)
             await handle_event(self, event)
         except Exception as e:
             logger.opt(colors=True, exception=e).error(
@@ -79,15 +62,15 @@ class Bot(BaseBot):
             s.capitalize() for s in api.split("_")[1:]
         )
 
-        # TODO 简单的 httpx 调用，等 a14 实装了正向 Driver 再改
+        # TODO 简单的 httpx 调用，等 a14 稳定实装了正向 Driver 再改
         async with httpx.AsyncClient(
             proxies=self.telegram_config.proxy, timeout=10
         ) as client:
             response = await client.post(
                 f"{self.telegram_config.api_server}bot{self.telegram_config.token}/{api}",
-                data=data,
+                json=data,
             )
-        return response
+        return response.text
 
     async def send(
         self, event: Event, message: Union[str, Message, MessageSegment], **kwargs
@@ -98,10 +81,16 @@ class Bot(BaseBot):
         由于 Telegram 对于不同类型的消息有不同的 API，如果需要批量发送不同类型的消息请尽量使用此方法
         """
         if isinstance(message, str):
-            await self.send_message(chat_id=event.chat.id, text=message)
-        elif isinstance(message, Message):
-            for seg in message:
-                pass
+            response = await self.send_message(chat_id=event.chat.id, text=message)
+        elif isinstance(message, MessageSegment):
+            if message.type == "text":
+                response = await self.send_message(
+                    chat_id=event.chat.id, text=message.data.get("text")
+                )
         else:
-            if message.type == "photo":
-                await self.send_photo(chat_id=event.chat.id, **message.data)
+            for seg in message:
+                if seg.type == "text":
+                    response = await self.send_message(
+                        chat_id=event.chat.id, text=seg.data.get("text")
+                    )
+        return response

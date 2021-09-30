@@ -15,9 +15,12 @@ class Config(BaseModel):
       - ``api_server`` / ``telegram_api_server``: 自定义 API 服务器
 
     """
+
     token: Optional[str] = Field(default=None, alias="telegram_token")
     proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
-    api_server: Optional[str] = Field(default="https://api.telegram.org/", alias="telegram_api_server")
+    api_server: Optional[str] = Field(
+        default="https://api.telegram.org/", alias="telegram_api_server"
+    )
 
     class Config:
         extra = "ignore"
