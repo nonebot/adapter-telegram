@@ -1,7 +1,8 @@
 import json
-from typing import TYPE_CHECKING, Any, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
 import httpx
+
 from nonebot.adapters import Bot as BaseBot
 from nonebot.drivers import (
     Driver,
@@ -28,6 +29,7 @@ class Bot(BaseBot):
     """
 
     telegram_config: TelegramConfig
+    username: str
     update_offset: int = 0
 
     def __init__(self, self_id: str, request: HTTPConnection):
@@ -59,9 +61,11 @@ class Bot(BaseBot):
             )
         else:
             logger.info("Start poll")
-            cls.update_offset = httpx.post(
+            res = httpx.post(
                 f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates"
-            ).json()["result"][-1]["update_id"]
+            ).json()["result"]
+            if res:
+                cls.update_offset = res[-1]["update_id"]
             driver.setup_http_polling(
                 HTTPPollingSetup(
                     "telegram",
@@ -71,7 +75,7 @@ class Bot(BaseBot):
                     b"",
                     {},
                     "1.1",
-                    0.001,
+                    0.1,
                 )
             )
 
@@ -82,18 +86,27 @@ class Bot(BaseBot):
         """
         Telegram 的 Webhook 方式完全不带机器人本身的标识符，所以只能默认所有上报都通过
         """
-        return cls.telegram_config.token.split(":", maxsplit=1)[0], HTTPResponse(204)
+        cls.username = httpx.post(
+            f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getMe"
+        ).json()["result"]["username"]
+
+        return cls.telegram_config.token.split(":", maxsplit=1)[0], HTTPResponse(200)
 
     async def handle_message(self, message: bytes):
+        message: dict = json.loads(message)
+        if "update_id" in message:
+            await self._handle_message(message)
+        else:
+            for msg in message["result"]:
+                if msg["update_id"] > self.update_offset:
+                    self.update_offset = msg["update_id"]
+                    await self._handle_message(msg)
+
+    async def _handle_message(self, message: Dict[str, Any]):
         try:
-            message: dict = json.loads(message)
-            if "update_id" in message:
-                await handle_event(self, Event.parse_event(message))
-            else:
-                for msg in message["result"]:
-                    if msg["update_id"] > self.update_offset:
-                        self.update_offset = msg["update_id"]
-                        await handle_event(self, Event.parse_event(msg))
+            event = Event.parse_event(message)
+            event.self_username = self.username
+            await handle_event(self, event)
         except Exception as e:
             logger.opt(colors=True, exception=e).error(
                 f"<r><bg #f8bbd0>Failed to handle event. Raw: {message}</bg #f8bbd0></r>"
@@ -120,7 +133,7 @@ class Bot(BaseBot):
         """
         TODO
 
-        由于 Telegram 对于不同类型的消息有不同的 API，如果需要批量发送不同类型的消息请尽量使用此方法
+        由于 Telegram 对于不同类型的消息有不同的 API，如果需要批量发送不同类型的消息请尽量使用此方法，Nonebot 将会自动帮你转换成多条消息。
         """
         if isinstance(message, str):
             response = await self.send_message(chat_id=event.chat.id, text=message)

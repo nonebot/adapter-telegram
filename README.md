@@ -4,10 +4,9 @@ _✨ telegram 协议适配 ✨_
 
 ## Manual
 
-<!-- [使用指南](./docs/manual.md) -->
+[使用指南](./MANAL.md)
 
-### Feature
+## TODO
 
-## Bug
-
-## Changelog
+- [ ] Inline Mode Support
+- [ ] Multiple Bot Support

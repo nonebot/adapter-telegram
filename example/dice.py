@@ -1,5 +1,5 @@
-import re
 import random
+import re
 
 from nonebot import on_command
 from nonebot_adapter_telegram import Bot, Event

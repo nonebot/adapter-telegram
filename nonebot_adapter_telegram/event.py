@@ -1,18 +1,18 @@
-from typing import Optional, Any
+from typing import Any, Optional
 
 from pydantic import Field
 
-from nonebot.typing import overrides
 from nonebot.adapters import Event as BaseEvent
+from nonebot.typing import overrides
 from nonebot.utils import DataclassEncoder
 
-from .model import *
 from .message import Message
+from .model import *
 
 
 class Event(BaseEvent):
     class Config:
-        extra = "ignore"
+        extra = "allow"
         json_encoders = {Message: DataclassEncoder}
 
     @classmethod
