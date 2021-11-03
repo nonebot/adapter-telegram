@@ -1,15 +1,21 @@
 import json
-from typing import Any, Union, Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional, Tuple, Union
 
 import httpx
+from nonebot.adapters import Bot as BaseBot
+from nonebot.drivers import (
+    Driver,
+    ForwardDriver,
+    HTTPConnection,
+    HTTPPollingSetup,
+    HTTPResponse,
+)
 from nonebot.log import logger
 from nonebot.message import handle_event
-from nonebot.adapters import Bot as BaseBot
 from nonebot.typing import overrides
-from nonebot.drivers import Driver, HTTPConnection, HTTPResponse
 
-from .event import Event
 from .config import Config as TelegramConfig
+from .event import Event
 from .message import Message, MessageSegment
 
 if TYPE_CHECKING:
@@ -22,9 +28,10 @@ class Bot(BaseBot):
     """
 
     telegram_config: TelegramConfig
+    update_offset: int = 0
 
-    def __init__(self, connection_type: str, self_id: str):
-        super().__init__(connection_type, self_id)
+    def __init__(self, self_id: str, request: HTTPConnection):
+        super().__init__(self_id, request)
 
     @property
     @overrides(BaseBot)
@@ -39,18 +46,54 @@ class Bot(BaseBot):
         super().register(driver, config)
         cls.telegram_config = TelegramConfig(**config.dict())
 
+        logger.info("Delete old webhook")
+        httpx.post(
+            f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/deleteWebhook"
+        )
+
+        if isinstance(driver, ForwardDriver) and cls.telegram_config.url:
+            logger.info("Set new webhook")
+            httpx.post(
+                f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/setWebhook",
+                params={"url": f"{cls.telegram_config.url}/telegram/http"},
+            )
+        else:
+            logger.info("Start poll")
+            cls.update_offset = httpx.post(
+                f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates"
+            ).json()["result"][-1]["update_id"]
+            driver.setup_http_polling(
+                HTTPPollingSetup(
+                    "telegram",
+                    cls.telegram_config.token.split(":", maxsplit=1)[0],
+                    f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates",
+                    "post",
+                    b"",
+                    {},
+                    "1.1",
+                    0.001,
+                )
+            )
+
     @classmethod
     async def check_permission(
         cls, driver: Driver, request: HTTPConnection
     ) -> Tuple[Optional[str], Optional[HTTPResponse]]:
-        # TODO Telegram 的 Webhook 方式完全不带机器人本身的标识符，所以只能默认所有上报都通过
+        """
+        Telegram 的 Webhook 方式完全不带机器人本身的标识符，所以只能默认所有上报都通过
+        """
         return cls.telegram_config.token.split(":", maxsplit=1)[0], HTTPResponse(204)
 
     async def handle_message(self, message: bytes):
         try:
             message: dict = json.loads(message)
-            event = Event.parse_event(message)
-            await handle_event(self, event)
+            if "update_id" in message:
+                await handle_event(self, Event.parse_event(message))
+            else:
+                for msg in message["result"]:
+                    if msg["update_id"] > self.update_offset:
+                        self.update_offset = msg["update_id"]
+                        await handle_event(self, Event.parse_event(msg))
         except Exception as e:
             logger.opt(colors=True, exception=e).error(
                 f"<r><bg #f8bbd0>Failed to handle event. Raw: {message}</bg #f8bbd0></r>"
@@ -62,7 +105,6 @@ class Bot(BaseBot):
             s.capitalize() for s in api.split("_")[1:]
         )
 
-        # TODO 简单的 httpx 调用，等 a14 稳定实装了正向 Driver 再改
         async with httpx.AsyncClient(
             proxies=self.telegram_config.proxy, timeout=10
         ) as client:

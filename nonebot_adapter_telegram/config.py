@@ -18,6 +18,7 @@ class Config(BaseModel):
 
     token: Optional[str] = Field(default=None, alias="telegram_token")
     proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
+    url: Optional[str] = Field(default=None, alias="telegram_url")
     api_server: Optional[str] = Field(
         default="https://api.telegram.org/", alias="telegram_api_server"
     )
