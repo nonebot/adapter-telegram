@@ -4,9 +4,6 @@ from nonebot_adapter_telegram import Bot
 from nonebot_adapter_telegram.event import MessageEvent
 
 
-echo = on_command("echo", rule=to_me())
-
-
-@echo.handle()
+@on_command("echo", rule=to_me()).handle()
 async def _(bot: Bot, event: MessageEvent):
     await bot.send(event, event.get_message())
