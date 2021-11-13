@@ -12,7 +12,7 @@ from .model import *
 
 class Event(BaseEvent):
     class Config:
-        extra = "allow"
+        extra = "ignore"
         json_encoders = {Message: DataclassEncoder}
 
     @classmethod

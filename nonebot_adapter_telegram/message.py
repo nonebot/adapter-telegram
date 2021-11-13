@@ -30,6 +30,46 @@ class MessageSegment(BaseMessageSegment):
     def text(text: str) -> "MessageSegment":
         return MessageSegment("text", {"text": text})
 
+    @staticmethod
+    def photo(file: str, capition: Optional[str] = None) -> "MessageSegment":
+        return MessageSegment("photo", {"file": file, "capition": capition})
+
+    @staticmethod
+    def voice(file: str, capition: Optional[str] = None) -> "MessageSegment":
+        return MessageSegment("voice", {"file": file, "capition": capition})
+
+    @staticmethod
+    def animation(
+        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+    ) -> "MessageSegment":
+        return MessageSegment(
+            "animation", {"file": file, "thumb": thumb, "capition": capition}
+        )
+
+    @staticmethod
+    def audio(
+        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+    ) -> "MessageSegment":
+        return MessageSegment(
+            "audio", {"file": file, "thumb": thumb, "capition": capition}
+        )
+
+    @staticmethod
+    def document(
+        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+    ) -> "MessageSegment":
+        return MessageSegment(
+            "document", {"file": file, "thumb": thumb, "capition": capition}
+        )
+
+    @staticmethod
+    def video(
+        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+    ) -> "MessageSegment":
+        return MessageSegment(
+            "video", {"file": file, "thumb": thumb, "capition": capition}
+        )
+
 
 class Message(BaseMessage[MessageSegment]):
     @classmethod
@@ -49,11 +89,19 @@ class Message(BaseMessage[MessageSegment]):
                     yield MessageSegment(
                         key, {key: msg[key], "entities": msg.get("entities")}
                     )
+                elif key == "photo":
+                    yield MessageSegment(
+                        key,
+                        {
+                            "file": msg[key][0]["file_id"],
+                            "caption": msg.get("caption"),
+                            "caption_entities": msg.get("caption_entities"),
+                        },
+                    )
                 elif key in [
                     "animation",
                     "audio",
                     "document",
-                    "photo",
                     "video",
                     "voice",
                 ]:

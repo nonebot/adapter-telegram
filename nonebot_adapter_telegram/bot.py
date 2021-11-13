@@ -1,6 +1,8 @@
 import json
+import pathlib
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
+import aiofiles
 import httpx
 
 from nonebot.adapters import Bot as BaseBot
@@ -29,7 +31,6 @@ class Bot(BaseBot):
     """
 
     telegram_config: TelegramConfig
-    username: str
     update_offset: int = 0
 
     def __init__(self, self_id: str, request: HTTPConnection):
@@ -75,7 +76,7 @@ class Bot(BaseBot):
                     b"",
                     {},
                     "1.1",
-                    0.1,
+                    0.01,
                 )
             )
 
@@ -86,10 +87,6 @@ class Bot(BaseBot):
         """
         Telegram 的 Webhook 方式完全不带机器人本身的标识符，所以只能默认所有上报都通过
         """
-        cls.username = httpx.post(
-            f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getMe"
-        ).json()["result"]["username"]
-
         return cls.telegram_config.token.split(":", maxsplit=1)[0], HTTPResponse(200)
 
     async def handle_message(self, message: bytes):
@@ -105,7 +102,6 @@ class Bot(BaseBot):
     async def _handle_message(self, message: Dict[str, Any]):
         try:
             event = Event.parse_event(message)
-            event.self_username = self.username
             await handle_event(self, event)
         except Exception as e:
             logger.opt(colors=True, exception=e).error(
@@ -117,13 +113,26 @@ class Bot(BaseBot):
         api = api.split("_", maxsplit=1)[0] + "".join(
             s.capitalize() for s in api.split("_")[1:]
         )
+        files = {}
+        for key, value in data.items():
+            if isinstance(value, bytes):
+                files[key] = value
+            else:
+                try:
+                    async with aiofiles.open(value, "rb") as f:
+                        files[key] = (pathlib.Path(value).name, await f.read())
+                except:
+                    pass
+        for key in files:
+            data.pop(key)
 
         async with httpx.AsyncClient(
             proxies=self.telegram_config.proxy, timeout=10
         ) as client:
             response = await client.post(
                 f"{self.telegram_config.api_server}bot{self.telegram_config.token}/{api}",
-                json=data,
+                data=data,
+                files=files,
             )
         return response.text
 
@@ -131,9 +140,8 @@ class Bot(BaseBot):
         self, event: Event, message: Union[str, Message, MessageSegment], **kwargs
     ) -> Any:
         """
-        TODO
-
-        由于 Telegram 对于不同类型的消息有不同的 API，如果需要批量发送不同类型的消息请尽量使用此方法，Nonebot 将会自动帮你转换成多条消息。
+        由于 Telegram 对于不同类型的消息有不同的 API，如果需要批量发送不同类型的消息请尽量使用此方法，
+        Nonebot 将会自动帮你转换成多条消息。
         """
         if isinstance(message, str):
             response = await self.send_message(chat_id=event.chat.id, text=message)
@@ -141,6 +149,22 @@ class Bot(BaseBot):
             if message.type == "text":
                 response = await self.send_message(
                     chat_id=event.chat.id, text=message.data.get("text")
+                )
+            elif message.type in [
+                "animation",
+                "audio",
+                "document",
+                "photo",
+                "video",
+                "voice",
+            ]:
+                response = await self.call_api(
+                    f"send_{message.type}",
+                    chat_id=event.chat.id,
+                    **{
+                        message.type: message.data.get("file"),
+                        "caption": message.data.get("caption"),
+                    },
                 )
         else:
             for seg in message:
