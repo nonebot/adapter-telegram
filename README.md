@@ -4,7 +4,7 @@ _✨ telegram 协议适配 ✨_
 
 ## Manual
 
-[使用指南](./MANAL.md)
+[使用指南](./MANUAL.md)
 
 ## TODO
 
