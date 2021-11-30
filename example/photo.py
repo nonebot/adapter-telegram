@@ -1,7 +1,7 @@
 from nonebot import on_command
-from nonebot_adapter_telegram import Bot
-from nonebot_adapter_telegram.event import MessageEvent
-from nonebot_adapter_telegram.message import MessageSegment
+from nonebot.adapters.telegram import Bot
+from nonebot.adapters.telegram.event import MessageEvent
+from nonebot.adapters.telegram.message import MessageSegment
 
 
 @on_command("photo").handle()

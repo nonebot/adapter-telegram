@@ -79,8 +79,8 @@ url = https://tg.yourdomain.com/telegram/http
 ```python
 from nonebot import on_command
 from nonebot.rule import to_me
-from nonebot_adapter_telegram import Bot
-from nonebot_adapter_telegram.event import MessageEvent
+from nonebot.adapters.telegram import Bot
+from nonebot.adapters.telegram.event import MessageEvent
 
 
 echo = on_command("echo", rule=to_me())

@@ -1,4 +1,4 @@
-from nonebot_adapter_telegram import Bot
+from nonebot.adapters.telegram import Bot
 
 
 @Bot.on_called_api

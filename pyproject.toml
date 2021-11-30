@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-adapter-telegram"
-version = "2.0.0a16.pre1"
+version = "0.1.0-alpha"
 description = "telegram adapter for nonebot2"
 authors = ["Jigsaw <j1g5aw@foxmail.com>"]
 license = "MIT"
@@ -16,6 +16,9 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
+]
+packages = [
+  { include = "nonebot" }
 ]
 
 [tool.poetry.dependencies]

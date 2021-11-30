@@ -2,7 +2,7 @@ import random
 import re
 
 from nonebot import on_command
-from nonebot_adapter_telegram import Bot, Event
+from nonebot.adapters.telegram import Bot, Event
 
 
 @on_command("r").handle()
