@@ -31,43 +31,43 @@ class MessageSegment(BaseMessageSegment):
         return MessageSegment("text", {"text": text})
 
     @staticmethod
-    def photo(file: str, capition: Optional[str] = None) -> "MessageSegment":
-        return MessageSegment("photo", {"file": file, "capition": capition})
+    def photo(file: str, caption: Optional[str] = None) -> "MessageSegment":
+        return MessageSegment("photo", {"file": file, "caption": caption})
 
     @staticmethod
-    def voice(file: str, capition: Optional[str] = None) -> "MessageSegment":
-        return MessageSegment("voice", {"file": file, "capition": capition})
+    def voice(file: str, caption: Optional[str] = None) -> "MessageSegment":
+        return MessageSegment("voice", {"file": file, "caption": caption})
 
     @staticmethod
     def animation(
-        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
     ) -> "MessageSegment":
         return MessageSegment(
-            "animation", {"file": file, "thumb": thumb, "capition": capition}
+            "animation", {"file": file, "thumb": thumb, "caption": caption}
         )
 
     @staticmethod
     def audio(
-        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
     ) -> "MessageSegment":
         return MessageSegment(
-            "audio", {"file": file, "thumb": thumb, "capition": capition}
+            "audio", {"file": file, "thumb": thumb, "caption": caption}
         )
 
     @staticmethod
     def document(
-        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
     ) -> "MessageSegment":
         return MessageSegment(
-            "document", {"file": file, "thumb": thumb, "capition": capition}
+            "document", {"file": file, "thumb": thumb, "caption": caption}
         )
 
     @staticmethod
     def video(
-        file: str, thumb: Optional[str] = None, capition: Optional[str] = None
+        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
     ) -> "MessageSegment":
         return MessageSegment(
-            "video", {"file": file, "thumb": thumb, "capition": capition}
+            "video", {"file": file, "thumb": thumb, "caption": caption}
         )
 
 
