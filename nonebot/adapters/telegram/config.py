@@ -22,6 +22,7 @@ class Config(BaseModel):
     api_server: Optional[str] = Field(
         default="https://api.telegram.org/", alias="telegram_api_server"
     )
+    interval: Optional[float] = Field(default=0.01, alias="polling_interval")
 
     class Config:
         extra = "ignore"

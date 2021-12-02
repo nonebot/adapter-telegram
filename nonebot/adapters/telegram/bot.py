@@ -76,7 +76,7 @@ class Bot(BaseBot):
                     b"",
                     {},
                     "1.1",
-                    0.01,
+                    cls.telegram_config.interval,
                 )
             )
 
