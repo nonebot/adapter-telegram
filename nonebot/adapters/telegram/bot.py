@@ -54,11 +54,11 @@ class Bot(BaseBot):
             f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/deleteWebhook"
         )
 
-        if isinstance(driver, ForwardDriver) and cls.telegram_config.url:
+        if isinstance(driver, ForwardDriver) and cls.telegram_config.webhook_url:
             logger.info("Set new webhook")
             httpx.post(
                 f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/setWebhook",
-                params={"url": f"{cls.telegram_config.url}/telegram/http"},
+                params={"url": f"{cls.telegram_config.webhook_url}/telegram/http"},
             )
         else:
             logger.info("Start poll")
@@ -76,7 +76,7 @@ class Bot(BaseBot):
                     b"",
                     {},
                     "1.1",
-                    0.01,
+                    cls.telegram_config.polling_interval,
                 )
             )
 
