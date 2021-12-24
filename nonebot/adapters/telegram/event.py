@@ -18,7 +18,7 @@ class Event(BaseEvent):
     @classmethod
     def _parse_event(cls, obj: dict) -> "Event":
         post_type: str = list(obj.keys())[1]
-        map = {
+        event_map = {
             "message": MessageEvent,
             "edited_message": EditedMessageEvent,
             "channel_post": MessageEvent,
@@ -33,7 +33,7 @@ class Event(BaseEvent):
             "chat_member": ChatMemberUpdatedEvent,
             "my_chat_member": ChatMemberUpdatedEvent,
         }
-        return map[post_type].parse_event(obj[post_type])
+        return event_map[post_type].parse_event(obj[post_type])
 
     @classmethod
     def parse_event(cls, obj: dict) -> "Event":
@@ -86,15 +86,19 @@ class MessageEvent(Event):
     def _parse_event(cls, obj: dict) -> "Event":
         if "pinned_message" in obj:
             return PinnedMessageEvent.parse_event(obj)
+        elif "new_chat_member" in obj:
+            return NewChatMemberEvent.parse_event(obj)
+        elif "left_chat_member" in obj:
+            return LeftChatMemberEvent.parse_event(obj)
         else:
             message_type = obj["chat"]["type"]
-            map = {
+            event_map = {
                 "private": PrivateMessageEvent,
                 "group": GroupMessageEvent,
                 "supergroup": GroupMessageEvent,
                 "channel": ChannelPostEvent,
             }
-            return map[message_type].parse_event(obj)
+            return event_map[message_type].parse_event(obj)
 
     def __init__(self, **data: Any) -> None:
         reply_to_message = data.pop("reply_to_message", None)
@@ -190,13 +194,13 @@ class EditedMessageEvent(Event):
     @classmethod
     def _parse_event(cls, obj: dict):
         message_type = obj["chat"]["type"]
-        map = {
+        event_map = {
             "private": PrivateEditedMessageEvent,
             "group": GroupEditedMessageEvent,
             "supergroup": GroupEditedMessageEvent,
             "channel": ChannelPostEvent,
         }
-        return map[message_type].parse_event(obj)
+        return event_map[message_type].parse_event(obj)
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
@@ -275,7 +279,30 @@ class PinnedMessageEvent(NoticeEvent):
 
 
 class NewChatMemberEvent(NoticeEvent):
-    pass
+    message_id: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    new_chat_participant: Optional[User]
+    new_chat_member: Optional[User]
+    new_chat_members: Optional[List[User]]
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat_member.new"
+
+
+class LeftChatMemberEvent(NoticeEvent):
+    message_id: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    left_chat_participant: Optional[User]
+    left_chat_member: Optional[User]
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat_member.left"
 
 
 class InlineQueryEvent(Event):
@@ -344,10 +371,14 @@ class PollAnswerEvent(Event):
     option_ids: List[int]
 
 
-class ChatMemberUpdatedEvent(Event):
+class ChatMemberUpdatedEvent(NoticeEvent):
     chat: Chat
     from_: User = Field(alias="from")
     date: int
     old_chat_member: ChatMember
     new_chat_member: ChatMember
     invite_link: Optional[ChatInviteLink]
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat_member.updated"
