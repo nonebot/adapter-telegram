@@ -17,9 +17,7 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
 ]
-packages = [
-  { include = "nonebot" }
-]
+packages = [{ include = "nonebot" }]
 
 [tool.poetry.dependencies]
 python = "^3.7.3"
@@ -27,6 +25,7 @@ nonebot2 = "^2.0.0a16"
 aiofiles = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
+nonebot2 = { git = "https://github.com/nonebot/nonebot2.git", branch = "dev" }
 nb-cli = "^0.5.0"
 black = "^21.7b0"
 
