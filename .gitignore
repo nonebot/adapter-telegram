@@ -3,6 +3,8 @@
 
 # nonebot
 /bot.py
+nonebot/__init__.py
+nonebot/adapters/__init__.py
 
 # VSCode 
 .vscode
