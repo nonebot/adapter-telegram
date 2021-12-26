@@ -23,6 +23,7 @@ from .bot import Bot
 from .config import AdapterConfig, BotConfig
 from .event import Event
 from .message import Message, MessageSegment
+from .exception import NetworkError
 
 
 class Adapter(BaseAdapter):
