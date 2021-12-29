@@ -83,10 +83,14 @@ class Adapter(BaseAdapter):
                                 bot, "get_updates", offset=update_offset
                             )
                         )["result"]
-                        for msg in message:
-                            if msg["update_id"] > update_offset:
-                                update_offset = msg["update_id"]
-                                await handle_event(bot, Event.parse_event(msg))
+                        if update_offset:
+                            for msg in message:
+                                if msg["update_id"] > update_offset:
+                                    update_offset = msg["update_id"]
+                                    await handle_event(bot, Event.parse_event(msg))
+                        else:
+                            update_offset=message[0]["update_id"]
+
                     except Exception as e:
                         logger.debug(e)
                     await asyncio.sleep(bot.bot_config.polling_interval)
