@@ -1,3 +1,4 @@
-from .bot import Bot
-from .message import Message, MessageSegment
-from .event import Event
+from .bot import Bot as Bot
+from .event import Event as Event
+from .message import Message as Message
+from .message import MessageSegment as MessageSegment
