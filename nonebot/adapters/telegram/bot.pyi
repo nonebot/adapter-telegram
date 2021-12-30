@@ -1,16 +1,24 @@
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
+
+from nonebot.drivers import HTTPConnection
 
 from nonebot.adapters import Bot as BaseBot
 
+from .event import Event
+from .message import Message, MessageSegment
 from .model import *
 
 class Bot(BaseBot):
+    def __init__(self, self_id: str, request: HTTPConnection): ...
+    async def send(
+        self, event: Event, message: Union[str, Message, MessageSegment], **kwargs
+    ) -> Any: ...
     async def get_updates(
         self,
-        offset: Optional[int],
-        limit: Optional[int],
-        timeout: Optional[int],
-        allowed_updates: Optional[List[str]],
+        offset: Optional[int] = None,
+        limit: Optional[int] = None,
+        timeout: Optional[int] = None,
+        allowed_updates: Optional[List[str]] = None,
     ): ...
     async def set_webhook(
         self,

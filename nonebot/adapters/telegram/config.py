@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
 
 
 # priority: alias > origin
@@ -18,13 +18,11 @@ class Config(BaseModel):
 
     """
 
-    token: Optional[str] = Field(default=None, alias="telegram_token")
+    token: str = Field(alias="telegram_token")
     proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
     webhook_url: Optional[str] = Field(default=None, alias="telegram_webhook_url")
-    polling_interval: Optional[float] = Field(
-        default=0.01, alias="telegram_polling_interval"
-    )
-    api_server: Optional[str] = Field(
+    polling_interval: float = Field(default=0.01, alias="telegram_polling_interval")
+    api_server: str = Field(
         default="https://api.telegram.org/", alias="telegram_api_server"
     )
 

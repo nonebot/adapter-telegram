@@ -4,21 +4,22 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
 import aiofiles
 import httpx
-
-from nonebot.adapters import Bot as BaseBot
 from nonebot.drivers import (
     Driver,
     ForwardDriver,
     HTTPConnection,
     HTTPPollingSetup,
     HTTPResponse,
+    ReverseDriver,
 )
 from nonebot.log import logger
 from nonebot.message import handle_event
 from nonebot.typing import overrides
 
+from nonebot.adapters import Bot as BaseBot
+
 from .config import Config as TelegramConfig
-from .event import Event
+from .event import Event, EventWithChat
 from .message import Message, MessageSegment
 
 if TYPE_CHECKING:
@@ -54,31 +55,32 @@ class Bot(BaseBot):
             f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/deleteWebhook"
         )
 
-        if isinstance(driver, ForwardDriver) and cls.telegram_config.webhook_url:
-            logger.info("Set new webhook")
-            httpx.post(
-                f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/setWebhook",
-                params={"url": f"{cls.telegram_config.webhook_url}/telegram/http"},
-            )
-        else:
-            logger.info("Start poll")
-            res = httpx.post(
-                f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates"
-            ).json()["result"]
-            if res:
-                cls.update_offset = res[-1]["update_id"]
-            driver.setup_http_polling(
-                HTTPPollingSetup(
-                    "telegram",
-                    cls.telegram_config.token.split(":", maxsplit=1)[0],
-                    f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates",
-                    "post",
-                    b"",
-                    {},
-                    "1.1",
-                    cls.telegram_config.polling_interval,
+        if isinstance(driver, ForwardDriver):
+            if isinstance(driver, ReverseDriver) and cls.telegram_config.webhook_url:
+                logger.info("Set new webhook")
+                httpx.post(
+                    f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/setWebhook",
+                    params={"url": f"{cls.telegram_config.webhook_url}/telegram/http"},
                 )
-            )
+            else:
+                logger.info("Start poll")
+                res = httpx.post(
+                    f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates"
+                ).json()["result"]
+                if res:
+                    cls.update_offset = res[-1]["update_id"]
+                driver.setup_http_polling(
+                    HTTPPollingSetup(
+                        "telegram",
+                        cls.telegram_config.token.split(":", maxsplit=1)[0],
+                        f"{cls.telegram_config.api_server}bot{cls.telegram_config.token}/getUpdates",
+                        "post",
+                        b"",
+                        {},
+                        "1.1",
+                        cls.telegram_config.polling_interval,
+                    )
+                )
 
     @classmethod
     async def check_permission(
@@ -89,8 +91,8 @@ class Bot(BaseBot):
         """
         return cls.telegram_config.token.split(":", maxsplit=1)[0], HTTPResponse(200)
 
-    async def handle_message(self, message: bytes):
-        message: dict = json.loads(message)
+    async def handle_message(self, message):
+        message = json.loads(message)
         if "update_id" in message:
             await self._handle_message(message)
         else:
@@ -137,17 +139,20 @@ class Bot(BaseBot):
         return response.text
 
     async def send(
-        self, event: Event, message: Union[str, Message, MessageSegment], **kwargs
+        self,
+        event: EventWithChat,
+        message: Union[str, Message, MessageSegment],
+        **kwargs,
     ) -> Any:
         """
         由于 Telegram 对于不同类型的消息有不同的 API，如果需要批量发送不同类型的消息请尽量使用此方法，
         Nonebot 将会自动帮你转换成多条消息。
         """
         if isinstance(message, str):
-            response = await self.send_message(chat_id=event.chat.id, text=message)
+            return await self.send_message(chat_id=event.chat.id, text=message)
         elif isinstance(message, MessageSegment):
             if message.type == "text":
-                response = await self.send_message(
+                return await self.send_message(
                     chat_id=event.chat.id, text=message.data.get("text")
                 )
             elif message.type in [
@@ -158,7 +163,7 @@ class Bot(BaseBot):
                 "video",
                 "voice",
             ]:
-                response = await self.call_api(
+                return await self.call_api(
                     f"send_{message.type}",
                     chat_id=event.chat.id,
                     **{
@@ -169,7 +174,6 @@ class Bot(BaseBot):
         else:
             for seg in message:
                 if seg.type == "text":
-                    response = await self.send_message(
+                    return await self.send_message(
                         chat_id=event.chat.id, text=seg.data.get("text")
                     )
-        return response
