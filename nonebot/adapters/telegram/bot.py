@@ -1,25 +1,25 @@
 import json
 import pathlib
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Tuple, Union, Optional
 
-import aiofiles
 import httpx
+import aiofiles
+from nonebot.log import logger
+from nonebot.typing import overrides
+from nonebot.message import handle_event
 from nonebot.drivers import (
     Driver,
+    HTTPResponse,
     ForwardDriver,
+    ReverseDriver,
     HTTPConnection,
     HTTPPollingSetup,
-    HTTPResponse,
-    ReverseDriver,
 )
-from nonebot.log import logger
-from nonebot.message import handle_event
-from nonebot.typing import overrides
 
 from nonebot.adapters import Bot as BaseBot
 
-from .config import Config as TelegramConfig
 from .event import Event, EventWithChat
+from .config import Config as TelegramConfig
 from .message import Message, MessageSegment
 
 if TYPE_CHECKING:

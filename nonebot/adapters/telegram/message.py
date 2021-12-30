@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Mapping, Optional, Type, Union, cast
+from typing import Any, Type, Union, Mapping, Iterable, Optional, cast
 
 from nonebot.typing import overrides
 

@@ -1,12 +1,12 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union, Optional
 
 from nonebot.drivers import HTTPConnection
 
 from nonebot.adapters import Bot as BaseBot
 
+from .model import *
 from .event import Event
 from .message import Message, MessageSegment
-from .model import *
 
 class Bot(BaseBot):
     def __init__(self, self_id: str, request: HTTPConnection): ...
