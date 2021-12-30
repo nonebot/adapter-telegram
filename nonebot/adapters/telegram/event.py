@@ -1,14 +1,14 @@
-from typing import Any, Optional, Union, cast
+from typing import Any, Union, Optional, cast
 
+from pydantic import Field
 from nonebot.log import logger
 from nonebot.typing import overrides
 from nonebot.utils import DataclassEncoder
-from pydantic import Field
 
 from nonebot.adapters import Event as BaseEvent
 
-from .message import Message
 from .model import *
+from .message import Message
 
 EventWithChat = Union["MessageEvent", "EditedMessageEvent"]
 

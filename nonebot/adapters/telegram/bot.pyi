@@ -1,12 +1,12 @@
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union, Optional
 
 from nonebot.adapters import Adapter
 from nonebot.adapters import Bot as BaseBot
 
+from .model import *
 from .config import BotConfig
 from .event import EventWithChat
 from .message import Message, MessageSegment
-from .model import *
 
 class Bot(BaseBot):
     bot_config: BotConfig
@@ -15,7 +15,7 @@ class Bot(BaseBot):
         self,
         event: EventWithChat,
         message: Union[str, Message, MessageSegment],
-        **kwargs
+        **kwargs,
     ) -> Any: ...
     async def get_updates(
         self,

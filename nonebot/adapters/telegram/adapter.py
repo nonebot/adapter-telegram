@@ -1,28 +1,28 @@
-import asyncio
 import json
+import asyncio
 import pathlib
-from typing import Any, Callable, List, Union
+from typing import Any, List, Union, Callable
 
 import aiofiles
+from nonebot.log import logger
+from nonebot.typing import overrides
+from nonebot.message import handle_event
 from nonebot.drivers import (
     URL,
     Driver,
-    ForwardDriver,
-    HTTPServerSetup,
     Request,
     Response,
+    ForwardDriver,
     ReverseDriver,
+    HTTPServerSetup,
 )
-from nonebot.log import logger
-from nonebot.message import handle_event
-from nonebot.typing import overrides
 
 from nonebot.adapters import Adapter as BaseAdapter
 
 from .bot import Bot
-from .config import AdapterConfig, BotConfig
 from .event import Event
 from .exception import NetworkError
+from .config import BotConfig, AdapterConfig
 from .message import Message, MessageSegment
 
 
