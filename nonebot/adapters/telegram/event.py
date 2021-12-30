@@ -1,13 +1,16 @@
-from typing import Any, Optional
+from typing import Any, Optional, Union, cast
 
+from nonebot.log import logger
+from nonebot.typing import overrides
+from nonebot.utils import DataclassEncoder
 from pydantic import Field
 
 from nonebot.adapters import Event as BaseEvent
-from nonebot.typing import overrides
-from nonebot.utils import DataclassEncoder
 
 from .message import Message
 from .model import *
+
+EventWithChat = Union["MessageEvent", "EditedMessageEvent"]
 
 
 class Event(BaseEvent):
@@ -17,6 +20,7 @@ class Event(BaseEvent):
 
     @classmethod
     def _parse_event(cls, obj: dict) -> "Event":
+        logger.debug('"RAW":' + str(obj))
         post_type: str = list(obj.keys())[1]
         event_map = {
             "message": MessageEvent,
@@ -80,7 +84,7 @@ class MessageEvent(Event):
     media_group_id: Optional[str]
     author_signature: Optional[str]
     reply_to_message: Optional["MessageEvent"] = None
-    message: Optional[Message] = None
+    message: Message = Message()
 
     @classmethod
     def _parse_event(cls, obj: dict) -> "Event":
@@ -105,14 +109,12 @@ class MessageEvent(Event):
         super().__init__(**data)
         self.message = Message(data)
         if reply_to_message:
-            self.reply_to_message = MessageEvent.parse_event(reply_to_message)
+            self.reply_to_message = cast(
+                MessageEvent, self.parse_event(reply_to_message)
+            )
 
     @overrides(Event)
     def get_type(self) -> str:
-        return "message"
-
-    @overrides(Event)
-    def get_event_name(self) -> str:
         return "message"
 
     @overrides(Event)
@@ -129,7 +131,7 @@ class MessageEvent(Event):
 
 
 class PrivateMessageEvent(MessageEvent):
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User = Field(alias="from")
 
     @overrides(Event)
     def is_tome(self) -> bool:
@@ -147,13 +149,9 @@ class PrivateMessageEvent(MessageEvent):
     def get_session_id(self) -> str:
         return f"private_{self.chat.id}"
 
-    @overrides(MessageEvent)
-    def is_tome(self) -> bool:
-        return True
-
 
 class GroupMessageEvent(MessageEvent):
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User = Field(alias="from")
     sender_chat: Optional[Chat]
 
     @overrides(MessageEvent)
@@ -198,7 +196,7 @@ class EditedMessageEvent(Event):
             "private": PrivateEditedMessageEvent,
             "group": GroupEditedMessageEvent,
             "supergroup": GroupEditedMessageEvent,
-            "channel": ChannelPostEvent,
+            "channel": EditedChannelPostEvent,
         }
         return event_map[message_type].parse_event(obj)
 
@@ -216,7 +214,7 @@ class EditedMessageEvent(Event):
 
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User = Field(alias="from")
     sender_chat: Optional[Chat]
 
     @overrides(EditedMessageEvent)
@@ -229,7 +227,7 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 
 
 class GroupEditedMessageEvent(EditedMessageEvent):
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User = Field(default=None, alias="from")
     sender_chat: Optional[Chat]
 
     @overrides(EditedMessageEvent)
@@ -247,10 +245,6 @@ class EditedChannelPostEvent(EditedMessageEvent):
     @overrides(EditedMessageEvent)
     def get_event_name(self) -> str:
         return "edited_message.channel_post"
-
-    @overrides(EditedMessageEvent)
-    def get_user_id(self) -> str:
-        return str(self.from_.id)
 
 
 class NoticeEvent(Event):

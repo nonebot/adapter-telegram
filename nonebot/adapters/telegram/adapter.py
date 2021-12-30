@@ -4,8 +4,6 @@ import pathlib
 from typing import Any, Callable, List, Union
 
 import aiofiles
-
-from nonebot.adapters import Adapter as BaseAdapter
 from nonebot.drivers import (
     URL,
     Driver,
@@ -19,11 +17,13 @@ from nonebot.log import logger
 from nonebot.message import handle_event
 from nonebot.typing import overrides
 
+from nonebot.adapters import Adapter as BaseAdapter
+
 from .bot import Bot
 from .config import AdapterConfig, BotConfig
 from .event import Event
-from .message import Message, MessageSegment
 from .exception import NetworkError
+from .message import Message, MessageSegment
 
 
 class Adapter(BaseAdapter):
@@ -43,8 +43,9 @@ class Adapter(BaseAdapter):
         @self.driver.on_startup
         async def _():
             async def handle_http(request: Request) -> Response:
-                message: dict = json.loads(request.content)
-                await handle_event(bot, Event.parse_event(message))
+                if request.content:
+                    message: dict = json.loads(request.content)
+                    await handle_event(bot, Event.parse_event(message))
                 return Response(204)
 
             for bot_config in bot_configs:
@@ -88,11 +89,11 @@ class Adapter(BaseAdapter):
                                 if msg["update_id"] > update_offset:
                                     update_offset = msg["update_id"]
                                     await handle_event(bot, Event.parse_event(msg))
-                        else:
-                            update_offset=message[0]["update_id"]
+                        elif message:
+                            update_offset = message[0]["update_id"]
 
                     except Exception as e:
-                        logger.debug(e)
+                        logger.error(e)
                     await asyncio.sleep(bot.bot_config.polling_interval)
 
             for bot_config in bot_configs:

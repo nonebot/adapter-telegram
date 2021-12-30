@@ -1,16 +1,28 @@
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
+from nonebot.adapters import Adapter
 from nonebot.adapters import Bot as BaseBot
 
+from .config import BotConfig
+from .event import EventWithChat
+from .message import Message, MessageSegment
 from .model import *
 
 class Bot(BaseBot):
+    bot_config: BotConfig
+    def __init__(self, adapter: "Adapter", config: BotConfig): ...
+    async def send(
+        self,
+        event: EventWithChat,
+        message: Union[str, Message, MessageSegment],
+        **kwargs
+    ) -> Any: ...
     async def get_updates(
         self,
-        offset: Optional[int],
-        limit: Optional[int],
-        timeout: Optional[int],
-        allowed_updates: Optional[List[str]],
+        offset: Optional[int] = None,
+        limit: Optional[int] = None,
+        timeout: Optional[int] = None,
+        allowed_updates: Optional[List[str]] = None,
     ): ...
     async def set_webhook(
         self,

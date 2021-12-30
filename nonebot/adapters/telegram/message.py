@@ -1,10 +1,9 @@
-from typing import Any, Dict, Union, Tuple, Mapping, Iterable, Optional
+from typing import Any, Iterable, Mapping, Optional, Type, Union, cast
 
 from nonebot.typing import overrides
-from nonebot.adapters import (
-    Message as BaseMessage,
-    MessageSegment as BaseMessageSegment,
-)
+
+from nonebot.adapters import Message as BaseMessage
+from nonebot.adapters import MessageSegment as BaseMessageSegment
 
 
 class MessageSegment(BaseMessageSegment):
@@ -14,13 +13,14 @@ class MessageSegment(BaseMessageSegment):
 
     @classmethod
     @overrides(BaseMessageSegment)
-    def get_message_class(cls) -> "Message":
+    def get_message_class(cls) -> Type["Message"]:
         return Message
 
     @overrides(BaseMessageSegment)
     def __str__(self) -> str:
         if self.type == "text":
-            return self.data.get("text")
+            return self.data["text"]
+        return ""
 
     @overrides(BaseMessageSegment)
     def is_text(self) -> bool:
@@ -74,7 +74,7 @@ class MessageSegment(BaseMessageSegment):
 class Message(BaseMessage[MessageSegment]):
     @classmethod
     @overrides(BaseMessage)
-    def get_segment_class(cls) -> "MessageSegment":
+    def get_segment_class(cls) -> Type["MessageSegment"]:
         return MessageSegment
 
     @staticmethod
@@ -84,6 +84,7 @@ class Message(BaseMessage[MessageSegment]):
     ) -> Iterable[MessageSegment]:
         # TODO
         if isinstance(msg, Mapping):
+            msg = cast(Mapping[str, Any], msg)
             for key in msg:
                 if key == "text":
                     yield MessageSegment(
@@ -118,7 +119,7 @@ class Message(BaseMessage[MessageSegment]):
             return
         elif isinstance(msg, Iterable) and not isinstance(msg, str):
             for seg in msg:
-                yield MessageSegment(seg.type, seg.data or {})
+                yield MessageSegment(seg["type"], seg.get("data") or {})
             return
         elif isinstance(msg, str):
             yield MessageSegment.text(msg)
