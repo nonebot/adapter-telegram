@@ -20,10 +20,10 @@ class Bot(BaseBot):
     ) -> Any: ...
     async def get_updates(
         self,
-        offset: Optional[int] = None,
-        limit: Optional[int] = None,
-        timeout: Optional[int] = None,
-        allowed_updates: Optional[List[str]] = None,
+        offset: Optional[int],
+        limit: Optional[int],
+        timeout: Optional[int],
+        allowed_updates: Optional[List[str]],
     ): ...
     async def set_webhook(
         self,
@@ -431,18 +431,28 @@ class Bot(BaseBot):
     async def create_chat_invite_link(
         self,
         chat_id: Union[int, str],
+        name: Optional[str],
         expire_date: Optional[int],
         member_limit: Optional[int],
+        creates_join_request: Optional[bool],
     ): ...
     async def edit_chat_invite_link(
         self,
         chat_id: Union[int, str],
         invite_link: str,
+        name: Optional[str],
         expire_date: Optional[int],
         member_limit: Optional[int],
+        creates_join_request: Optional[bool],
     ): ...
     async def revoke_chat_invite_link(
         self, chat_id: Union[int, str], invite_link: str
+    ): ...
+    async def approve_chat_join_request(
+        self, chat_id: Union[int, str], user_id: int
+    ): ...
+    async def decline_chat_join_request(
+        self, chat_id: Union[int, str], user_id: int
     ): ...
     async def set_chat_photo(self, chat_id: Union[int, str], photo: InputFile): ...
     async def delete_chat_photo(self, chat_id: Union[int, str]): ...

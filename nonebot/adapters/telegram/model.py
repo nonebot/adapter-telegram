@@ -18,6 +18,7 @@ class Update(BaseModel):
     poll_answer: Optional["PollAnswer"]
     my_chat_member: Optional["ChatMemberUpdated"]
     chat_member: Optional["ChatMemberUpdated"]
+    chat_join_request: Optional["ChatJoinRequest"]
 
 
 class WebhookInfo(BaseModel):
@@ -462,10 +463,13 @@ class ChatPhoto(BaseModel):
 class ChatInviteLink(BaseModel):
     invite_link: str
     creator: User
+    creates_join_request: bool
     is_primary: bool
     is_revoked: bool
+    name: Optional[str]
     expire_date: Optional[int]
     member_limit: Optional[int]
+    pending_join_request_count: Optional[int]
 
 
 class ChatMember(BaseModel):
@@ -528,6 +532,14 @@ class ChatMemberUpdated(BaseModel):
     date: int
     old_chat_member: ChatMember
     new_chat_member: ChatMember
+    invite_link: Optional[ChatInviteLink]
+
+
+class ChatJoinRequest(BaseModel):
+    chat: Chat
+    from_: User = Field(alias="from")
+    date: int
+    bio: Optional[str]
     invite_link: Optional[ChatInviteLink]
 
 
