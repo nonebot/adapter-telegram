@@ -52,8 +52,8 @@ class Bot(BaseBot):
         text: str,
         parse_mode: Optional[str],
         entities: Optional[List[MessageEntity]],
-        disble_web_page_preview: Optional[bool],
-        disble_notification: Optional[bool],
+        disable_web_page_preview: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -70,7 +70,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         message_id: int,
     ): ...
@@ -82,7 +82,7 @@ class Bot(BaseBot):
         caption: Optional[str],
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -102,7 +102,7 @@ class Bot(BaseBot):
         caption: Optional[str],
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -126,7 +126,7 @@ class Bot(BaseBot):
         performer: Optional[str],
         title: Optional[str],
         thumb: Optional[Union[InputFile, str]],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -148,7 +148,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
         disable_content_type_detection: Optional[bool],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -173,7 +173,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
         support_streaming: Optional[bool],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -197,7 +197,7 @@ class Bot(BaseBot):
         caption: Optional[str],
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -218,7 +218,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
         duration: Optional[int],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -238,7 +238,7 @@ class Bot(BaseBot):
         duration: Optional[int],
         length: Optional[int],
         thumb: Optional[Union[InputFile, str]],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -257,7 +257,7 @@ class Bot(BaseBot):
         media: List[
             Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]
         ],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -267,11 +267,11 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         latitude: float,
         longitude: float,
-        horizontal_accurary: Optional[float],
+        horizontal_accuracy: Optional[float],
         live_period: Optional[int],
         heading: Optional[int],
         proximity_alert_radius: Optional[int],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -291,7 +291,7 @@ class Bot(BaseBot):
         inline_message_id: Optional[int],
         latitude: float,
         longitude: float,
-        horizontal_accurary: Optional[float],
+        horizontal_accuracy: Optional[float],
         heading: Optional[int],
         proximity_alert_radius: Optional[int],
         reply_markup: Optional[
@@ -328,7 +328,7 @@ class Bot(BaseBot):
         foursquare_type: Optional[str],
         google_place_id: Optional[str],
         google_place_type: Optional[str],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -348,7 +348,7 @@ class Bot(BaseBot):
         first_name: str,
         last_name: Optional[str],
         vcard: Optional[str],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -376,7 +376,7 @@ class Bot(BaseBot):
         open_period: Optional[int],
         close_date: Optional[int],
         is_closed: Optional[bool],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -393,7 +393,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         emoji: Optional[str],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -437,7 +437,7 @@ class Bot(BaseBot):
         can_invite_users: Optional[bool],
         can_pin_messages: Optional[bool],
     ): ...
-    async def set_chat_adminstrator_custom_title(
+    async def set_chat_administrator_custom_title(
         self, chat_id: Union[int, str], user_id: int, custom_title: str
     ): ...
     async def ban_chat_sender_chat(
@@ -486,7 +486,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         message_id: int,
-        disble_notification: Optional[bool],
+        disable_notification: Optional[bool],
     ): ...
     async def unpin_chat_message(
         self, chat_id: Union[int, str], message_id: Optional[int]
@@ -529,7 +529,7 @@ class Bot(BaseBot):
         text: str,
         parse_mode: Optional[str],
         entities: Optional[List[MessageEntity]],
-        diable_web_page_preview: Optional[bool],
+        disable_web_page_preview: Optional[bool],
         reply_markup: Optional[InlineKeyboardMarkup],
     ): ...
     async def edit_message_caption(
@@ -570,7 +570,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -605,7 +605,7 @@ class Bot(BaseBot):
         emojis: str,
         mask_potion: Optional[MaskPosition],
     ): ...
-    async def set_sticker_positon_in_set(self, sticker: str, positon: int): ...
+    async def set_sticker_position_in_set(self, sticker: str, position: int): ...
     async def delete_sticker_from_set(self, sticker: str): ...
     async def set_sticker_set_thumb(
         self, name: str, user_id: int, thumb: Optional[Union[InputFile, str]]
@@ -615,7 +615,7 @@ class Bot(BaseBot):
         inline_query_id: str,
         results: List[InlineQueryResult],
         cache_time: Optional[int],
-        is_persional: Optional[bool],
+        is_personal: Optional[bool],
         next_offset: Optional[str],
         switch_pm_text: Optional[str],
         switch_pm_parameter: Optional[str],
@@ -643,7 +643,7 @@ class Bot(BaseBot):
         send_phone_number_to_provider: Optional[bool],
         send_email_to_provider: Optional[bool],
         is_flexible: Optional[bool],
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
@@ -666,7 +666,7 @@ class Bot(BaseBot):
         self,
         chat_id: int,
         game_short_name: str,
-        diable_notification: Optional[bool],
+        disable_notification: Optional[bool],
         protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
