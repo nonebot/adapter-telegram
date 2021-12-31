@@ -54,6 +54,7 @@ class Bot(BaseBot):
         entities: Optional[List[MessageEntity]],
         disble_web_page_preview: Optional[bool],
         disble_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -70,6 +71,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         message_id: int,
     ): ...
     async def copy_message(
@@ -81,6 +83,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -100,6 +103,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -123,6 +127,7 @@ class Bot(BaseBot):
         title: Optional[str],
         thumb: Optional[Union[InputFile, str]],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -144,6 +149,7 @@ class Bot(BaseBot):
         caption_entities: Optional[List[MessageEntity]],
         disable_content_type_detection: Optional[bool],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -168,6 +174,7 @@ class Bot(BaseBot):
         caption_entities: Optional[List[MessageEntity]],
         support_streaming: Optional[bool],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -191,6 +198,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str],
         caption_entities: Optional[List[MessageEntity]],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -211,6 +219,7 @@ class Bot(BaseBot):
         caption_entities: Optional[List[MessageEntity]],
         duration: Optional[int],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -230,6 +239,7 @@ class Bot(BaseBot):
         length: Optional[int],
         thumb: Optional[Union[InputFile, str]],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -248,6 +258,7 @@ class Bot(BaseBot):
             Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]
         ],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
     ): ...
@@ -261,6 +272,7 @@ class Bot(BaseBot):
         heading: Optional[int],
         proximity_alert_radius: Optional[int],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -317,6 +329,7 @@ class Bot(BaseBot):
         google_place_id: Optional[str],
         google_place_type: Optional[str],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -336,6 +349,7 @@ class Bot(BaseBot):
         last_name: Optional[str],
         vcard: Optional[str],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -363,6 +377,7 @@ class Bot(BaseBot):
         close_date: Optional[int],
         is_closed: Optional[bool],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -379,6 +394,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         emoji: Optional[str],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -555,6 +571,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[
@@ -627,6 +644,7 @@ class Bot(BaseBot):
         send_email_to_provider: Optional[bool],
         is_flexible: Optional[bool],
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[InlineKeyboardMarkup],
@@ -649,6 +667,7 @@ class Bot(BaseBot):
         chat_id: int,
         game_short_name: str,
         diable_notification: Optional[bool],
+        protect_content: Optional[bool],
         reply_to_message_id: Optional[int],
         allow_sending_without_reply: Optional[bool],
         reply_markup: Optional[InlineKeyboardMarkup],
