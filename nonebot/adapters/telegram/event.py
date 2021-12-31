@@ -1,25 +1,24 @@
-from typing import Any, Union, Optional, cast
+from typing import Any, Optional, cast
+from typing_extensions import Protocol, runtime_checkable
 
 from pydantic import Field
 from nonebot.log import logger
 from nonebot.typing import overrides
-from nonebot.utils import DataclassEncoder
 
 from nonebot.adapters import Event as BaseEvent
 
 from .model import *
 from .message import Message
 
-EventWithChat = Union["MessageEvent", "EditedMessageEvent"]
+
+@runtime_checkable
+class EventWithChat(Protocol):
+    chat: Chat
 
 
 class Event(BaseEvent):
-    class Config:
-        extra = "ignore"
-        json_encoders = {Message: DataclassEncoder}
-
     @classmethod
-    def _parse_event(cls, obj: dict) -> "Event":
+    def __parse_event(cls, obj: dict) -> "Event":
         logger.debug('"RAW":' + str(obj))
         post_type: str = list(obj.keys())[1]
         event_map = {
@@ -40,23 +39,33 @@ class Event(BaseEvent):
         return event_map[post_type].parse_event(obj[post_type])
 
     @classmethod
+    def _parse_event(cls, obj: dict, failed: set = set()) -> "Event":
+        for subclass in cls.__subclasses__():
+            if subclass not in failed:
+                try:
+                    return subclass.parse_event(obj)
+                except:
+                    pass
+        return cls.parse_obj(obj)
+
+    @classmethod
     def parse_event(cls, obj: dict) -> "Event":
-        if cls.__subclasses__():
-            return cls._parse_event(obj)
+        if hasattr(cls, f"_{cls.__name__}__parse_event"):
+            return getattr(cls, f"_{cls.__name__}__parse_event")(obj)
         else:
-            return cls.parse_obj(obj)
+            return cls._parse_event(obj)
+
+    @overrides(BaseEvent)
+    def get_type(self) -> str:
+        return ""
+
+    @overrides(BaseEvent)
+    def get_event_name(self) -> str:
+        return ""
 
     @overrides(BaseEvent)
     def get_event_description(self) -> str:
         return str(self.dict(by_alias=True, exclude_none=True))
-
-    @overrides(BaseEvent)
-    def get_message(self) -> Message:
-        raise ValueError("Event has no message!")
-
-    @overrides(BaseEvent)
-    def get_plaintext(self) -> str:
-        raise ValueError("Event has no message!")
 
     @overrides(BaseEvent)
     def get_user_id(self) -> str:
@@ -65,6 +74,14 @@ class Event(BaseEvent):
     @overrides(BaseEvent)
     def get_session_id(self) -> str:
         raise ValueError("Event has no session!")
+
+    @overrides(BaseEvent)
+    def get_message(self) -> Message:
+        raise ValueError("Event has no message!")
+
+    @overrides(BaseEvent)
+    def get_plaintext(self) -> str:
+        raise ValueError("Event has no message!")
 
     @overrides(BaseEvent)
     def is_tome(self) -> bool:
@@ -87,13 +104,9 @@ class MessageEvent(Event):
     message: Message = Message()
 
     @classmethod
-    def _parse_event(cls, obj: dict) -> "Event":
-        if "pinned_message" in obj:
-            return PinnedMessageEvent.parse_event(obj)
-        elif "new_chat_member" in obj:
-            return NewChatMemberEvent.parse_event(obj)
-        elif "left_chat_member" in obj:
-            return LeftChatMemberEvent.parse_event(obj)
+    def __parse_event(cls, obj: dict) -> "Event":
+        if not Message(obj):
+            return NoticeEvent.parse_event(obj)
         else:
             message_type = obj["chat"]["type"]
             event_map = {
@@ -118,6 +131,10 @@ class MessageEvent(Event):
         return "message"
 
     @overrides(Event)
+    def get_event_name(self) -> str:
+        return "message"
+
+    @overrides(Event)
     def get_message(self) -> Message:
         return self.message
 
@@ -125,17 +142,14 @@ class MessageEvent(Event):
     def get_plaintext(self) -> str:
         return self.message.extract_plain_text()
 
+    # TODO
     @overrides(Event)
-    def get_session_id(self) -> str:
-        return str(self.chat.id)
+    def is_tome(self) -> bool:
+        return super().is_tome()
 
 
 class PrivateMessageEvent(MessageEvent):
     from_: User = Field(alias="from")
-
-    @overrides(Event)
-    def is_tome(self) -> bool:
-        return True
 
     @overrides(MessageEvent)
     def get_event_name(self) -> str:
@@ -148,6 +162,10 @@ class PrivateMessageEvent(MessageEvent):
     @overrides(MessageEvent)
     def get_session_id(self) -> str:
         return f"private_{self.chat.id}"
+
+    @overrides(MessageEvent)
+    def is_tome(self) -> bool:
+        return True
 
 
 class GroupMessageEvent(MessageEvent):
@@ -164,18 +182,19 @@ class GroupMessageEvent(MessageEvent):
 
     @overrides(MessageEvent)
     def get_session_id(self) -> str:
-        return f"group_{self.from_.id}"
+        return f"group_{self.chat.id}_{self.from_.id}"
 
 
 class ChannelPostEvent(MessageEvent):
     sender_chat: Optional[Chat]
 
+    @overrides(MessageEvent)
     def get_event_name(self) -> str:
         return "message.channel_post"
 
     @overrides(MessageEvent)
     def get_session_id(self) -> str:
-        return str(self.chat.id)
+        return f"channel_{self.chat.id}"
 
 
 class EditedMessageEvent(Event):
@@ -187,10 +206,10 @@ class EditedMessageEvent(Event):
     media_group_id: Optional[str]
     author_signature: Optional[str]
     reply_to_message: Optional["MessageEvent"]
-    message: Optional[Message] = None
+    message: Message = Message()
 
     @classmethod
-    def _parse_event(cls, obj: dict):
+    def __parse_event(cls, obj: dict):
         message_type = obj["chat"]["type"]
         event_map = {
             "private": PrivateEditedMessageEvent,
@@ -212,6 +231,19 @@ class EditedMessageEvent(Event):
     def get_event_name(self) -> str:
         return "edit_message"
 
+    @overrides(Event)
+    def get_message(self) -> Message:
+        return self.message
+
+    @overrides(Event)
+    def get_plaintext(self) -> str:
+        return self.message.extract_plain_text()
+
+    # TODO
+    @overrides(Event)
+    def is_tome(self) -> bool:
+        return super().is_tome()
+
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(alias="from")
@@ -224,6 +256,14 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
     @overrides(EditedMessageEvent)
     def get_user_id(self) -> str:
         return str(self.from_.id)
+
+    @overrides(EditedMessageEvent)
+    def get_session_id(self) -> str:
+        return f"privete_{self.chat.id}"
+
+    @overrides(EditedMessageEvent)
+    def is_tome(self) -> bool:
+        return True
 
 
 class GroupEditedMessageEvent(EditedMessageEvent):
@@ -238,6 +278,10 @@ class GroupEditedMessageEvent(EditedMessageEvent):
     def get_user_id(self) -> str:
         return str(self.from_.id)
 
+    @overrides(EditedMessageEvent)
+    def get_session_id(self) -> str:
+        return f"group_{self.chat.id}_{self.from_.id}"
+
 
 class EditedChannelPostEvent(EditedMessageEvent):
     sender_chat: Optional[Chat]
@@ -246,9 +290,22 @@ class EditedChannelPostEvent(EditedMessageEvent):
     def get_event_name(self) -> str:
         return "edited_message.channel_post"
 
+    @overrides(EditedMessageEvent)
+    def get_session_id(self) -> str:
+        return f"channel_{self.chat.id}"
+
 
 class NoticeEvent(Event):
-    sender_chat: Optional[Chat]
+    @classmethod
+    def __parse_event(cls, obj: dict) -> "Event":
+        if "pinned_message" in obj:
+            return PinnedMessageEvent.parse_event(obj)
+        elif "new_chat_member" in obj:
+            return NewChatMemberEvent.parse_event(obj)
+        elif "left_chat_member" in obj:
+            return LeftChatMemberEvent.parse_event(obj)
+        else:
+            return cls._parse_event(obj)
 
     @overrides(Event)
     def get_type(self) -> str:
@@ -261,15 +318,23 @@ class NoticeEvent(Event):
 
 class PinnedMessageEvent(NoticeEvent):
     message_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User = Field(alias="from")
     sender_chat: Optional[Chat]
     chat: Chat
     date: int
-    pinned_message: Optional[MessageEvent]
+    pinned_message: MessageEvent
 
-    @overrides(Event)
+    @overrides(NoticeEvent)
     def get_event_name(self) -> str:
         return "notice.pinned_message"
+
+    @overrides(NoticeEvent)
+    def get_message(self) -> Message:
+        return self.pinned_message.get_message()
+
+    @overrides(NoticeEvent)
+    def get_plaintext(self) -> str:
+        return self.pinned_message.get_plaintext()
 
 
 class NewChatMemberEvent(NoticeEvent):
@@ -278,10 +343,10 @@ class NewChatMemberEvent(NoticeEvent):
     chat: Chat
     date: int
     new_chat_participant: Optional[User]
-    new_chat_member: Optional[User]
+    new_chat_member: User
     new_chat_members: Optional[List[User]]
 
-    @overrides(Event)
+    @overrides(NoticeEvent)
     def get_event_name(self) -> str:
         return "notice.chat_member.new"
 
@@ -292,13 +357,27 @@ class LeftChatMemberEvent(NoticeEvent):
     chat: Chat
     date: int
     left_chat_participant: Optional[User]
-    left_chat_member: Optional[User]
+    left_chat_member: User
 
     @overrides(Event)
     def get_event_name(self) -> str:
         return "notice.chat_member.left"
 
 
+class ChatMemberUpdatedEvent(NoticeEvent):
+    chat: Chat
+    from_: User = Field(alias="from")
+    date: int
+    old_chat_member: ChatMember
+    new_chat_member: ChatMember
+    invite_link: Optional[ChatInviteLink]
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat_member.updated"
+
+
+# TODO
 class InlineQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
@@ -308,6 +387,7 @@ class InlineQueryEvent(Event):
     Location: Optional[Location]
 
 
+# TODO
 class ChosenInlineResultEvent(Event):
     result_id: str
     from_: User = Field(alias="from")
@@ -316,6 +396,7 @@ class ChosenInlineResultEvent(Event):
     query: str
 
 
+# TODO
 class CallbackQueryEvent(Event):
     id: str
     from_: Optional[User] = Field(default=None, alias="from")
@@ -326,6 +407,7 @@ class CallbackQueryEvent(Event):
     game_short_name: Optional[str]
 
 
+# DELAY
 class ShippingQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
@@ -333,6 +415,7 @@ class ShippingQueryEvent(Event):
     shipping_address: ShippingAddress
 
 
+# DELAY
 class PreCheckoutQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
@@ -343,6 +426,7 @@ class PreCheckoutQueryEvent(Event):
     order_info: Optional[OrderInfo]
 
 
+# TODO
 class PollEvent(Event):
     id: str
     question: str
@@ -359,20 +443,8 @@ class PollEvent(Event):
     close_date: Optional[int]
 
 
+# TODO
 class PollAnswerEvent(Event):
     poll_id: str
     user: User
     option_ids: List[int]
-
-
-class ChatMemberUpdatedEvent(NoticeEvent):
-    chat: Chat
-    from_: User = Field(alias="from")
-    date: int
-    old_chat_member: ChatMember
-    new_chat_member: ChatMember
-    invite_link: Optional[ChatInviteLink]
-
-    @overrides(Event)
-    def get_event_name(self) -> str:
-        return "notice.chat_member.updated"
