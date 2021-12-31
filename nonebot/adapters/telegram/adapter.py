@@ -1,7 +1,7 @@
 import json
 import asyncio
 import pathlib
-from typing import Any, List, Union, Callable
+from typing import Any, List
 
 import aiofiles
 from nonebot.log import logger
@@ -23,7 +23,6 @@ from .bot import Bot
 from .event import Event
 from .exception import NetworkError
 from .config import BotConfig, AdapterConfig
-from .message import Message, MessageSegment
 
 
 class Adapter(BaseAdapter):
@@ -91,7 +90,6 @@ class Adapter(BaseAdapter):
                                     await handle_event(bot, Event.parse_event(msg))
                         elif message:
                             update_offset = message[0]["update_id"]
-
                     except Exception as e:
                         logger.error(e)
                     await asyncio.sleep(bot.bot_config.polling_interval)
@@ -167,10 +165,3 @@ class Adapter(BaseAdapter):
                 raise
             except Exception as e:
                 raise NetworkError("HTTP request failed") from e
-
-    @classmethod
-    def custom_send(
-        cls,
-        send_func: Callable[[Bot, Event, Union[str, Message, MessageSegment]], None],
-    ):
-        setattr(Bot, "send_handler", send_func)

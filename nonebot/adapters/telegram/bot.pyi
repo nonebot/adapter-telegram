@@ -1,21 +1,22 @@
 from typing import Any, List, Union, Optional
 
-from nonebot.adapters import Adapter
 from nonebot.adapters import Bot as BaseBot
+from nonebot.adapters import Adapter as Adapter
 
 from .model import *
-from .config import BotConfig
-from .event import EventWithChat
-from .message import Message, MessageSegment
+from .event import Event as Event
+from .message import Message as Message
+from .config import BotConfig as BotConfig
+from .event import EventWithChat as EventWithChat
+from .message import MessageSegment as MessageSegment
 
 class Bot(BaseBot):
+    adapter: Adapter
+    self_id: str
     bot_config: BotConfig
-    def __init__(self, adapter: "Adapter", config: BotConfig): ...
+    def __init__(self, adapter: Adapter, config: BotConfig) -> None: ...
     async def send(
-        self,
-        event: EventWithChat,
-        message: Union[str, Message, MessageSegment],
-        **kwargs,
+        self, event: Event, message: Union[str, Message, MessageSegment], **kwargs
     ) -> Any: ...
     async def get_updates(
         self,
