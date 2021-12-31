@@ -344,7 +344,7 @@ class Location(BaseModel):
     horizontal_accuracy: Optional[float]
     live_period: Optional[int]
     heading: Optional[int]
-    prpximity_alert_radius: Optional[int]
+    proximity_alert_radius: Optional[int]
 
 
 class Venue(BaseModel):
@@ -711,7 +711,7 @@ class InputLocationMessageContent(InputMessageContent):
     horizontal_accuracy: Optional[float]
     live_period: Optional[int]
     heading: Optional[int]
-    prpximity_alert_radius: Optional[int]
+    proximity_alert_radius: Optional[int]
 
 
 class InputVenueMessageContent(InputMessageContent):
@@ -879,7 +879,7 @@ class InlineQueryResultLocation(InlineQueryResult):
     horizontal_accuracy: Optional[float]
     live_period: Optional[int]
     heading: Optional[int]
-    prpximity_alert_radius: Optional[int]
+    proximity_alert_radius: Optional[int]
     input_message_content: Optional[InputMessageContent]
     thumb_url: Optional[str]
     thumb_width: Optional[int]

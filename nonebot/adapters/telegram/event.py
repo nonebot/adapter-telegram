@@ -259,7 +259,7 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 
     @overrides(EditedMessageEvent)
     def get_session_id(self) -> str:
-        return f"privete_{self.chat.id}"
+        return f"private_{self.chat.id}"
 
     @overrides(EditedMessageEvent)
     def is_tome(self) -> bool:
