@@ -88,6 +88,7 @@ class Chat(BaseModel):
 
     :类型: ``Optional[str]``
     """
+    has_private_forwards: Optional[Literal[True]]
     description: Optional[str]
     """
     :说明: 聊天简介，仅在使用 get_chat 方法时返回
@@ -124,6 +125,7 @@ class Chat(BaseModel):
 
     :类型: ``Optional[int]``
     """
+    has_protected_content: Optional[Literal[True]]
     sticker_set_name: Optional[str]
     """
     :说明: 聊天表情包，仅在使用 get_chat 方法时返回
@@ -162,9 +164,11 @@ class Message_(BaseModel):
     forward_signature: Optional[str]
     forward_sender_name: Optional[str]
     forward_date: Optional[int]
+    is_automatic_forward: Optional[Literal[True]]
     reply_to_message: Optional["Message_"]
     via_bot: Optional[User]
     edit_date: Optional[int]
+    has_protected_content: Optional[Literal[True]]
     media_group_id: Optional[str]
     author_signature: Optional[str]
     text: Optional[str]
