@@ -1,5 +1,7 @@
 # Telegram Adapter 使用指南
 
+**此适配器还在施工中，遇到问题请尽快反馈！**
+
 ## 配置 Telegram Bot
 
 ### 申请一个 Telegram 机器人
@@ -14,22 +16,38 @@
 1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI
 ```
 
-将这个 token 填入 Nonebot 的`env`文件：
+将这个 token 填入 NoneBot 的`env`文件：
 
 ```dotenv
-token = 1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI
+telegram_bots =[{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI"}]
 ```
 
 如果你需要让你的 Bot 响应除了 `/` 开头之外的消息，你需要向BotFather 发送 `/setprivacy` 并选择 `Disable`。
 
-## 配置 Nonebot
+## 配置 NoneBot
+
+## 配置驱动器
+
+NoneBot 默认的驱动器为 FastAPI，它是一个服务端类型驱动器（ReverseDriver），而 Telegram 适配器至少需要一个客户端类型驱动器（ForwardDriver），所以你需要额外安装其他驱动器。
+
+HTTPX 是推荐的客户端类型驱动器，你可以使用 nb-cli 进行安装。
+
+```shell
+nb driver install httpx
+```
+
+别忘了在环境文件中写入配置：
+
+```dotenv
+driver=~fastapi+~httpx
+```
 
 ## 使用代理
 
-如果运行 Nonebot 的服务器位于中国大陆，那么你可能需要使用代理，否则将无法调用 Telegram 提供的任何 API。
+如果运行 NoneBot 的服务器位于中国大陆，那么你可能需要配置代理，否则将无法调用 Telegram 提供的任何 API。
 
 ```dotenv
-proxy = "http://127.0.0.1:10809"
+telegram_proxy = "http://127.0.0.1:10809"
 ```
 
 ## 使用 Long polling 获取更新（推荐）
@@ -38,7 +56,7 @@ proxy = "http://127.0.0.1:10809"
 
 ## 使用 Webhook 获取更新
 
-Telegram Bot 的 webhook 必须使用 https 协议，所以我推荐使用 nginx 反向代理。
+Telegram Bot 的 webhook 必须使用 https 协议，推荐使用 nginx 反向代理。
 
 ```conf
 server {
@@ -71,26 +89,24 @@ server {
 最后将域名填入`env`文件：
 
 ```dotenv
-url = https://tg.yourdomain.com/telegram/http
+telegram_bots =[{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI", webhook_url: "https://tg.yourdomain.com"}]
 ```
 
 ## 第一次对话
 
+
 ```python
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.adapters.telegram import Bot
-from nonebot.adapters.telegram.event import MessageEvent
+import nonebot
+from nonebot.adapters.telegram import Adapter as TelegramAdapter
 
+nonebot.init()
 
-echo = on_command("echo", rule=to_me())
+driver = nonebot.get_driver()
+driver.register_adapter(TelegramAdapter)
 
+nonebot.load_builtin_plugins("echo")
 
-@echo.handle()
-async def _(bot: Bot, event: MessageEvent):
-    await bot.send(event, event.get_message())
+nonebot.run()
 ```
 
-以上代码注册了一个对 telegram 适用的 echo 指令，并会提取 /echo 之后的内容发送到事件所对应的群或私聊。
-
-> 查看更多示例：https://github.com/nonebot/adapter-telegram/tree/master/example
+现在，你可以私聊自己的 Telegram Bot `/echo hello world`，不出意外的话，它将回复你 `hello world`。

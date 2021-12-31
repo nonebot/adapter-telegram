@@ -1,9 +1,9 @@
 <div align="center">
 	<img width="200" src="docs/logo.png" alt="logo"></br>
 
-# NoneBot-Adapter-Telegram
+# NoneBot Adapter Telegram
 
-_✨ telegram 协议适配 ✨_
+_✨ Telegram 协议适配 ✨_
 
 </div>
 
@@ -14,4 +14,7 @@ _✨ telegram 协议适配 ✨_
 ## TODO
 
 - [ ] Inline Mode Support
-- [ ] Multiple Bot Support
+- [x] Multiple Bot Support
+- [ ] All Event (with docstring)
+- [ ] All Method (with docstring)
+- [ ] All MessageSegment (with docstring)
