@@ -20,19 +20,19 @@ class Bot(BaseBot):
     ) -> Any: ...
     async def get_updates(
         self,
-        offset: Optional[int],
-        limit: Optional[int],
-        timeout: Optional[int],
-        allowed_updates: Optional[List[str]],
+        offset: Optional[int] = ...,
+        limit: Optional[int] = ...,
+        timeout: Optional[int] = ...,
+        allowed_updates: Optional[List[str]] = ...,
     ): ...
     async def set_webhook(
         self,
         url: str,
-        certificate: Optional[InputFile],
-        ip_address: Optional[str],
-        max_connections: Optional[int],
-        allowed_updates: Optional[List[str]],
-        drop_pending_updates: Optional[bool],
+        certificate: Optional[InputFile] = ...,
+        ip_address: Optional[str] = ...,
+        max_connections: Optional[int] = ...,
+        allowed_updates: Optional[List[str]] = ...,
+        drop_pending_updates: Optional[bool] = ...,
     ): ...
     async def delete_webhook(self, drop_pending_updates: Optional[bool]): ...
     async def get_webhook_info(self): ...
@@ -50,13 +50,13 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         text: str,
-        parse_mode: Optional[str],
-        entities: Optional[List[MessageEntity]],
-        disable_web_page_preview: Optional[bool],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        parse_mode: Optional[str] = ...,
+        entities: Optional[List[MessageEntity]] = ...,
+        disable_web_page_preview: Optional[bool] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -64,28 +64,28 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def forward_message(
         self,
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
         message_id: int,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
     ): ...
     async def copy_message(
         self,
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
         message_id: int,
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -93,19 +93,19 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_photo(
         self,
         chat_id: Union[int, str],
         photo: Union[InputFile, str],
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -113,23 +113,23 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_audio(
         self,
         chat_id: Union[int, str],
         audio: Union[InputFile, str],
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        duration: Optional[int],
-        performer: Optional[str],
-        title: Optional[str],
-        thumb: Optional[Union[InputFile, str]],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        duration: Optional[int] = ...,
+        performer: Optional[str] = ...,
+        title: Optional[str] = ...,
+        thumb: Optional[Union[InputFile, str]] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -137,21 +137,21 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_document(
         self,
         chat_id: Union[int, str],
         document: Union[InputFile, str],
-        thumb: Optional[Union[InputFile, str]],
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        disable_content_type_detection: Optional[bool],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        thumb: Optional[Union[InputFile, str]] = ...,
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        disable_content_type_detection: Optional[bool] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -159,24 +159,24 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_video(
         self,
         chat_id: Union[int, str],
         video: Union[InputFile, str],
-        duration: Optional[int],
-        width: Optional[int],
-        height: Optional[int],
-        thumb: Optional[Union[InputFile, str]],
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        support_streaming: Optional[bool],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        duration: Optional[int] = ...,
+        width: Optional[int] = ...,
+        height: Optional[int] = ...,
+        thumb: Optional[Union[InputFile, str]] = ...,
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        support_streaming: Optional[bool] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -184,23 +184,23 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_animation(
         self,
         chat_id: Union[int, str],
         animation: Union[InputFile, str],
-        duration: Optional[int],
-        width: Optional[int],
-        height: Optional[int],
-        thumb: Optional[Union[InputFile, str]],
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        duration: Optional[int] = ...,
+        width: Optional[int] = ...,
+        height: Optional[int] = ...,
+        thumb: Optional[Union[InputFile, str]] = ...,
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -208,20 +208,20 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_voice(
         self,
         chat_id: Union[int, str],
         voice: Union[InputFile, str],
-        caption: Optional[str],
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        duration: Optional[int],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        caption: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        duration: Optional[int] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -229,19 +229,19 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_video_note(
         self,
         chat_id: Union[int, str],
         video_note: Union[InputFile, str],
-        duration: Optional[int],
-        length: Optional[int],
-        thumb: Optional[Union[InputFile, str]],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        duration: Optional[int] = ...,
+        length: Optional[int] = ...,
+        thumb: Optional[Union[InputFile, str]] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -249,7 +249,7 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_media_group(
         self,
@@ -257,24 +257,24 @@ class Bot(BaseBot):
         media: List[
             Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]
         ],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
     ): ...
     async def send_location(
         self,
         chat_id: Union[int, str],
         latitude: float,
         longitude: float,
-        horizontal_accuracy: Optional[float],
-        live_period: Optional[int],
-        heading: Optional[int],
-        proximity_alert_radius: Optional[int],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        horizontal_accuracy: Optional[float] = ...,
+        live_period: Optional[int] = ...,
+        heading: Optional[int] = ...,
+        proximity_alert_radius: Optional[int] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -282,18 +282,18 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def edit_message_live_location(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        inline_message_id: Optional[int],
         latitude: float,
         longitude: float,
-        horizontal_accuracy: Optional[float],
-        heading: Optional[int],
-        proximity_alert_radius: Optional[int],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[int] = ...,
+        horizontal_accuracy: Optional[float] = ...,
+        heading: Optional[int] = ...,
+        proximity_alert_radius: Optional[int] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -301,13 +301,13 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def stop_message_live_location(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        inline_message_id: Optional[int],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[int] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -315,7 +315,7 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_venue(
         self,
@@ -324,14 +324,14 @@ class Bot(BaseBot):
         longitude: float,
         title: str,
         address: str,
-        foursquare_id: Optional[str],
-        foursquare_type: Optional[str],
-        google_place_id: Optional[str],
-        google_place_type: Optional[str],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        foursquare_id: Optional[str] = ...,
+        foursquare_type: Optional[str] = ...,
+        google_place_id: Optional[str] = ...,
+        google_place_type: Optional[str] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -339,19 +339,19 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_contact(
         self,
         chat_id: Union[int, str],
         phone_number: str,
         first_name: str,
-        last_name: Optional[str],
-        vcard: Optional[str],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        last_name: Optional[str] = ...,
+        vcard: Optional[str] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -359,27 +359,27 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_poll(
         self,
         chat_id: Union[int, str],
         question: str,
         options: List[str],
-        is_anonymous: Optional[bool],
-        type: Optional[str],
-        allows_multiple_answers: Optional[bool],
-        correct_option_id: Optional[int],
-        explanation: Optional[str],
-        explanation_parse_mode: Optional[str],
-        explanation_entities: Optional[List[MessageEntity]],
-        open_period: Optional[int],
-        close_date: Optional[int],
-        is_closed: Optional[bool],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        is_anonymous: Optional[bool] = ...,
+        type: Optional[str] = ...,
+        allows_multiple_answers: Optional[bool] = ...,
+        correct_option_id: Optional[int] = ...,
+        explanation: Optional[str] = ...,
+        explanation_parse_mode: Optional[str] = ...,
+        explanation_entities: Optional[List[MessageEntity]] = ...,
+        open_period: Optional[int] = ...,
+        close_date: Optional[int] = ...,
+        is_closed: Optional[bool] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -387,16 +387,16 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_dice(
         self,
         chat_id: Union[int, str],
-        emoji: Optional[str],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        emoji: Optional[str] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -404,19 +404,19 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def send_chat_action(self, chat_id: Union[int, str], action: str): ...
     async def get_user_profile_photos(
-        self, user_id: int, offset: Optional[int], limit: Optional[int]
+        self, user_id: int, offset: Optional[int] = ..., limit: Optional[int] = ...
     ): ...
     async def get_file(self, file_id: str): ...
     async def ban_chat_member(
         self,
         chat_id: Union[int, str],
         user_id: int,
-        until_date: Optional[int],
-        revoke_messages: Optional[bool],
+        until_date: Optional[int] = ...,
+        revoke_messages: Optional[bool] = ...,
     ): ...
     async def unban_chat_member(
         self, chat_id: Union[int, str], user_id: int, only_if_banned: Optional[bool]
@@ -425,17 +425,17 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         user_id: int,
-        is_anonymous: Optional[bool],
-        can_manage_chat: Optional[bool],
-        can_post_messages: Optional[bool],
-        can_edit_messages: Optional[bool],
-        can_delete_messages: Optional[bool],
-        can_manage_voice_chats: Optional[bool],
-        can_restrict_members: Optional[bool],
-        can_promote_members: Optional[bool],
-        can_change_info: Optional[bool],
-        can_invite_users: Optional[bool],
-        can_pin_messages: Optional[bool],
+        is_anonymous: Optional[bool] = ...,
+        can_manage_chat: Optional[bool] = ...,
+        can_post_messages: Optional[bool] = ...,
+        can_edit_messages: Optional[bool] = ...,
+        can_delete_messages: Optional[bool] = ...,
+        can_manage_voice_chats: Optional[bool] = ...,
+        can_restrict_members: Optional[bool] = ...,
+        can_promote_members: Optional[bool] = ...,
+        can_change_info: Optional[bool] = ...,
+        can_invite_users: Optional[bool] = ...,
+        can_pin_messages: Optional[bool] = ...,
     ): ...
     async def set_chat_administrator_custom_title(
         self, chat_id: Union[int, str], user_id: int, custom_title: str
@@ -453,19 +453,19 @@ class Bot(BaseBot):
     async def create_chat_invite_link(
         self,
         chat_id: Union[int, str],
-        name: Optional[str],
-        expire_date: Optional[int],
-        member_limit: Optional[int],
-        creates_join_request: Optional[bool],
+        name: Optional[str] = ...,
+        expire_date: Optional[int] = ...,
+        member_limit: Optional[int] = ...,
+        creates_join_request: Optional[bool] = ...,
     ): ...
     async def edit_chat_invite_link(
         self,
         chat_id: Union[int, str],
         invite_link: str,
-        name: Optional[str],
-        expire_date: Optional[int],
-        member_limit: Optional[int],
-        creates_join_request: Optional[bool],
+        name: Optional[str] = ...,
+        expire_date: Optional[int] = ...,
+        member_limit: Optional[int] = ...,
+        creates_join_request: Optional[bool] = ...,
     ): ...
     async def revoke_chat_invite_link(
         self, chat_id: Union[int, str], invite_link: str
@@ -486,7 +486,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         message_id: int,
-        disable_notification: Optional[bool],
+        disable_notification: Optional[bool] = ...,
     ): ...
     async def unpin_chat_message(
         self, chat_id: Union[int, str], message_id: Optional[int]
@@ -504,76 +504,76 @@ class Bot(BaseBot):
     async def answer_callback_query(
         self,
         callback_query_id: str,
-        text: Optional[str],
-        show_alert: Optional[bool],
-        url: Optional[str],
-        cache_time: Optional[int],
+        text: Optional[str] = ...,
+        show_alert: Optional[bool] = ...,
+        url: Optional[str] = ...,
+        cache_time: Optional[int] = ...,
     ): ...
     async def set_my_commands(
         self,
         commands: List[BotCommand],
-        scope: Optional[BotCommandScope],
-        language_code: Optional[str],
+        scope: Optional[BotCommandScope] = ...,
+        language_code: Optional[str] = ...,
     ): ...
     async def delete_my_commands(
-        self, scope: Optional[BotCommandScope], language_code: Optional[str]
+        self, scope: Optional[BotCommandScope] = ..., language_code: Optional[str] = ...
     ): ...
     async def get_my_commands(
-        self, scope: Optional[BotCommandScope], language_code: Optional[str]
+        self, scope: Optional[BotCommandScope] = ..., language_code: Optional[str] = ...
     ): ...
     async def edit_message_text(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        inline_message_id: Optional[str],
         text: str,
-        parse_mode: Optional[str],
-        entities: Optional[List[MessageEntity]],
-        disable_web_page_preview: Optional[bool],
-        reply_markup: Optional[InlineKeyboardMarkup],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        entities: Optional[List[MessageEntity]] = ...,
+        disable_web_page_preview: Optional[bool] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def edit_message_caption(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        inline_message_id: Optional[str],
         caption: str,
-        parse_mode: Optional[str],
-        caption_entities: Optional[List[MessageEntity]],
-        reply_markup: Optional[InlineKeyboardMarkup],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
+        parse_mode: Optional[str] = ...,
+        caption_entities: Optional[List[MessageEntity]] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def edit_message_media(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        inline_message_id: Optional[str],
         media: InputMedia,
-        reply_markup: Optional[InlineKeyboardMarkup],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def edit_message_reply_markup(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        inline_message_id: Optional[str],
-        reply_markup: Optional[InlineKeyboardMarkup],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def stop_poll(
         self,
-        chat_id: Optional[Union[int, str]],
-        message_id: Optional[int],
-        reply_markup: Optional[InlineKeyboardMarkup],
+        chat_id: Optional[Union[int, str]] = ...,
+        message_id: Optional[int] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def delete_message(
-        self, chat_id: Optional[Union[int, str]], message_id: Optional[int]
+        self, chat_id: Optional[Union[int, str]] = ..., message_id: Optional[int] = ...
     ): ...
     async def send_sticker(
         self,
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -581,7 +581,7 @@ class Bot(BaseBot):
                 ReplyKeyboardRemove,
                 ForceReply,
             ]
-        ],
+        ] = ...,
     ): ...
     async def get_sticker_set(self, name: str): ...
     async def upload_sticker_file(self, user_id: int, png_sticker: InputFile): ...
@@ -590,20 +590,20 @@ class Bot(BaseBot):
         user_id: int,
         name: str,
         title: str,
-        png_sticker: Optional[Union[InputFile, str]],
-        tgs_sticker: Optional[InputFile],
         emojis: str,
-        contains_masks: Optional[bool],
-        mask_potion: Optional[MaskPosition],
+        png_sticker: Optional[Union[InputFile, str]] = ...,
+        tgs_sticker: Optional[InputFile] = ...,
+        contains_masks: Optional[bool] = ...,
+        mask_potion: Optional[MaskPosition] = ...,
     ): ...
     async def add_sticker_to_set(
         self,
         user_id: int,
         name: str,
-        png_sticker: Optional[Union[InputFile, str]],
-        tgs_sticker: Optional[InputFile],
         emojis: str,
-        mask_potion: Optional[MaskPosition],
+        png_sticker: Optional[Union[InputFile, str]] = ...,
+        tgs_sticker: Optional[InputFile] = ...,
+        mask_potion: Optional[MaskPosition] = ...,
     ): ...
     async def set_sticker_position_in_set(self, sticker: str, position: int): ...
     async def delete_sticker_from_set(self, sticker: str): ...
@@ -614,11 +614,11 @@ class Bot(BaseBot):
         self,
         inline_query_id: str,
         results: List[InlineQueryResult],
-        cache_time: Optional[int],
-        is_personal: Optional[bool],
-        next_offset: Optional[str],
-        switch_pm_text: Optional[str],
-        switch_pm_parameter: Optional[str],
+        cache_time: Optional[int] = ...,
+        is_personal: Optional[bool] = ...,
+        next_offset: Optional[str] = ...,
+        switch_pm_text: Optional[str] = ...,
+        switch_pm_parameter: Optional[str] = ...,
     ): ...
     async def send_invoice(
         self,
@@ -628,33 +628,33 @@ class Bot(BaseBot):
         payload: str,
         provider_token: str,
         prices: List[LabeledPrice],
-        max_tip_amount: Optional[int],
-        suggested_tip_amounts: Optional[int],
-        start_parameter: Optional[str],
-        provider_date: Optional[str],
-        photo_url: Optional[str],
-        photo_size: Optional[int],
-        photo_width: Optional[int],
-        photo_height: Optional[int],
-        need_name: Optional[bool],
-        need_phone_number: Optional[bool],
-        need_email: Optional[bool],
-        need_shipping_address: Optional[bool],
-        send_phone_number_to_provider: Optional[bool],
-        send_email_to_provider: Optional[bool],
-        is_flexible: Optional[bool],
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
-        reply_markup: Optional[InlineKeyboardMarkup],
+        max_tip_amount: Optional[int] = ...,
+        suggested_tip_amounts: Optional[int] = ...,
+        start_parameter: Optional[str] = ...,
+        provider_date: Optional[str] = ...,
+        photo_url: Optional[str] = ...,
+        photo_size: Optional[int] = ...,
+        photo_width: Optional[int] = ...,
+        photo_height: Optional[int] = ...,
+        need_name: Optional[bool] = ...,
+        need_phone_number: Optional[bool] = ...,
+        need_email: Optional[bool] = ...,
+        need_shipping_address: Optional[bool] = ...,
+        send_phone_number_to_provider: Optional[bool] = ...,
+        send_email_to_provider: Optional[bool] = ...,
+        is_flexible: Optional[bool] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def answer_shipping_query(
         self,
         shipping_query_id: str,
         ok: bool,
-        shipping_options: Optional[List[ShippingOption]],
-        error_message: Optional[str],
+        shipping_options: Optional[List[ShippingOption]] = ...,
+        error_message: Optional[str] = ...,
     ): ...
     async def answer_pre_checkout_query(
         self, pre_checkout_query_id: str, ol: bool, error_message: Optional[str]
@@ -666,26 +666,26 @@ class Bot(BaseBot):
         self,
         chat_id: int,
         game_short_name: str,
-        disable_notification: Optional[bool],
-        protect_content: Optional[bool],
-        reply_to_message_id: Optional[int],
-        allow_sending_without_reply: Optional[bool],
-        reply_markup: Optional[InlineKeyboardMarkup],
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def set_game_score(
         self,
         user_id: int,
         score: int,
-        force: Optional[bool],
-        disable_edit_message: Optional[bool],
-        chat_id: Optional[int],
-        message_id: Optional[int],
-        inline_message_id: Optional[str],
+        force: Optional[bool] = ...,
+        disable_edit_message: Optional[bool] = ...,
+        chat_id: Optional[int] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
     ): ...
     async def get_game_high_score(
         self,
         user_id: int,
-        chat_id: Optional[int],
-        message_id: Optional[int],
-        inline_message_id: Optional[str],
+        chat_id: Optional[int] = ...,
+        message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
     ): ...
