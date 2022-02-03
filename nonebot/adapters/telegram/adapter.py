@@ -149,7 +149,7 @@ class Adapter(BaseAdapter):
             data=data if files else None,
             json=data if not files else None,
             files=files,
-            proxy=self.adapter_config.proxy
+            proxy=self.adapter_config.proxy,
         )
         if isinstance(self.driver, ForwardDriver):
             try:

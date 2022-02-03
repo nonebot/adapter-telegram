@@ -1,5 +1,7 @@
-from typing import Any, Type, Union, Mapping, Iterable, Optional, cast
+from typing import Any, Dict, Type, Union, Mapping, Iterable, Optional, cast
+from loguru import logger
 
+from pydantic import parse_obj_as
 from nonebot.typing import overrides
 
 from nonebot.adapters import Message as BaseMessage
@@ -79,47 +81,47 @@ class Message(BaseMessage[MessageSegment]):
 
     @staticmethod
     @overrides(BaseMessage)
-    def _construct(
-        msg: Union[str, Mapping, Iterable[Mapping]]
-    ) -> Iterable[MessageSegment]:
-        # TODO
-        if isinstance(msg, Mapping):
-            msg = cast(Mapping[str, Any], msg)
-            for key in msg:
-                if key == "text":
-                    yield MessageSegment(
-                        key, {key: msg[key], "entities": msg.get("entities")}
+    def _construct(msg: str) -> Iterable[MessageSegment]:
+        yield MessageSegment.text(msg)
+
+    @classmethod
+    def parse_obj(cls, obj: Dict[str, Any]) -> "Message":
+        msg = []
+        for key in obj:
+            if key == "text":
+                msg.append(
+                    MessageSegment(
+                        key, {key: obj[key], "entities": obj.get("entities")}
                     )
-                elif key == "photo":
-                    yield MessageSegment(
+                )
+            elif key == "photo":
+                msg.append(
+                    MessageSegment(
                         key,
                         {
-                            "file": msg[key][0]["file_id"],
-                            "caption": msg.get("caption"),
-                            "caption_entities": msg.get("caption_entities"),
+                            "file": obj[key][0]["file_id"],
+                            "caption": obj.get("caption"),
+                            "caption_entities": obj.get("caption_entities"),
                         },
                     )
-                elif key in [
-                    "animation",
-                    "audio",
-                    "document",
-                    "video",
-                    "voice",
-                ]:
-                    yield MessageSegment(
+                )
+            elif key in [
+                "animation",
+                "audio",
+                "document",
+                "video",
+                "voice",
+            ]:
+                msg.append(
+                    MessageSegment(
                         key,
                         {
-                            key: msg[key],
-                            "caption": msg.get("caption"),
-                            "caption_entities": msg.get("caption_entities"),
+                            key: obj[key],
+                            "caption": obj.get("caption"),
+                            "caption_entities": obj.get("caption_entities"),
                         },
                     )
-                elif key in ["sticker", "video_note", "dice", "poll"]:
-                    yield MessageSegment(key, {key: msg[key]})
-            return
-        elif isinstance(msg, Iterable) and not isinstance(msg, str):
-            for seg in msg:
-                yield MessageSegment(seg["type"], seg.get("data") or {})
-            return
-        elif isinstance(msg, str):
-            yield MessageSegment.text(msg)
+                )
+            elif key in ["sticker", "video_note", "dice", "poll"]:
+                msg.append(MessageSegment(key, {key: obj[key]}))
+        return cls(msg)

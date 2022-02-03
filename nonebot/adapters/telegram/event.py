@@ -105,7 +105,7 @@ class MessageEvent(Event):
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
-        if not Message(obj):
+        if not Message.parse_obj(obj):
             return NoticeEvent.parse_event(obj)
         else:
             message_type = obj["chat"]["type"]
@@ -120,7 +120,7 @@ class MessageEvent(Event):
     def __init__(self, **data: Any) -> None:
         reply_to_message = data.pop("reply_to_message", None)
         super().__init__(**data)
-        self.message = Message(data)
+        self.message = Message.parse_obj(data)
         if reply_to_message:
             self.reply_to_message = cast(
                 MessageEvent, self.parse_event(reply_to_message)
@@ -221,7 +221,7 @@ class EditedMessageEvent(Event):
 
     def __init__(self, **data: Any) -> None:
         super().__init__(**data)
-        self.message = Message(data)
+        self.message = Message.parse_obj(data)
 
     @overrides(Event)
     def get_type(self) -> str:
