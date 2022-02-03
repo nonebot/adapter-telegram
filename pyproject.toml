@@ -6,7 +6,7 @@ authors = ["Jigsaw <j1g5aw@foxmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://v2.nonebot.dev/"
-repository = "https://github.com/nonebot/nonebot2"
+repository = "https://github.com/nonebot/adapter-telegram"
 documentation = "https://v2.nonebot.dev/"
 keywords = ["bot", "telegram"]
 classifiers = [
@@ -25,8 +25,9 @@ nonebot2 = "^2.0.0b1"
 aiofiles = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
-nonebot2 = { git = "https://github.com/nonebot/nonebot2.git", branch = "dev" }
-nb-cli = "^0.5.0"
+nonebot2 = { git = "https://github.com/nonebot/nonebot2.git", branch = "dev"}
+uvicorn = "^0.17.1"
+httpx = "^0.22.0"
 
 [tool.poetry.group.formatter.dependencies]
 isort = "^5.10.1"
