@@ -593,6 +593,7 @@ class Bot(BaseBot):
         emojis: str,
         png_sticker: Optional[Union[InputFile, str]] = ...,
         tgs_sticker: Optional[InputFile] = ...,
+        webm_sticker: Optional[InputFile] = ...,
         contains_masks: Optional[bool] = ...,
         mask_potion: Optional[MaskPosition] = ...,
     ): ...
@@ -603,6 +604,7 @@ class Bot(BaseBot):
         emojis: str,
         png_sticker: Optional[Union[InputFile, str]] = ...,
         tgs_sticker: Optional[InputFile] = ...,
+        webm_sticker: Optional[InputFile] = ...,
         mask_potion: Optional[MaskPosition] = ...,
     ): ...
     async def set_sticker_position_in_set(self, sticker: str, position: int): ...

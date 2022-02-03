@@ -669,6 +669,7 @@ class Sticker(BaseModel):
     width: int
     height: int
     is_animated: bool
+    is_video: bool
     thumb: Optional[PhotoSize]
     emoji: Optional[str]
     set_name: Optional[str]
@@ -680,6 +681,7 @@ class StickerSet(BaseModel):
     name: str
     title: str
     is_animated: bool
+    is_video: bool
     contains_masks: bool
     stickers: List[Sticker]
     thumb: Optional[PhotoSize]
