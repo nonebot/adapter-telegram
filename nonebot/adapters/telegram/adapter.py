@@ -133,7 +133,7 @@ class Adapter(BaseAdapter):
         files = {}
         for key, value in data.items():
             if isinstance(value, bytes):
-                files[key] = value
+                files[key] = ("upload", value)
             else:
                 try:
                     async with aiofiles.open(value, "rb") as f:
