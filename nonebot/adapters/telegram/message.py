@@ -1,7 +1,5 @@
-from typing import Any, Dict, Type, Union, Mapping, Iterable, Optional, cast
-from loguru import logger
+from typing import Any, Dict, Type, Union, Iterable, Optional
 
-from pydantic import parse_obj_as
 from nonebot.typing import overrides
 
 from nonebot.adapters import Message as BaseMessage
@@ -33,16 +31,22 @@ class MessageSegment(BaseMessageSegment):
         return MessageSegment("text", {"text": text})
 
     @staticmethod
-    def photo(file: str, caption: Optional[str] = None) -> "MessageSegment":
+    def photo(
+        file: Union[str, bytes], caption: Optional[str] = None
+    ) -> "MessageSegment":
         return MessageSegment("photo", {"file": file, "caption": caption})
 
     @staticmethod
-    def voice(file: str, caption: Optional[str] = None) -> "MessageSegment":
+    def voice(
+        file: Union[str, bytes], caption: Optional[str] = None
+    ) -> "MessageSegment":
         return MessageSegment("voice", {"file": file, "caption": caption})
 
     @staticmethod
     def animation(
-        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
+        file: Union[str, bytes],
+        thumb: Union[str, bytes] = None,
+        caption: Optional[str] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "animation", {"file": file, "thumb": thumb, "caption": caption}
@@ -50,7 +54,9 @@ class MessageSegment(BaseMessageSegment):
 
     @staticmethod
     def audio(
-        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
+        file: Union[str, bytes],
+        thumb: Union[str, bytes] = None,
+        caption: Optional[str] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "audio", {"file": file, "thumb": thumb, "caption": caption}
@@ -58,7 +64,9 @@ class MessageSegment(BaseMessageSegment):
 
     @staticmethod
     def document(
-        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
+        file: Union[str, bytes],
+        thumb: Union[str, bytes] = None,
+        caption: Optional[str] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "document", {"file": file, "thumb": thumb, "caption": caption}
@@ -66,7 +74,9 @@ class MessageSegment(BaseMessageSegment):
 
     @staticmethod
     def video(
-        file: str, thumb: Optional[str] = None, caption: Optional[str] = None
+        file: Union[str, bytes],
+        thumb: Union[str, bytes] = None,
+        caption: Optional[str] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "video", {"file": file, "thumb": thumb, "caption": caption}
