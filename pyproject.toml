@@ -25,7 +25,7 @@ nonebot2 = "^2.0.0b1"
 aiofiles = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
-nonebot2 = { git = "https://github.com/nonebot/nonebot2.git", branch = "dev"}
+nonebot2 = { git = "https://github.com/nonebot/nonebot2.git" }
 uvicorn = "^0.17.1"
 httpx = "^0.22.0"
 
