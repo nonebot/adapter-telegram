@@ -7,6 +7,8 @@ import aiofiles
 from nonebot.log import logger
 from nonebot.typing import overrides
 from nonebot.message import handle_event
+from pydantic.json import pydantic_encoder
+
 from nonebot.drivers import (
     URL,
     Driver,
@@ -142,6 +144,8 @@ class Adapter(BaseAdapter):
                     pass
         for key in files:
             data.pop(key)
+        # TODO 不知道为什么直接 data = pydantic_encoder(data) 会卡死
+        data = json.loads(json.dumps(data, default=pydantic_encoder))
 
         request = Request(
             "POST",
