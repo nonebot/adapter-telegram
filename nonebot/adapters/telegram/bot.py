@@ -22,15 +22,12 @@ class Bot(BaseBot):
         self.self_id = config.token.split(":")[0]
         self.bot_config = config
 
+    # TODO b2 重构
     @overrides(BaseBot)
     async def send(
         self,
         event: Event,
         message: Union[str, Message, MessageSegment],
-        disable_notification: Optional[bool] = None,
-        protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
         **kwargs,
     ) -> Any:
         """
@@ -41,7 +38,9 @@ class Bot(BaseBot):
         """
         if isinstance(event, EventWithChat):
             if isinstance(message, str):
-                return await self.send_message(chat_id=event.chat.id, text=message)
+                return await self.send_message(
+                    chat_id=event.chat.id, text=message, **kwargs
+                )
             elif isinstance(message, MessageSegment):
                 if message.is_text():
                     return await self.send_message(
@@ -59,24 +58,27 @@ class Bot(BaseBot):
                             if message.type != "text"
                             else None
                         ],
+                        **kwargs,
                     )
                 elif isinstance(message, File):
                     return await self.call_api(
                         f"send_{message.type}",
                         chat_id=event.chat.id,
                         **{message.type: message.data["file"]},
+                        **kwargs,
                     )
                 else:
                     if message.type == "chat_action":
                         await self.send_chat_action(
                             chat_id=event.chat.id, action=message.data["action"]
                         )
-                        await self.send(event, message.data["message"])
+                        await self.send(event, message.data["message"], **kwargs)
                     else:
                         await self.call_api(
                             f"send_{message.type}",
                             chat_id=event.chat.id,
                             **message.data,
+                            **kwargs,
                         )
             else:
                 entities = Message(filter(lambda x: isinstance(x, Entity), message))
@@ -120,6 +122,7 @@ class Bot(BaseBot):
                                 )
                                 for file in files[1:]
                             ],
+                            **kwargs,
                         ),
 
                     else:
@@ -145,6 +148,7 @@ class Bot(BaseBot):
                                 if entities
                                 else None,
                             },
+                            **kwargs,
                         )
                 else:
                     return await self.send_message(
@@ -162,4 +166,5 @@ class Bot(BaseBot):
                             for i, entity in enumerate(message)
                             if entity.is_text() and entity.type != "text"
                         ],
+                        **kwargs,
                     )

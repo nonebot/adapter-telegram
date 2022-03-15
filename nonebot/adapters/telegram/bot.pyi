@@ -16,7 +16,14 @@ class Bot(BaseBot):
     bot_config: BotConfig
     def __init__(self, adapter: Adapter, config: BotConfig) -> None: ...
     async def send(
-        self, event: Event, message: Union[str, Message, MessageSegment], **kwargs
+        self,
+        event: Event,
+        message: Union[str, Message, MessageSegment],
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        reply_to_message_id: Optional[int] = None,
+        allow_sending_without_reply: Optional[bool] = None,
+        **kwargs,
     ) -> Any: ...
     async def get_updates(
         self,
