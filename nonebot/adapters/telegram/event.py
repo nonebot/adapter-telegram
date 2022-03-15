@@ -108,7 +108,6 @@ class MessageEvent(Event):
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
 
-    # TODO 去除多余字段
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
         message = Message.parse_obj(obj)
@@ -149,6 +148,12 @@ class MessageEvent(Event):
     @overrides(Event)
     def is_tome(self) -> bool:
         return super().is_tome()
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return (
+            f"Message {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
+        )
 
 
 class PrivateMessageEvent(MessageEvent):
@@ -245,6 +250,10 @@ class EditedMessageEvent(Event):
     def is_tome(self) -> bool:
         return super().is_tome()
 
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return f"EditedMessage {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
+
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(alias="from")
@@ -336,6 +345,10 @@ class PinnedMessageEvent(NoticeEvent):
     @overrides(NoticeEvent)
     def get_plaintext(self) -> str:
         return self.pinned_message.get_plaintext()
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return f"PinnedMessage {self.pinned_message.message_id} from Chat {self.pinned_message.chat.id}: {str(self.pinned_message.message)}"
 
 
 class NewChatMemberEvent(NoticeEvent):
