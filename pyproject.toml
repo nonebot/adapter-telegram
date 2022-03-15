@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot-adapter-telegram"
-version = "0.1.0-beta"
+version = "0.1.0-beta.1"
 description = "Telegram Adapter for NoneBot2"
 authors = ["Jigsaw <j1g5aw@foxmail.com>"]
 license = "MIT"
