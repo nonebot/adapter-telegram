@@ -1,14 +1,14 @@
 import json
 import asyncio
 import pathlib
-from typing import Any, List
+from typing import Any, List, Iterable, cast
 
 import aiofiles
 from nonebot.log import logger
+from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from nonebot.message import handle_event
 from pydantic.json import pydantic_encoder
-
 from nonebot.drivers import (
     URL,
     Driver,
@@ -20,6 +20,7 @@ from nonebot.drivers import (
 )
 
 from nonebot.adapters import Adapter as BaseAdapter
+from nonebot.adapters.telegram.model import InputMedia
 
 from .bot import Bot
 from .event import Event
@@ -132,20 +133,56 @@ class Adapter(BaseAdapter):
             s.capitalize() for s in api.split("_")[1:]
         )
 
+        # 分离文件到 files
         files = {}
-        for key, value in data.items():
-            if isinstance(value, bytes):
-                files[key] = ("upload", value)
-            else:
-                try:
-                    async with aiofiles.open(value, "rb") as f:
-                        files[key] = (pathlib.Path(value).name, await f.read())
-                except:
-                    pass
-        for key in files:
-            data.pop(key)
-        # TODO 不知道为什么直接 data = pydantic_encoder(data) 会卡死
-        data = json.loads(json.dumps(data, default=pydantic_encoder))
+        if api == "sendMediaGroup":
+            upload_count = 0
+            for media in data["media"]:
+                media = cast(InputMedia, media)
+                if isinstance(media.media, bytes):
+                    files[f"upload{upload_count}"] = (
+                        f"upload{upload_count}",
+                        media.media,
+                    )
+                    media.media = f"attach://upload{upload_count}"
+                else:
+                    try:
+                        async with aiofiles.open(media.media, "rb") as f:
+                            files[pathlib.Path(media.media).name] = (
+                                pathlib.Path(media.media).name,
+                                await f.read(),
+                            )
+                        media.media = f"attach://{pathlib.Path(media.media).name}"
+                    except:
+                        pass
+        else:
+            for key, value in data.items():
+                if isinstance(value, bytes):
+                    files[key] = ("upload", value)
+                elif isinstance(value, str) or not isinstance(value, Iterable):
+                    try:
+                        async with aiofiles.open(value, "rb") as f:
+                            files[key] = (pathlib.Path(value).name, await f.read())
+                    except:
+                        pass
+            for key in files:
+                data.pop(key)
+
+        # 最后处理 data 以符合 DataTypes
+        for key in data:
+            if (
+                not isinstance(data[key], str)
+                and isinstance(data[key], Iterable)
+                or isinstance(data[key], BaseModel)
+            ):
+                data[key] = json.dumps(
+                    data[key],
+                    default=(
+                        lambda o: o.dict(exclude_none=True)
+                        if isinstance(o, BaseModel)
+                        else pydantic_encoder(o)
+                    ),
+                )
 
         request = Request(
             "POST",
@@ -164,7 +201,7 @@ class Adapter(BaseAdapter):
                     result = json.loads(response.content)
                     return result
                 raise NetworkError(
-                    f"HTTP request received unexpected " f"{response.status_code}"
+                    f"HTTP request received unexpected {response.status_code} {response.content}"
                 )
             except NetworkError:
                 raise

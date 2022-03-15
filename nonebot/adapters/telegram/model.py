@@ -609,13 +609,12 @@ class ResponseParameters(BaseModel):
     retry_after: Optional[int] = None
 
 
-class InputFile(BaseModel):
-    pass
+InputFile = Union[str, bytes]
 
 
 class InputMedia(BaseModel):
     type: str
-    media: str
+    media: Union[str, bytes]
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[List[MessageEntity]] = None
