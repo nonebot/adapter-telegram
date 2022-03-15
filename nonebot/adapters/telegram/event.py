@@ -1,8 +1,7 @@
-from typing import Any, Optional, cast
+from typing import Optional
 from typing_extensions import Protocol, runtime_checkable
 
 from pydantic import Field
-from nonebot.log import logger
 from nonebot.typing import overrides
 
 from nonebot.adapters import Event as BaseEvent
@@ -17,9 +16,10 @@ class EventWithChat(Protocol):
 
 
 class Event(BaseEvent):
+    telegram_model: Update = Field(default=None)
+
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
-        logger.debug('"RAW":' + str(obj))
         post_type: str = list(obj.keys())[1]
         event_map = {
             "message": MessageEvent,
@@ -36,7 +36,10 @@ class Event(BaseEvent):
             "chat_member": ChatMemberUpdatedEvent,
             "my_chat_member": ChatMemberUpdatedEvent,
         }
-        return event_map[post_type].parse_event(obj[post_type])
+
+        event = event_map[post_type].parse_event(obj[post_type])
+        setattr(event, "telegram_model", Update.parse_obj(obj))
+        return event
 
     @classmethod
     def _parse_event(cls, obj: dict, failed: set = set()) -> "Event":
@@ -65,7 +68,9 @@ class Event(BaseEvent):
 
     @overrides(BaseEvent)
     def get_event_description(self) -> str:
-        return str(self.dict(by_alias=True, exclude_none=True))
+        return str(
+            self.dict(by_alias=True, exclude_none=True, exclude={"telegram_model"})
+        )
 
     @overrides(BaseEvent)
     def get_user_id(self) -> str:
@@ -103,11 +108,14 @@ class MessageEvent(Event):
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
 
+    # TODO 去除多余字段
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
-        if not Message.parse_obj(obj):
+        message = Message.parse_obj(obj)
+        if not message:
             return NoticeEvent.parse_event(obj)
         else:
+            reply_to_message = obj.pop("reply_to_message", None)
             message_type = obj["chat"]["type"]
             event_map = {
                 "private": PrivateMessageEvent,
@@ -115,16 +123,11 @@ class MessageEvent(Event):
                 "supergroup": GroupMessageEvent,
                 "channel": ChannelPostEvent,
             }
-            return event_map[message_type].parse_event(obj)
-
-    def __init__(self, **data: Any) -> None:
-        reply_to_message = data.pop("reply_to_message", None)
-        super().__init__(**data)
-        self.message = Message.parse_obj(data)
-        if reply_to_message:
-            self.reply_to_message = cast(
-                MessageEvent, self.parse_event(reply_to_message)
-            )
+            event = event_map[message_type].parse_event(obj)
+            setattr(event, "message", message)
+            if reply_to_message:
+                setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
+            return event
 
     @overrides(Event)
     def get_type(self) -> str:
@@ -217,11 +220,9 @@ class EditedMessageEvent(Event):
             "supergroup": GroupEditedMessageEvent,
             "channel": EditedChannelPostEvent,
         }
-        return event_map[message_type].parse_event(obj)
-
-    def __init__(self, **data: Any) -> None:
-        super().__init__(**data)
-        self.message = Message.parse_obj(data)
+        event = event_map[message_type].parse_event(obj)
+        setattr(event, "message", Message.parse_obj(event))
+        return event
 
     @overrides(Event)
     def get_type(self) -> str:
@@ -377,7 +378,7 @@ class ChatMemberUpdatedEvent(NoticeEvent):
         return "notice.chat_member.updated"
 
 
-# TODO
+# TODO b2
 class InlineQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
@@ -387,7 +388,7 @@ class InlineQueryEvent(Event):
     Location: Optional[Location]
 
 
-# TODO
+# TODO b2
 class ChosenInlineResultEvent(Event):
     result_id: str
     from_: User = Field(alias="from")
@@ -396,7 +397,7 @@ class ChosenInlineResultEvent(Event):
     query: str
 
 
-# TODO
+# TODO b2
 class CallbackQueryEvent(Event):
     id: str
     from_: Optional[User] = Field(default=None, alias="from")
@@ -407,7 +408,7 @@ class CallbackQueryEvent(Event):
     game_short_name: Optional[str]
 
 
-# DELAY
+# TODO DELAY
 class ShippingQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
@@ -415,7 +416,7 @@ class ShippingQueryEvent(Event):
     shipping_address: ShippingAddress
 
 
-# DELAY
+# TODO DELAY
 class PreCheckoutQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
@@ -426,7 +427,7 @@ class PreCheckoutQueryEvent(Event):
     order_info: Optional[OrderInfo]
 
 
-# TODO
+# TODO b2
 class PollEvent(Event):
     id: str
     question: str
@@ -443,7 +444,7 @@ class PollEvent(Event):
     close_date: Optional[int]
 
 
-# TODO
+# TODO b2
 class PollAnswerEvent(Event):
     poll_id: str
     user: User
