@@ -251,7 +251,7 @@ class Message(BaseMessage[MessageSegment]):
                 msg.append(Entity("text", {"text": obj[key][offset:]}))
         for key in obj:
             if key == "photo":
-                msg.append(File("photo", {"file": obj[key][0]["file_id"]}))
+                msg.append(File("photo", {"file": obj[key][-1]["file_id"]}))
             elif key in ["animation", "audio", "document", "video", "voice"]:
                 msg.append(File(key, {key: obj[key]}))
             elif key in ["sticker", "video_note", "dice", "poll"]:
