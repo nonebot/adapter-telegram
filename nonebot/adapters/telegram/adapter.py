@@ -90,7 +90,14 @@ class Adapter(BaseAdapter):
                             for msg in message:
                                 if msg["update_id"] > update_offset:
                                     update_offset = msg["update_id"]
-                                    await handle_event(bot, Event.parse_event(msg))
+                                    event = Event.parse_event(msg)
+                                    logger.debug(
+                                        event.dict(
+                                            exclude_none=True,
+                                            exclude={"telegram_model"},
+                                        )
+                                    )
+                                    await handle_event(bot, event)
                         elif message:
                             update_offset = message[0]["update_id"]
                     except Exception as e:

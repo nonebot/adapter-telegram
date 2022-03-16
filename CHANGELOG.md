@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 新功能
 
 - photo 消息段的 file_id 现在指向分辨率最高的图片
+- DEBUG 模式下打印较完整的事件描述
 
 ## [0.1.0-beta.1] - 2022-03-15
 
