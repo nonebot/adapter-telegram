@@ -3,6 +3,7 @@ from typing_extensions import Protocol, runtime_checkable
 
 from pydantic import Field
 from nonebot.typing import overrides
+from nonebot.utils import escape_tag
 
 from nonebot.adapters import Event as BaseEvent
 
@@ -68,8 +69,8 @@ class Event(BaseEvent):
 
     @overrides(BaseEvent)
     def get_event_description(self) -> str:
-        return str(
-            self.dict(by_alias=True, exclude_none=True, exclude={"telegram_model"})
+        return escape_tag(
+            str(self.dict(by_alias=True, exclude_none=True, exclude={"telegram_model"}))
         )
 
     @overrides(BaseEvent)
@@ -151,7 +152,7 @@ class MessageEvent(Event):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return (
+        return escape_tag(
             f"Message {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
         )
 
@@ -252,7 +253,9 @@ class EditedMessageEvent(Event):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return f"EditedMessage {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
+        return escape_tag(
+            f"EditedMessage {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
+        )
 
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
@@ -348,7 +351,9 @@ class PinnedMessageEvent(NoticeEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return f"PinnedMessage {self.pinned_message.message_id} from Chat {self.pinned_message.chat.id}: {str(self.pinned_message.message)}"
+        return escape_tag(
+            f"PinnedMessage {self.pinned_message.message_id} from Chat {self.pinned_message.chat.id}: {str(self.pinned_message.message)}"
+        )
 
 
 class NewChatMemberEvent(NoticeEvent):

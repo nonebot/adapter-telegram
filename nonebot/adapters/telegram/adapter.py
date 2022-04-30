@@ -7,6 +7,7 @@ import aiofiles
 from nonebot.log import logger
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
+from nonebot.utils import escape_tag
 from nonebot.message import handle_event
 from pydantic.json import pydantic_encoder
 from nonebot.drivers import (
@@ -92,9 +93,13 @@ class Adapter(BaseAdapter):
                                     update_offset = msg["update_id"]
                                     event = Event.parse_event(msg)
                                     logger.debug(
-                                        event.dict(
-                                            exclude_none=True,
-                                            exclude={"telegram_model"},
+                                        escape_tag(
+                                            str(
+                                                event.dict(
+                                                    exclude_none=True,
+                                                    exclude={"telegram_model"},
+                                                )
+                                            )
                                         )
                                     )
                                     await handle_event(bot, event)
