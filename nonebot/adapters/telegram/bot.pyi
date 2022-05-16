@@ -659,7 +659,7 @@ class Bot(BaseBot):
         max_tip_amount: Optional[int] = ...,
         suggested_tip_amounts: Optional[int] = ...,
         start_parameter: Optional[str] = ...,
-        provider_date: Optional[str] = ...,
+        provider_data: Optional[str] = ...,
         photo_url: Optional[str] = ...,
         photo_size: Optional[int] = ...,
         photo_width: Optional[int] = ...,

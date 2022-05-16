@@ -442,7 +442,7 @@ class InlineKeyboardButton(BaseModel):
     text: str
     url: Optional[str] = None
     login_url: Optional[LoginUrl] = None
-    callback_date: Optional[str] = None
+    callback_data: Optional[str] = None
     web_app: Optional[WebAppInfo] = None
     switch_inline_query: Optional[str] = None
     switch_inline_query_current_chat: Optional[str] = None
