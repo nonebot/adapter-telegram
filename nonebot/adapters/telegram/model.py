@@ -28,6 +28,7 @@ class WebhookInfo(BaseModel):
     ip_address: Optional[str] = None
     last_error_date: Optional[int] = None
     last_error_message: Optional[str] = None
+    last_synchronization_error_date: Optional[int] = None
     max_connections: Optional[int] = None
     allowed_updates: Optional[List[str]] = None
 
@@ -206,10 +207,11 @@ class Message_(BaseModel):
     connected_website: Optional[str] = None
     passport_data: Optional["PassportData"] = None
     proximity_alert_triggered: Optional["ProximityAlertTriggered"] = None
-    voice_chat_scheduled: Optional["VoiceChatScheduled"] = None
-    voice_chat_started: Optional["VoiceChatStarted"] = None
-    voice_chat_ended: Optional["VoiceChatEnded"] = None
-    voice_chat_participants_invited: Optional["VoiceChatParticipantsInvited"] = None
+    video_chat_scheduled: Optional["VoiceChatScheduled"] = None
+    video_chat_started: Optional["VoiceChatStarted"] = None
+    video_chat_ended: Optional["VoiceChatEnded"] = None
+    video_chat_participants_invited: Optional["VoiceChatParticipantsInvited"] = None
+    web_app_data: Optional["WebAppData"] = None
     reply_markup: Optional["InlineKeyboardMarkup"] = None
 
 
@@ -357,6 +359,11 @@ class Venue(BaseModel):
     google_place_type: Optional[str] = None
 
 
+class WebAppData(BaseModel):
+    data: str
+    button_text: str
+
+
 class ProximityAlertTriggered(BaseModel):
     traveler: User
     watcher: User
@@ -395,6 +402,10 @@ class File(BaseModel):
     file_path: Optional[str] = None
 
 
+class WebAppInfo(BaseModel):
+    url: str
+
+
 class KeyboardButtonPollType(BaseModel):
     type: Optional[str] = None
 
@@ -404,6 +415,7 @@ class KeyboardButton(BaseModel):
     request_contact: Optional[bool] = None
     request_location: Optional[bool] = None
     request_poll: Optional[KeyboardButtonPollType] = None
+    web_app: Optional[WebAppInfo] = None
 
 
 class ReplyKeyboardMarkup(BaseModel):
@@ -431,6 +443,7 @@ class InlineKeyboardButton(BaseModel):
     url: Optional[str] = None
     login_url: Optional[LoginUrl] = None
     callback_date: Optional[str] = None
+    web_app: Optional[WebAppInfo] = None
     switch_inline_query: Optional[str] = None
     switch_inline_query_current_chat: Optional[str] = None
     callback_game: Optional["CallbackGame"] = None
@@ -476,6 +489,20 @@ class ChatInviteLink(BaseModel):
     pending_join_request_count: Optional[int] = None
 
 
+class ChatAdministratorRights(BaseModel):
+    is_anonymous: bool
+    can_manage_chat: bool
+    can_delete_messages: bool
+    can_manage_video_chats: bool
+    can_restrict_members: bool
+    can_promote_members: bool
+    can_change_info: bool
+    can_invite_users: bool
+    can_post_messages: Optional[bool] = None
+    can_edit_messages: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+
+
 class ChatMember(BaseModel):
     status: str
     user: User
@@ -493,7 +520,7 @@ class ChatMemberAdministrator(ChatMember):
     is_anonymous: bool
     can_manage_chat: bool
     can_delete_messages: bool
-    can_manage_voice_chats: bool
+    can_manage_video_chats: bool
     can_restrict_members: bool
     can_promote_members: bool
     can_change_info: bool
@@ -602,6 +629,24 @@ class BotCommandScopeChatMember(BotCommandScope):
     type: str = "chat_member"
     chat_id: Union[int, str]
     user_id: int
+
+
+class MenuButton(BaseModel):
+    pass
+
+
+class MenuButtonCommands(BaseModel):
+    type: str = "commmands"
+
+
+class MenuButtonWebApp(BaseModel):
+    type: str = "web_app"
+    text: str
+    web_app: WebAppInfo
+
+
+class MenuButtonDefault(BaseModel):
+    type: str = "default"
 
 
 class ResponseParameters(BaseModel):
@@ -1005,6 +1050,10 @@ class ChosenInlineResult(BaseModel):
     Location: Optional[Location] = None
     inline_message_id: Optional[str] = None
     query: str
+
+
+class SentWebAppMessage(BaseModel):
+    inline_message_id: Optional[str] = None
 
 
 class LabeledPrice(BaseModel):

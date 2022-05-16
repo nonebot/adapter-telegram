@@ -437,7 +437,7 @@ class Bot(BaseBot):
         can_post_messages: Optional[bool] = ...,
         can_edit_messages: Optional[bool] = ...,
         can_delete_messages: Optional[bool] = ...,
-        can_manage_voice_chats: Optional[bool] = ...,
+        can_manage_video_chats: Optional[bool] = ...,
         can_restrict_members: Optional[bool] = ...,
         can_promote_members: Optional[bool] = ...,
         can_change_info: Optional[bool] = ...,
@@ -527,6 +527,22 @@ class Bot(BaseBot):
     ): ...
     async def get_my_commands(
         self, scope: Optional[BotCommandScope] = ..., language_code: Optional[str] = ...
+    ): ...
+    async def set_chat_menu_button(
+        self, chat_id: Optional[int] = ..., menu_button: Optional[MenuButton] = ...
+    ): ...
+    async def get_chat_menu_button(
+        self,
+        chat_id: Optional[int] = ...,
+    ): ...
+    async def set_my_default_administrator_rights(
+        self,
+        rights: Optional[ChatAdministratorRights] = ...,
+        for_channels: Optional[bool] = ...,
+    ): ...
+    async def get_my_default_administrator_rights(
+        self,
+        for_channels: Optional[bool] = ...,
     ): ...
     async def edit_message_text(
         self,
@@ -628,6 +644,9 @@ class Bot(BaseBot):
         next_offset: Optional[str] = ...,
         switch_pm_text: Optional[str] = ...,
         switch_pm_parameter: Optional[str] = ...,
+    ): ...
+    async def answer_web_app_query(
+        self, web_app_query_id: str, result: InlineQueryResult
     ): ...
     async def send_invoice(
         self,
