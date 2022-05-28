@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.2] - 2022-05-28
+
 ### 🚀 新功能
 
 - photo 消息段的 file_id 现在指向分辨率最高的图片
 - DEBUG 模式下打印较完整的事件描述
+- 适配 Telegram Bot API 6.0
+
+### 🐛 Bug 修复
+
+- 修复带有 `<tag>` 的消息无法打印日志的问题
 
 ## [0.1.0-beta.1] - 2022-03-15
 
