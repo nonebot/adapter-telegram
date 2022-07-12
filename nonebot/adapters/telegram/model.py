@@ -251,8 +251,6 @@ class Animation(BaseModel):
 class Audio(BaseModel):
     file_id: str
     file_unique_id: str
-    width: int
-    height: int
     duration: int
     performer: Optional[str] = None
     title: Optional[str] = None
