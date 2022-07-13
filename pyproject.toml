@@ -26,7 +26,7 @@ aiofiles = "^0.8.0"
 
 [tool.poetry.group.dev.dependencies]
 nonebot2 = { git = "https://github.com/nonebot/nonebot2.git" }
-httpx = "^0.22.0"
+httpx = "^0.23.0"
 
 [tool.poetry.group.formatter.dependencies]
 isort = "^5.10.1"
