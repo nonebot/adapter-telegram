@@ -363,7 +363,6 @@ class NewChatMemberEvent(NoticeEvent):
     new_chat_participant: Optional[User]
     new_chat_member: User
     new_chat_members: Optional[List[User]]
-    invite_link: Optional[ChatInviteLink]
 
     @overrides(NoticeEvent)
     def get_event_name(self) -> str:
