@@ -1,10 +1,12 @@
-from nonebot.adapters import Event as BaseEvent
-from nonebot.typing import overrides
-from nonebot.utils import escape_tag
 from typing_extensions import Protocol, runtime_checkable
 
-from .message import Message
+from nonebot.typing import overrides
+from nonebot.utils import escape_tag
+
+from nonebot.adapters import Event as BaseEvent
+
 from .model import *
+from .message import Message
 
 
 @runtime_checkable
