@@ -1,14 +1,10 @@
-from typing import Optional
-from typing_extensions import Protocol, runtime_checkable
-
-from pydantic import Field
+from nonebot.adapters import Event as BaseEvent
 from nonebot.typing import overrides
 from nonebot.utils import escape_tag
+from typing_extensions import Protocol, runtime_checkable
 
-from nonebot.adapters import Event as BaseEvent
-
-from .model import *
 from .message import Message
+from .model import *
 
 
 @runtime_checkable
@@ -36,6 +32,7 @@ class Event(BaseEvent):
             "poll_answer": PollAnswerEvent,
             "chat_member": ChatMemberUpdatedEvent,
             "my_chat_member": ChatMemberUpdatedEvent,
+            "chat_join_request": ChatJoinRequestEvent,
         }
 
         event = event_map[post_type].parse_event(obj[post_type])
@@ -317,6 +314,8 @@ class NoticeEvent(Event):
             return NewChatMemberEvent.parse_event(obj)
         elif "left_chat_member" in obj:
             return LeftChatMemberEvent.parse_event(obj)
+        elif "chat_join_request" in obj:
+            return ChatJoinRequestEvent.parse_obj(obj)
         else:
             return cls._parse_event(obj)
 
@@ -364,6 +363,7 @@ class NewChatMemberEvent(NoticeEvent):
     new_chat_participant: Optional[User]
     new_chat_member: User
     new_chat_members: Optional[List[User]]
+    invite_link: Optional[ChatInviteLink]
 
     @overrides(NoticeEvent)
     def get_event_name(self) -> str:
@@ -394,6 +394,12 @@ class ChatMemberUpdatedEvent(NoticeEvent):
     @overrides(Event)
     def get_event_name(self) -> str:
         return "notice.chat_member.updated"
+
+
+class ChatJoinRequestEvent(NoticeEvent, ChatJoinRequest):
+    @overrides(NoticeEvent)
+    def get_event_name(self) -> str:
+        return "notice.chat.join_request"
 
 
 # TODO b2
