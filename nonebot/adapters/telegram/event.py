@@ -1,7 +1,5 @@
-from typing import Optional
 from typing_extensions import Protocol, runtime_checkable
 
-from pydantic import Field
 from nonebot.typing import overrides
 from nonebot.utils import escape_tag
 
@@ -36,6 +34,7 @@ class Event(BaseEvent):
             "poll_answer": PollAnswerEvent,
             "chat_member": ChatMemberUpdatedEvent,
             "my_chat_member": ChatMemberUpdatedEvent,
+            "chat_join_request": ChatJoinRequestEvent,
         }
 
         event = event_map[post_type].parse_event(obj[post_type])
@@ -394,6 +393,12 @@ class ChatMemberUpdatedEvent(NoticeEvent):
     @overrides(Event)
     def get_event_name(self) -> str:
         return "notice.chat_member.updated"
+
+
+class ChatJoinRequestEvent(NoticeEvent, ChatJoinRequest):
+    @overrides(NoticeEvent)
+    def get_event_name(self) -> str:
+        return "notice.chat_join_request"
 
 
 # TODO b2
