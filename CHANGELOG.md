@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.3] - 2022-09-16
+
+### 🚀 新功能
+
+- 新增 `ChatJoinRequestEvent` [@lgc2333](https://github.com/lgc2333) ([#10](https://github.com/nonebot/adapter-telegram/pull/10))
+- 适配 Telegram Bot API 6.1
+- 适配 Telegram Bot API 6.2
+
+### 🐛 Bug 修复
+
+- 修复 `Audio` 的错误字段 [@lgc2333](https://github.com/lgc2333) ([#9](https://github.com/nonebot/adapter-telegram/pull/9))
+
+### 📝 文档
+
+- 添加回复消息和 Inline Mode 的示例
+
 ## [0.1.0-beta.2] - 2022-05-28
 
 ### 🚀 新功能
@@ -53,6 +69,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b1...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...HEAD
+[0.1.0-beta.3]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b2...v0.1.0b3
+[0.1.0-beta.2]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b1...v0.1.0b2
 [0.1.0-beta.1]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b0...v0.1.0b1
 [0.1.0-beta]: https://github.com/nonebot/adapter-telegram/releases/tag/v0.1.0b0
