@@ -40,6 +40,8 @@ class User(BaseModel):
     last_name: Optional[str] = None
     username: Optional[str] = None
     language_code: Optional[str] = None
+    is_premium: Optional[Literal[True]] = None
+    added_to_attachment_menu: Optional[Literal[True]] = None
     """
     :说明: 用户的语言编码，比如中文用户是 zh-hans
 
@@ -90,6 +92,8 @@ class Chat(BaseModel):
     :类型: ``Optional[str] = None``
     """
     has_private_forwards: Optional[Literal[True]] = None
+    join_to_send_messages: Optional[Literal[True]] = None
+    join_by_request: Optional[Literal[True]] = None
     description: Optional[str] = None
     """
     :说明: 聊天简介，仅在使用 get_chat 方法时返回
@@ -715,6 +719,7 @@ class Sticker(BaseModel):
     thumb: Optional[PhotoSize] = None
     emoji: Optional[str] = None
     set_name: Optional[str] = None
+    premium_animation: Optional[File] = None
     mask_position: Optional[MaskPosition] = None
     file_size: Optional[int] = None
 

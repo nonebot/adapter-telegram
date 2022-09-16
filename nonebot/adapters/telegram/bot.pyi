@@ -40,6 +40,7 @@ class Bot(BaseBot):
         max_connections: Optional[int] = ...,
         allowed_updates: Optional[List[str]] = ...,
         drop_pending_updates: Optional[bool] = ...,
+        secret_token: Optional[str] = ...,
     ): ...
     async def delete_webhook(self, drop_pending_updates: Optional[bool]): ...
     async def get_webhook_info(self): ...
@@ -651,6 +652,34 @@ class Bot(BaseBot):
     async def send_invoice(
         self,
         chat_id: Union[int, str],
+        title: str,
+        description: str,
+        payload: str,
+        provider_token: str,
+        prices: List[LabeledPrice],
+        max_tip_amount: Optional[int] = ...,
+        suggested_tip_amounts: Optional[int] = ...,
+        start_parameter: Optional[str] = ...,
+        provider_data: Optional[str] = ...,
+        photo_url: Optional[str] = ...,
+        photo_size: Optional[int] = ...,
+        photo_width: Optional[int] = ...,
+        photo_height: Optional[int] = ...,
+        need_name: Optional[bool] = ...,
+        need_phone_number: Optional[bool] = ...,
+        need_email: Optional[bool] = ...,
+        need_shipping_address: Optional[bool] = ...,
+        send_phone_number_to_provider: Optional[bool] = ...,
+        send_email_to_provider: Optional[bool] = ...,
+        is_flexible: Optional[bool] = ...,
+        disable_notification: Optional[bool] = ...,
+        protect_content: Optional[bool] = ...,
+        reply_to_message_id: Optional[int] = ...,
+        allow_sending_without_reply: Optional[bool] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
+    ): ...
+    async def create_invoice_link(
+        self,
         title: str,
         description: str,
         payload: str,
