@@ -20,7 +20,7 @@ classifiers = [
 packages = [{ include = "nonebot" }]
 
 [tool.poetry.dependencies]
-python = "^3.7.3"
+python = "^3.8"
 nonebot2 = "^2.0.0b1"
 aiofiles = "^0.8.0"
 
