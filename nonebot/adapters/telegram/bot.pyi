@@ -620,7 +620,7 @@ class Bot(BaseBot):
         tgs_sticker: Optional[InputFile] = ...,
         webm_sticker: Optional[InputFile] = ...,
         sticker_type: Optional[str] = ...,
-        mask_potion: Optional[MaskPosition] = ...,
+        mask_position: Optional[MaskPosition] = ...,
     ): ...
     async def add_sticker_to_set(
         self,
@@ -630,7 +630,7 @@ class Bot(BaseBot):
         png_sticker: Optional[Union[InputFile, str]] = ...,
         tgs_sticker: Optional[InputFile] = ...,
         webm_sticker: Optional[InputFile] = ...,
-        mask_potion: Optional[MaskPosition] = ...,
+        mask_position: Optional[MaskPosition] = ...,
     ): ...
     async def set_sticker_position_in_set(self, sticker: str, position: int): ...
     async def delete_sticker_from_set(self, sticker: str): ...
@@ -657,6 +657,7 @@ class Bot(BaseBot):
         description: str,
         payload: str,
         provider_token: str,
+        currency: str,
         prices: List[LabeledPrice],
         max_tip_amount: Optional[int] = ...,
         suggested_tip_amounts: Optional[int] = ...,
@@ -685,6 +686,7 @@ class Bot(BaseBot):
         description: str,
         payload: str,
         provider_token: str,
+        currency: str,
         prices: List[LabeledPrice],
         max_tip_amount: Optional[int] = ...,
         suggested_tip_amounts: Optional[int] = ...,
