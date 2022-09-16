@@ -156,6 +156,12 @@ class Entity(MessageSegment):
     def text_mention(text: str, user: User) -> "Entity":
         return Entity("text_mention", {"text": text, "user": user})
 
+    @staticmethod
+    def custom_emoji(text: str, custom_emoji_id: str) -> "Entity":
+        return Entity(
+            "custom_emoji", {"text": text, "custom_emoji_id": custom_emoji_id}
+        )
+
 
 class File(MessageSegment):
     @staticmethod

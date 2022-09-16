@@ -608,6 +608,7 @@ class Bot(BaseBot):
         ] = ...,
     ): ...
     async def get_sticker_set(self, name: str): ...
+    async def get_custom_emoji_stickers(self, custom_emoji_ids: List[str]): ...
     async def upload_sticker_file(self, user_id: int, png_sticker: InputFile): ...
     async def create_new_sticker_set(
         self,
@@ -618,7 +619,7 @@ class Bot(BaseBot):
         png_sticker: Optional[Union[InputFile, str]] = ...,
         tgs_sticker: Optional[InputFile] = ...,
         webm_sticker: Optional[InputFile] = ...,
-        contains_masks: Optional[bool] = ...,
+        sticker_type: Optional[str] = ...,
         mask_potion: Optional[MaskPosition] = ...,
     ): ...
     async def add_sticker_to_set(

@@ -92,6 +92,7 @@ class Chat(BaseModel):
     :类型: ``Optional[str] = None``
     """
     has_private_forwards: Optional[Literal[True]] = None
+    has_restricted_voice_and_video_messages: Optional[Literal[True]] = None
     join_to_send_messages: Optional[Literal[True]] = None
     join_by_request: Optional[Literal[True]] = None
     description: Optional[str] = None
@@ -230,6 +231,7 @@ class MessageEntity(BaseModel):
     url: Optional[str] = None
     user: Optional[User] = None
     language: Optional[str] = None
+    custom_emoji_id: Optional[str] = None
 
 
 class PhotoSize(BaseModel):
@@ -712,6 +714,7 @@ class MaskPosition(BaseModel):
 class Sticker(BaseModel):
     file_id: str
     file_unique_id: str
+    type: str
     width: int
     height: int
     is_animated: bool
@@ -722,14 +725,15 @@ class Sticker(BaseModel):
     premium_animation: Optional[File] = None
     mask_position: Optional[MaskPosition] = None
     file_size: Optional[int] = None
+    custom_emoji_id: Optional[str] = None
 
 
 class StickerSet(BaseModel):
     name: str
     title: str
+    sticker_type: str
     is_animated: bool
     is_video: bool
-    contains_masks: bool
     stickers: List[Sticker]
     thumb: Optional[PhotoSize] = None
 
