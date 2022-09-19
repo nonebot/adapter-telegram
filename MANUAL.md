@@ -50,6 +50,8 @@ driver=~fastapi+~httpx
 telegram_proxy = "http://127.0.0.1:10809"
 ```
 
+> NOTE 如果你的代理使用 socks 协议，你需要安装 httpx\[socks\]。
+
 ## 使用 Long polling 获取更新（推荐）
 
 只要不在`env`文件中设置`url`，默认使用 long polling 模式。
@@ -100,13 +102,17 @@ import nonebot
 from nonebot.adapters.telegram import Adapter as TelegramAdapter
 
 nonebot.init()
+app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
 driver.register_adapter(TelegramAdapter)
 
 nonebot.load_builtin_plugins("echo")
 
-nonebot.run()
+if __name__ == "__main__":
+    nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")
+    nonebot.run(app="__mp_main__:app")
 ```
 
 现在，你可以私聊自己的 Telegram Bot `/echo hello world`，不出意外的话，它将回复你 `hello world`。
+
