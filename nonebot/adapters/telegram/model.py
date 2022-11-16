@@ -589,13 +589,25 @@ class ChatPermissions(BaseModel):
     can_pin_messages: Optional[bool] = None
 
 
+class ForumTopic(BaseModel):
+    # Unique identifier of the forum topic
+    message_thread_id:int
+    # Name of the topic
+    name:str
+    # Color of the topic icon in RGB format
+    icon_color:int
+
+    icon_custom_emoji_id:str
+
 class ChatLocation(BaseModel):
     location: Location
     address: str
 
 
 class BotCommand(BaseModel):
+    # Text of the command; 1-32 characters. Can contain only lowercase English letters, digits and underscores.
     command: str
+    # Description of the command; 1-256 characters.
     description: str
 
 
@@ -604,27 +616,34 @@ class BotCommandScope(BaseModel):
 
 
 class BotCommandScopeDefault(BotCommandScope):
+    # Scope type, must be default
     type: str = "default"
 
 
 class BotCommandScopeAllPrivateChats(BotCommandScope):
+    # Scope type, must be all_private_chats
     type: str = "all_private_chats"
 
 
 class BotCommandScopeAllGroupChats(BotCommandScope):
+    # Scope type, must be all_group_chats
     type: str = "all_group_chats"
 
 
 class BotCommandScopeAllChatAdministrators(BotCommandScope):
+    # Scope type, must be all_chat_administrators
     type: str = "all_chat_administrators"
 
 
 class BotCommandScopeChat(BotCommandScope):
+    # Scope type, must be chat
     type: str = "chat"
+    # Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
     chat_id: Union[int, str]
 
 
 class BotCommandScopeChatAdministrators(BotCommandScope):
+    # Scope type, must be chat_administrators
     type: str = "chat_administrators"
     chat_id: Union[int, str]
 
@@ -657,7 +676,8 @@ class ResponseParameters(BaseModel):
     migrate_to_chat_id: Optional[int] = None
     retry_after: Optional[int] = None
 
-
+# This object represents the contents of a file to be uploaded.
+# Must be posted using multipart/form-data in the usual way that files are uploaded via the browser.
 InputFile = Union[str, bytes]
 
 
