@@ -59,9 +59,9 @@ def sendMessage(
     ],
 ) -> "Message_":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[str, int]): [description]
         message_thread_id (Optional[int]): [description]
@@ -87,9 +87,9 @@ def forwardMessage(
     message_id: int,
 ) -> "Message_":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         char_id (Union[int, str]): [description]
         message_thread_id (Optional[int]): [description]
@@ -120,9 +120,9 @@ def copyMessage(
     ],
 ) -> "MessageId":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (Optional[int]): [description]
@@ -159,9 +159,9 @@ def sendPhoto(
     ],
 ) -> "Message_":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (Optional[int]): [description]
@@ -202,9 +202,9 @@ def sendAudio(
     ],
 ) -> "Message_":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (Optional[int]): [description]
@@ -298,9 +298,9 @@ def unbanChatMember(
     chat_id: Union[str, int], user_id: int, only_if_banned: Optional[bool]
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[str, int]): [description]
         user_id (int): [description]
@@ -316,9 +316,9 @@ def restrictChatMember(
     until_date: Optional[int],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         user_id (int): [description]
@@ -345,9 +345,9 @@ def promoteChatMember(
     can_manage_topics: Optional[bool],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         user_id (int): [description]
@@ -371,9 +371,9 @@ def setChatAdministratorCustomTitle(
     chat_id: Union[int, str], user_id: int, custom_title: str
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         user_id (int): [description]
@@ -397,9 +397,9 @@ def setChatPermissions():
 
 def exportChatInviteLink(chat_id: Union[int, str]) -> str:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -414,9 +414,9 @@ def createChatInviteLink(
     creates_join_request: Optional[bool],
 ) -> "ChatInviteLink":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         name (Optional[str]): [description]
@@ -429,7 +429,7 @@ def createChatInviteLink(
 
 def editChatInviteLink() -> "ChatInviteLink":
     """[summary]
-    
+
     [description]
     """
     pass
@@ -439,9 +439,9 @@ def revokeChatInviteLink(
     chat_id: Union[int, str], invite_link: str
 ) -> "ChatInviteLink":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         invite_link (str): [description]
@@ -454,9 +454,9 @@ def approveChatJoinRequest(
     user_id: int,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         user_id (int): [description]
@@ -469,9 +469,9 @@ def declineChatJoinRequest(
     user_id: int,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         user_id (int): [description]
@@ -481,9 +481,9 @@ def declineChatJoinRequest(
 
 def setChatPhoto(chat_id: Union[int, str], photo: "InputFile"):
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         photo ("InputFile"): [description]
@@ -495,9 +495,9 @@ def deleteChatPhoto(
     chat_id: Union[int, str],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -506,9 +506,9 @@ def deleteChatPhoto(
 
 def setChatTitle(chat_id: Union[int, str], title: str) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         title (str): [description]
@@ -518,9 +518,9 @@ def setChatTitle(chat_id: Union[int, str], title: str) -> bool:
 
 def setChatDescription(chat_id: Union[int, str], description: Optional[str]) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         description (Optional[str]): [description]
@@ -532,9 +532,9 @@ def pinChatMessage(
     chat_id: Union[int, str], message_id: int, disable_notification: Optional[bool]
 ):
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_id (int): [description]
@@ -545,9 +545,9 @@ def pinChatMessage(
 
 def unpinAllChatMessages(chat_id: Union[int, str]) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -556,9 +556,9 @@ def unpinAllChatMessages(chat_id: Union[int, str]) -> bool:
 
 def leaveChat(chat_id: Union[int, str]) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -567,9 +567,9 @@ def leaveChat(chat_id: Union[int, str]) -> bool:
 
 def getChat(chat_id: Union[int, str]) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -578,9 +578,9 @@ def getChat(chat_id: Union[int, str]) -> bool:
 
 def getChatAdministrators(chat_id: Union[int, str]) -> List[ChatMember]:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -589,9 +589,9 @@ def getChatAdministrators(chat_id: Union[int, str]) -> List[ChatMember]:
 
 def getChatMemberCount(chat_id: Union[int, str]) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -603,9 +603,9 @@ def getChatMember(
     user_id: int,
 ) -> "ChatMember":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         user_id (int): [description]
@@ -615,9 +615,9 @@ def getChatMember(
 
 def setChatStickerSet(chat_id: Union[int, str], sticker_set_name: str) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         sticker_set_name (str): [description]
@@ -629,9 +629,9 @@ def deleteChatStickerSet(
     chat_id: Union[int, str],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
     """
@@ -640,7 +640,7 @@ def deleteChatStickerSet(
 
 def getForumTopicIconStickers() -> List[Sticker]:
     """[summary]
-    
+
     [description]
     """
     pass
@@ -653,9 +653,9 @@ def createForumTopic(
     icon_custom_emoji_id: Optional[str],
 ) -> "ForumTopic":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         name (str): [description]
@@ -672,9 +672,9 @@ def editForumTopic(
     icon_custom_emoji_id: str,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         name (str): [description]
@@ -689,9 +689,9 @@ def closeForumTopic(
     message_thread_id: int,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (int): [description]
@@ -704,9 +704,9 @@ def reopenForumTopic(
     message_thread_id: int,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (int): [description]
@@ -719,9 +719,9 @@ def deleteForumTopic(
     message_thread_id: int,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (int): [description]
@@ -734,9 +734,9 @@ def unpinAllForumTopicMessages(
     message_thread_id: int,
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_thread_id (int): [description]
@@ -752,9 +752,9 @@ def answerCallbackQuery(
     cache_time: Optional[int],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         callback_query_id (str): [description]
         text (Optional[str]): [description]
@@ -771,9 +771,9 @@ def setMyCommands(
     language_code: Optional[str],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         commands (List[BotCommand]): [description]
         scope (Optional[BotCommandScope]): [description]
@@ -784,9 +784,9 @@ def setMyCommands(
 
 def deleteMyCommands(commands: List[BotCommand], language_code: Optional[str]) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         commands (List[BotCommand]): [description]
         language_code (Optional[str]): [description]
@@ -798,9 +798,9 @@ def getMyCommands(
     commands: List[BotCommand], language_code: Optional[str]
 ) -> List[Union[BotCommand, None]]:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         commands (List[BotCommand]): [description]
         language_code (Optional[str]): [description]
@@ -812,9 +812,9 @@ def getChatMenuButton(
     chat_id: Union[int, str], language_code: Optional[str]
 ) -> "MenuButton":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         language_code (Optional[str]): [description]
@@ -826,9 +826,9 @@ def setMyDefaultAdministratorRights(
     right: Optional[ChatAdministratorRights], for_channels: Optional[bool]
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         right (Optional[ChatAdministratorRights]): [description]
         for_channels (Optional[bool]): [description]
@@ -840,9 +840,9 @@ def getMyDefaultAdministratorRights(
     right: Optional[ChatAdministratorRights], for_channels: Optional[bool]
 ) -> "ChatAdministratorRights":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         right (Optional[ChatAdministratorRights]): [description]
         for_channels (Optional[bool]): [description]
@@ -861,9 +861,9 @@ def editMessageText(
     reply_markup: Optional[InlineKeyboardMarkup],
 ) -> Union[Message_, True]:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_id (Optional[int]): [description]
@@ -887,9 +887,9 @@ def editMessageCaption(
     reply_markup: Optional[InlineKeyboardMarkup],
 ) -> Union[Message_, True]:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Union[int, str]): [description]
         message_id (Optional[int]): [description]
@@ -910,9 +910,9 @@ def editMessageMedia(
     reply_markup: Optional[InlineKeyboardMarkup],
 ) -> Union[Message_, True]:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Optional[Union[int, str]]): [description]
         message_id (Optional[int]): [description]
@@ -930,9 +930,9 @@ def editMessageReplyMarkup(
     reply_markup: Optional[InlineKeyboardMarkup],
 ) -> Union[Message_, True]:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Optional[Union[int, str]]): [description]
         message_id (Optional[int]): [description]
@@ -949,9 +949,9 @@ def stopPoll(
     reply_markup: Optional[InlineKeyboardMarkup],
 ) -> "Poll":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Optional[Union[int, str]]): [description]
         message_id (Optional[int]): [description]
@@ -966,9 +966,9 @@ def deleteMessage(
     message_id: Optional[int],
 ) -> bool:
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (Optional[Union[int, str]]): [description]
         message_id (Optional[int]): [description]
@@ -987,9 +987,9 @@ def sendGame(
     reply_markup: Optional[InlineKeyboardMarkup],
 ) -> "Message_":
     """[summary]
-    
+
     [description]
-    
+
     Args:
         chat_id (int): [description]
         message_thread_id (Optional[int]): [description]
