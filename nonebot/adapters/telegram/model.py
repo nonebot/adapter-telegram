@@ -591,13 +591,14 @@ class ChatPermissions(BaseModel):
 
 class ForumTopic(BaseModel):
     # Unique identifier of the forum topic
-    message_thread_id:int
+    message_thread_id: int
     # Name of the topic
-    name:str
+    name: str
     # Color of the topic icon in RGB format
-    icon_color:int
+    icon_color: int
 
-    icon_custom_emoji_id:str
+    icon_custom_emoji_id: str
+
 
 class ChatLocation(BaseModel):
     location: Location
@@ -675,6 +676,7 @@ class MenuButtonDefault(BaseModel):
 class ResponseParameters(BaseModel):
     migrate_to_chat_id: Optional[int] = None
     retry_after: Optional[int] = None
+
 
 # This object represents the contents of a file to be uploaded.
 # Must be posted using multipart/form-data in the usual way that files are uploaded via the browser.
