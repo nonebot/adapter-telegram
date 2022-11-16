@@ -30,7 +30,9 @@ from .model import (
     MenuButton,
     ChatAdministratorRights,
     InputMedia,
-    Poll
+    Poll,
+    PhotoSize,
+    MaskPosition
 )
 
 
@@ -414,8 +416,22 @@ def stopPoll(
     reply_markup:Optional[InlineKeyboardMarkup],
 )->'Poll':
     pass
+
 def deleteMessage(
     chat_id:Optional[Union[int,str]],
     message_id:Optional[int],
 )->bool:
+    pass
+
+
+def sendGame(
+    chat_id:int,
+    message_thread_id:Optional[int],
+    game_short_name:str,
+    disable_notification:Optional[bool],
+    protect_content:Optional[bool],
+    reply_to_message_id:Optional[bool],
+    allow_sending_without_reply:Optional[bool],
+    reply_markup:Optional[InlineKeyboardMarkup]
+)->'Message_':
     pass
