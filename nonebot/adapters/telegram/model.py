@@ -79,12 +79,15 @@ class Chat(BaseModel):
     username: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
+    is_forum: Optional[Literal[True]] = None
     photo: Optional["ChatPhoto"] = None
     """
     :说明: 聊天图片，仅在使用 get_chat 方法时返回
 
     :类型: ``Optional[ChatPhoto] = None``
     """
+    active_usernames: Optional[List[str]] = None
+    emoji_status_custom_emoji_id: Optional[str] = None
     bio: Optional[str] = None
     """
     :说明: 聊天 ?，仅在使用 get_chat 方法时返回
@@ -160,6 +163,7 @@ class Chat(BaseModel):
 
 class Message_(BaseModel):
     message_id: int
+    message_thread_id: Optional[int] = None
     from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat] = None
     date: int
@@ -170,6 +174,7 @@ class Message_(BaseModel):
     forward_signature: Optional[str] = None
     forward_sender_name: Optional[str] = None
     forward_date: Optional[int] = None
+    is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message_"] = None
     via_bot: Optional[User] = None
@@ -212,6 +217,9 @@ class Message_(BaseModel):
     connected_website: Optional[str] = None
     passport_data: Optional["PassportData"] = None
     proximity_alert_triggered: Optional["ProximityAlertTriggered"] = None
+    forum_topic_created: Optional["ForumTopicCreated"] = None
+    forum_topic_closed: Optional["ForumTopicClosed"] = None
+    forum_topic_reopened: Optional["ForumTopicReopened"] = None
     video_chat_scheduled: Optional["VoiceChatScheduled"] = None
     video_chat_started: Optional["VoiceChatStarted"] = None
     video_chat_ended: Optional["VoiceChatEnded"] = None
@@ -378,6 +386,20 @@ class MessageAutoDeleteTimerChanged(BaseModel):
     message_auto_delete_time: int
 
 
+class ForumTopicCreated(BaseModel):
+    name: str
+    icon_color: int
+    icon_custom_emoji_id: Optional[str] = None
+
+
+class ForumTopicClosed(BaseModel):
+    pass
+
+
+class ForumTopicReopened(BaseModel):
+    pass
+
+
 class VoiceChatScheduled(BaseModel):
     start_date: int
 
@@ -505,6 +527,7 @@ class ChatAdministratorRights(BaseModel):
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
 
 
 class ChatMember(BaseModel):
@@ -532,6 +555,7 @@ class ChatMemberAdministrator(ChatMember):
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
     custom_title: Optional[str] = None
 
 
@@ -545,6 +569,7 @@ class ChatMemberRestricted(ChatMember):
     can_change_info: bool
     can_invite_users: bool
     can_pin_messages: bool
+    can_manage_topics: bool
     can_send_messages: bool
     can_send_media_messages: bool
     can_send_polls: bool
@@ -587,6 +612,7 @@ class ChatPermissions(BaseModel):
     can_change_info: Optional[bool] = None
     can_invite_users: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
 
 
 class ChatLocation(BaseModel):

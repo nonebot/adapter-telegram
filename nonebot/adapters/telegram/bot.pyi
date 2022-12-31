@@ -58,6 +58,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         text: str,
+        message_thread_id: Optional[int] = ...,
         parse_mode: Optional[str] = ...,
         entities: Optional[List[MessageEntity]] = ...,
         disable_web_page_preview: Optional[bool] = ...,
@@ -79,6 +80,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
         message_id: int,
+        message_thread_id: Optional[int] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
     ): ...
@@ -87,6 +89,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
         message_id: int,
+        message_thread_id: Optional[int] = ...,
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
@@ -107,6 +110,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         photo: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
@@ -127,6 +131,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         audio: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
@@ -151,6 +156,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         document: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         thumb: Optional[Union[InputFile, str]] = ...,
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
@@ -173,6 +179,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         video: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         duration: Optional[int] = ...,
         width: Optional[int] = ...,
         height: Optional[int] = ...,
@@ -198,6 +205,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         animation: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         duration: Optional[int] = ...,
         width: Optional[int] = ...,
         height: Optional[int] = ...,
@@ -222,6 +230,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         voice: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
@@ -243,6 +252,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         video_note: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         duration: Optional[int] = ...,
         length: Optional[int] = ...,
         thumb: Optional[Union[InputFile, str]] = ...,
@@ -265,6 +275,7 @@ class Bot(BaseBot):
         media: List[
             Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]
         ],
+        message_thread_id: Optional[int] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
         reply_to_message_id: Optional[int] = ...,
@@ -275,6 +286,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         latitude: float,
         longitude: float,
+        message_thread_id: Optional[int] = ...,
         horizontal_accuracy: Optional[float] = ...,
         live_period: Optional[int] = ...,
         heading: Optional[int] = ...,
@@ -332,6 +344,7 @@ class Bot(BaseBot):
         longitude: float,
         title: str,
         address: str,
+        message_thread_id: Optional[int] = ...,
         foursquare_id: Optional[str] = ...,
         foursquare_type: Optional[str] = ...,
         google_place_id: Optional[str] = ...,
@@ -354,6 +367,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         phone_number: str,
         first_name: str,
+        message_thread_id: Optional[int] = ...,
         last_name: Optional[str] = ...,
         vcard: Optional[str] = ...,
         disable_notification: Optional[bool] = ...,
@@ -374,6 +388,7 @@ class Bot(BaseBot):
         chat_id: Union[int, str],
         question: str,
         options: List[str],
+        message_thread_id: Optional[int] = ...,
         is_anonymous: Optional[bool] = ...,
         type: Optional[str] = ...,
         allows_multiple_answers: Optional[bool] = ...,
@@ -400,6 +415,7 @@ class Bot(BaseBot):
     async def send_dice(
         self,
         chat_id: Union[int, str],
+        message_thread_id: Optional[int] = ...,
         emoji: Optional[str] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
@@ -444,6 +460,7 @@ class Bot(BaseBot):
         can_change_info: Optional[bool] = ...,
         can_invite_users: Optional[bool] = ...,
         can_pin_messages: Optional[bool] = ...,
+        can_manage_topics: Optional[bool] = ...,
     ): ...
     async def set_chat_administrator_custom_title(
         self, chat_id: Union[int, str], user_id: int, custom_title: str
@@ -509,6 +526,41 @@ class Bot(BaseBot):
         self, chat_id: Union[int, str], sticker_set_name: str
     ): ...
     async def delete_chat_sticker_set(self, chat_id: Union[int, str]): ...
+    async def get_forum_topic_icon_stickers(self): ...
+    async def create_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        name: str,
+        icon_color: Optional[int] = ...,
+        icon_custom_emoji_id: Optional[str] = ...,
+    ): ...
+    async def edit_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+        name: Optional[str] = ...,
+        icon_custom_emoji_id: Optional[str] = ...,
+    ): ...
+    async def close_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+    ): ...
+    async def reopen_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+    ): ...
+    async def delete_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+    ): ...
+    async def unpin_all_forum_topic_messages(
+        self,
+        chat_id: Union[int, str],
+        message_thread_id: int,
+    ): ...
     async def answer_callback_query(
         self,
         callback_query_id: str,
@@ -594,6 +646,7 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
+        message_thread_id: Optional[int] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
         reply_to_message_id: Optional[int] = ...,
@@ -659,6 +712,7 @@ class Bot(BaseBot):
         provider_token: str,
         currency: str,
         prices: List[LabeledPrice],
+        message_thread_id: Optional[int] = ...,
         max_tip_amount: Optional[int] = ...,
         suggested_tip_amounts: Optional[int] = ...,
         start_parameter: Optional[str] = ...,
@@ -726,6 +780,7 @@ class Bot(BaseBot):
         self,
         chat_id: int,
         game_short_name: str,
+        message_thread_id: Optional[int] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
         reply_to_message_id: Optional[int] = ...,
