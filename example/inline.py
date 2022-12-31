@@ -2,14 +2,14 @@
 
 from nonebot import on, on_command
 from nonebot.adapters.telegram import Bot
-from nonebot.adapters.telegram.event import InlineQueryEvent, MessageEvent
-
+from nonebot.adapters.telegram.event import MessageEvent, InlineQueryEvent
 from nonebot.adapters.telegram.model import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    InlineQueryResultArticle,
     InputTextMessageContent,
+    InlineQueryResultArticle,
 )
+
 
 # InlineKeyboard：https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating
 @on_command("inline1").handle()
