@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.4] - 2022-12-31
+
+### 🚀 新功能
+
+- 适配 Telegram Bot API 6.3
+- 适配 Telegram Bot API 6.4
+- 新增 `ForumTopicMessageEvent` `ForumTopicEditedMessageEvent`
+
+### 📝 文档
+
+- 更新使用指南
+
 ## [0.1.0-beta.3] - 2022-09-16
 
 ### 🚀 新功能
@@ -57,11 +69,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 添加发送图片的示例
 
-### 💫 杂项
-
-- 不再使用 nb-cli 作为开发依赖以防依赖冲突
-- 使用 pre-commit 在提交前自动格式化代码
-
 ## [0.1.0-beta] - 2022-01-01
 
 ### 🚀 新功能
@@ -69,7 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...HEAD
+[0.1.0-beta.4]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...v0.1.0b4
 [0.1.0-beta.3]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b2...v0.1.0b3
 [0.1.0-beta.2]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b1...v0.1.0b2
 [0.1.0-beta.1]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b0...v0.1.0b1
