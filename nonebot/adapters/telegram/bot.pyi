@@ -114,6 +114,7 @@ class Bot(BaseBot):
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
+        has_spoiler: Optional[bool] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
         reply_to_message_id: Optional[int] = ...,
@@ -187,6 +188,7 @@ class Bot(BaseBot):
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
+        has_spoiler: Optional[bool] = ...,
         support_streaming: Optional[bool] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
@@ -213,6 +215,7 @@ class Bot(BaseBot):
         caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
+        has_spoiler: Optional[bool] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
         reply_to_message_id: Optional[int] = ...,
@@ -430,7 +433,12 @@ class Bot(BaseBot):
             ]
         ] = ...,
     ): ...
-    async def send_chat_action(self, chat_id: Union[int, str], action: str): ...
+    async def send_chat_action(
+        self,
+        chat_id: Union[int, str],
+        action: str,
+        message_thread_id: Optional[int] = ...,
+    ): ...
     async def get_user_profile_photos(
         self, user_id: int, offset: Optional[int] = ..., limit: Optional[int] = ...
     ): ...
@@ -560,6 +568,27 @@ class Bot(BaseBot):
         self,
         chat_id: Union[int, str],
         message_thread_id: int,
+    ): ...
+    async def edit_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+        name: str,
+    ): ...
+    async def close_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+    ): ...
+    async def reopen_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+    ): ...
+    async def hide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
+    ): ...
+    async def unhide_general_forum_topic(
+        self,
+        chat_id: Union[int, str],
     ): ...
     async def answer_callback_query(
         self,

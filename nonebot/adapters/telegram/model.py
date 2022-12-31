@@ -134,6 +134,8 @@ class Chat(BaseModel):
 
     :类型: ``Optional[int] = None``
     """
+    has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
+    has_hidden_members: Optional[Literal[True]] = None
     has_protected_content: Optional[Literal[True]] = None
     sticker_set_name: Optional[str] = None
     """
@@ -194,6 +196,7 @@ class Message_(BaseModel):
     voice: Optional["Voice"] = None
     caption: Optional[str] = None
     caption_entities: Optional[List["MessageEntity"]] = None
+    has_media_spoiler: Optional[Literal[True]] = None
     contact: Optional["Contact"] = None
     dice: Optional["Dice"] = None
     game: Optional["Game"] = None
@@ -215,9 +218,13 @@ class Message_(BaseModel):
     invoice: Optional["Invoice"] = None
     successful_payment: Optional["SuccessfulPayment"] = None
     connected_website: Optional[str] = None
+    write_access_allowed: Optional["WriteAccessAllowed"] = None
     passport_data: Optional["PassportData"] = None
     proximity_alert_triggered: Optional["ProximityAlertTriggered"] = None
     forum_topic_created: Optional["ForumTopicCreated"] = None
+    forum_topic_edited: Optional["ForumTopicEdited"] = None
+    general_forum_topic_hidden: Optional["GeneralForumTopicHidden"] = None
+    general_forum_topic_unhidden: Optional["GeneralForumTopicUnhidden"] = None
     forum_topic_closed: Optional["ForumTopicClosed"] = None
     forum_topic_reopened: Optional["ForumTopicReopened"] = None
     video_chat_scheduled: Optional["VoiceChatScheduled"] = None
@@ -396,7 +403,24 @@ class ForumTopicClosed(BaseModel):
     pass
 
 
+class ForumTopicEdited(BaseModel):
+    name: Optional[str] = None
+    icon_custom_emoji_id: Optional[str] = None
+
+
 class ForumTopicReopened(BaseModel):
+    pass
+
+
+class GeneralForumTopicHidden(BaseModel):
+    pass
+
+
+class GeneralForumTopicUnhidden(BaseModel):
+    pass
+
+
+class WriteAccessAllowed(BaseModel):
     pass
 
 
@@ -446,6 +470,7 @@ class KeyboardButton(BaseModel):
 
 class ReplyKeyboardMarkup(BaseModel):
     keyboard: List[List[KeyboardButton]]
+    is_persistent: Optional[bool] = None
     resize_keyboard: Optional[bool] = None
     one_time_keyboard: Optional[bool] = None
     input_field_placeholder: Optional[str] = None
@@ -697,6 +722,7 @@ class InputMedia(BaseModel):
 
 class InputMediaPhoto(InputMedia):
     type: str = "photo"
+    has_spoiler: Optional[bool] = None
 
 
 class InputMediaVideo(InputMedia):
@@ -706,6 +732,7 @@ class InputMediaVideo(InputMedia):
     height: Optional[int] = None
     duration: Optional[int] = None
     supports_streaming: Optional[bool] = None
+    has_spoiler: Optional[bool] = None
 
 
 class InputMediaAnimation(InputMedia):
@@ -714,6 +741,7 @@ class InputMediaAnimation(InputMedia):
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
+    has_spoiler: Optional[bool] = None
 
 
 class InputMediaAudio(InputMedia):
