@@ -744,7 +744,7 @@ class InlineQuery(BaseModel):
     query: str
     offset: str
     chat_type: Optional[str] = None
-    Location: Optional[Location] = None
+    location: Optional[Location] = None
 
 
 class InputMessageContent(BaseModel):
@@ -1054,7 +1054,7 @@ class InlineQueryResultCachedAudio(InlineQueryResult):
 class ChosenInlineResult(BaseModel):
     result_id: str
     from_: User = Field(alias="from")
-    Location: Optional[Location] = None
+    location: Optional[Location] = None
     inline_message_id: Optional[str] = None
     query: str
 

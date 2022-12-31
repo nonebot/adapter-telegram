@@ -1,4 +1,4 @@
-from typing import Any, Union, Optional
+from typing import Any, Union
 
 from nonebot.typing import overrides
 
@@ -123,7 +123,7 @@ class Bot(BaseBot):
                                 for file in files[1:]
                             ],
                             **kwargs,
-                        ),
+                        )
 
                     else:
                         file = files[0]
