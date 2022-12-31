@@ -193,6 +193,18 @@ class GroupMessageEvent(MessageEvent):
         return f"group_{self.chat.id}_{self.from_.id}"
 
 
+class ForumTopicMessageEvent(GroupMessageEvent):
+    message_thread_id: int
+
+    @overrides(MessageEvent)
+    def get_event_name(self) -> str:
+        return "message.group.forum_topic"
+
+    @overrides(MessageEvent)
+    def get_session_id(self) -> str:
+        return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
+
+
 class ChannelPostEvent(MessageEvent):
     sender_chat: Optional[Chat]
 
@@ -293,6 +305,18 @@ class GroupEditedMessageEvent(EditedMessageEvent):
     @overrides(EditedMessageEvent)
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_{self.from_.id}"
+
+
+class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
+    message_thread_id: int
+
+    @overrides(MessageEvent)
+    def get_event_name(self) -> str:
+        return "edited_message.group.forum_topic"
+
+    @overrides(MessageEvent)
+    def get_session_id(self) -> str:
+        return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
 
 
 class EditedChannelPostEvent(EditedMessageEvent):

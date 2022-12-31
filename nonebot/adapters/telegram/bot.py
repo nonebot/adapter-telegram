@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Any, Union, Optional, cast
 
 from nonebot.typing import overrides
 
@@ -37,14 +37,20 @@ class Bot(BaseBot):
         - 非 `File` 非 `Entity` 的 `MessageSegment` 无法组合
         """
         if isinstance(event, EventWithChat):
+            message_thread_id = getattr(event, "message_thread_id", None)
+            message_thread_id = cast(Optional[int], message_thread_id)
             if isinstance(message, str):
                 return await self.send_message(
-                    chat_id=event.chat.id, text=message, **kwargs
+                    chat_id=event.chat.id,
+                    message_thread_id=message_thread_id,
+                    text=message,
+                    **kwargs,
                 )
             elif isinstance(message, MessageSegment):
                 if message.is_text():
                     return await self.send_message(
                         chat_id=event.chat.id,
+                        message_thread_id=message_thread_id,
                         text=str(message),
                         entities=[
                             MessageEntity(
@@ -64,19 +70,23 @@ class Bot(BaseBot):
                     return await self.call_api(
                         f"send_{message.type}",
                         chat_id=event.chat.id,
+                        message_thread_id=message_thread_id,
                         **{message.type: message.data["file"]},
                         **kwargs,
                     )
                 else:
                     if message.type == "chat_action":
                         await self.send_chat_action(
-                            chat_id=event.chat.id, action=message.data["action"]
+                            chat_id=event.chat.id,
+                            message_thread_id=message_thread_id,
+                            action=message.data["action"],
                         )
                         await self.send(event, message.data["message"], **kwargs)
                     else:
                         await self.call_api(
                             f"send_{message.type}",
                             chat_id=event.chat.id,
+                            message_thread_id=message_thread_id,
                             **message.data,
                             **kwargs,
                         )
@@ -96,6 +106,7 @@ class Bot(BaseBot):
                     if len(files) > 1:
                         await self.send_media_group(
                             chat_id=event.chat.id,
+                            message_thread_id=message_thread_id,
                             media=[
                                 InputMedia(
                                     type=files[0].type,
@@ -130,6 +141,7 @@ class Bot(BaseBot):
                         return await self.call_api(
                             f"send_{file.type}",
                             chat_id=event.chat.id,
+                            message_thread_id=message_thread_id,
                             **{
                                 file.type: file.data.get("file"),
                                 "caption": str(entities) if entities else None,
@@ -153,6 +165,7 @@ class Bot(BaseBot):
                 else:
                     return await self.send_message(
                         chat_id=event.chat.id,
+                        message_thread_id=message_thread_id,
                         text=str(message),
                         entities=[
                             MessageEntity(
