@@ -62,7 +62,7 @@ class Bot(BaseBot):
         drop_pending_updates: Optional[bool] = ...,
         secret_token: Optional[str] = ...,
     ): ...
-    async def delete_webhook(self, drop_pending_updates: Optional[bool]): ...
+    async def delete_webhook(self, drop_pending_updates: Optional[bool] = ...): ...
     async def get_webhook_info(self): ...
     async def get_me(self):
         """
@@ -209,7 +209,7 @@ class Bot(BaseBot):
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
         has_spoiler: Optional[bool] = ...,
-        support_streaming: Optional[bool] = ...,
+        supports_streaming: Optional[bool] = ...,
         disable_notification: Optional[bool] = ...,
         protect_content: Optional[bool] = ...,
         reply_to_message_id: Optional[int] = ...,
@@ -333,32 +333,18 @@ class Bot(BaseBot):
         longitude: float,
         chat_id: Optional[Union[int, str]] = ...,
         message_id: Optional[int] = ...,
-        inline_message_id: Optional[int] = ...,
+        inline_message_id: Optional[str] = ...,
         horizontal_accuracy: Optional[float] = ...,
         heading: Optional[int] = ...,
         proximity_alert_radius: Optional[int] = ...,
-        reply_markup: Optional[
-            Union[
-                InlineKeyboardMarkup,
-                ReplyKeyboardMarkup,
-                ReplyKeyboardRemove,
-                ForceReply,
-            ]
-        ] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def stop_message_live_location(
         self,
         chat_id: Optional[Union[int, str]] = ...,
         message_id: Optional[int] = ...,
-        inline_message_id: Optional[int] = ...,
-        reply_markup: Optional[
-            Union[
-                InlineKeyboardMarkup,
-                ReplyKeyboardMarkup,
-                ReplyKeyboardRemove,
-                ForceReply,
-            ]
-        ] = ...,
+        inline_message_id: Optional[str] = ...,
+        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def send_venue(
         self,
@@ -471,7 +457,17 @@ class Bot(BaseBot):
         revoke_messages: Optional[bool] = ...,
     ): ...
     async def unban_chat_member(
-        self, chat_id: Union[int, str], user_id: int, only_if_banned: Optional[bool]
+        self,
+        chat_id: Union[int, str],
+        user_id: int,
+        only_if_banned: Optional[bool] = ...,
+    ): ...
+    async def restrict_chat_member(
+        self,
+        chat_id: Union[int, str],
+        user_id: int,
+        permissions: ChatPermissions,
+        until_date: Optional[int] = ...,
     ): ...
     async def promote_chat_member(
         self,
@@ -533,7 +529,7 @@ class Bot(BaseBot):
     async def delete_chat_photo(self, chat_id: Union[int, str]): ...
     async def set_chat_title(self, chat_id: Union[int, str], title: str): ...
     async def set_chat_description(
-        self, chat_id: Union[int, str], description: Optional[str]
+        self, chat_id: Union[int, str], description: Optional[str] = ...
     ): ...
     async def pin_chat_message(
         self,
@@ -542,7 +538,7 @@ class Bot(BaseBot):
         disable_notification: Optional[bool] = ...,
     ): ...
     async def unpin_chat_message(
-        self, chat_id: Union[int, str], message_id: Optional[int]
+        self, chat_id: Union[int, str], message_id: Optional[int] = ...
     ): ...
     async def unpin_all_chat_messages(self, chat_id: Union[int, str]): ...
     async def leave_chat(self, chat_id: Union[int, str]): ...
@@ -570,46 +566,22 @@ class Bot(BaseBot):
         icon_custom_emoji_id: Optional[str] = ...,
     ): ...
     async def close_forum_topic(
-        self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
+        self, chat_id: Union[int, str], message_thread_id: int
     ): ...
     async def reopen_forum_topic(
-        self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
+        self, chat_id: Union[int, str], message_thread_id: int
     ): ...
     async def delete_forum_topic(
-        self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
+        self, chat_id: Union[int, str], message_thread_id: int
     ): ...
     async def unpin_all_forum_topic_messages(
-        self,
-        chat_id: Union[int, str],
-        message_thread_id: int,
+        self, chat_id: Union[int, str], message_thread_id: int
     ): ...
-    async def edit_general_forum_topic(
-        self,
-        chat_id: Union[int, str],
-        name: str,
-    ): ...
-    async def close_general_forum_topic(
-        self,
-        chat_id: Union[int, str],
-    ): ...
-    async def reopen_general_forum_topic(
-        self,
-        chat_id: Union[int, str],
-    ): ...
-    async def hide_general_forum_topic(
-        self,
-        chat_id: Union[int, str],
-    ): ...
-    async def unhide_general_forum_topic(
-        self,
-        chat_id: Union[int, str],
-    ): ...
+    async def edit_general_forum_topic(self, chat_id: Union[int, str], name: str): ...
+    async def close_general_forum_topic(self, chat_id: Union[int, str]): ...
+    async def reopen_general_forum_topic(self, chat_id: Union[int, str]): ...
+    async def hide_general_forum_topic(self, chat_id: Union[int, str]): ...
+    async def unhide_general_forum_topic(self, chat_id: Union[int, str]): ...
     async def answer_callback_query(
         self,
         callback_query_id: str,
@@ -633,18 +605,14 @@ class Bot(BaseBot):
     async def set_chat_menu_button(
         self, chat_id: Optional[int] = ..., menu_button: Optional[MenuButton] = ...
     ): ...
-    async def get_chat_menu_button(
-        self,
-        chat_id: Optional[int] = ...,
-    ): ...
+    async def get_chat_menu_button(self, chat_id: Optional[int] = ...): ...
     async def set_my_default_administrator_rights(
         self,
         rights: Optional[ChatAdministratorRights] = ...,
         for_channels: Optional[bool] = ...,
     ): ...
     async def get_my_default_administrator_rights(
-        self,
-        for_channels: Optional[bool] = ...,
+        self, for_channels: Optional[bool] = ...
     ): ...
     async def edit_message_text(
         self,
@@ -659,10 +627,10 @@ class Bot(BaseBot):
     ): ...
     async def edit_message_caption(
         self,
-        caption: str,
         chat_id: Optional[Union[int, str]] = ...,
         message_id: Optional[int] = ...,
         inline_message_id: Optional[str] = ...,
+        caption: Optional[str] = ...,
         parse_mode: Optional[str] = ...,
         caption_entities: Optional[List[MessageEntity]] = ...,
         reply_markup: Optional[InlineKeyboardMarkup] = ...,
@@ -684,13 +652,11 @@ class Bot(BaseBot):
     ): ...
     async def stop_poll(
         self,
-        chat_id: Optional[Union[int, str]] = ...,
-        message_id: Optional[int] = ...,
+        chat_id: Union[int, str],
+        message_id: int,
         reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
-    async def delete_message(
-        self, chat_id: Optional[Union[int, str]] = ..., message_id: Optional[int] = ...
-    ): ...
+    async def delete_message(self, chat_id: Union[int, str], message_id: int): ...
     async def send_sticker(
         self,
         chat_id: Union[int, str],
@@ -737,7 +703,7 @@ class Bot(BaseBot):
     async def set_sticker_position_in_set(self, sticker: str, position: int): ...
     async def delete_sticker_from_set(self, sticker: str): ...
     async def set_sticker_set_thumb(
-        self, name: str, user_id: int, thumb: Optional[Union[InputFile, str]]
+        self, name: str, user_id: int, thumb: Optional[Union[InputFile, str]] = ...
     ): ...
     async def answer_inline_query(
         self,
@@ -763,7 +729,7 @@ class Bot(BaseBot):
         prices: List[LabeledPrice],
         message_thread_id: Optional[int] = ...,
         max_tip_amount: Optional[int] = ...,
-        suggested_tip_amounts: Optional[int] = ...,
+        suggested_tip_amounts: Optional[List[int]] = ...,
         start_parameter: Optional[str] = ...,
         provider_data: Optional[str] = ...,
         photo_url: Optional[str] = ...,
@@ -792,8 +758,7 @@ class Bot(BaseBot):
         currency: str,
         prices: List[LabeledPrice],
         max_tip_amount: Optional[int] = ...,
-        suggested_tip_amounts: Optional[int] = ...,
-        start_parameter: Optional[str] = ...,
+        suggested_tip_amounts: Optional[List[int]] = ...,
         provider_data: Optional[str] = ...,
         photo_url: Optional[str] = ...,
         photo_size: Optional[int] = ...,
@@ -806,11 +771,6 @@ class Bot(BaseBot):
         send_phone_number_to_provider: Optional[bool] = ...,
         send_email_to_provider: Optional[bool] = ...,
         is_flexible: Optional[bool] = ...,
-        disable_notification: Optional[bool] = ...,
-        protect_content: Optional[bool] = ...,
-        reply_to_message_id: Optional[int] = ...,
-        allow_sending_without_reply: Optional[bool] = ...,
-        reply_markup: Optional[InlineKeyboardMarkup] = ...,
     ): ...
     async def answer_shipping_query(
         self,
@@ -820,7 +780,7 @@ class Bot(BaseBot):
         error_message: Optional[str] = ...,
     ): ...
     async def answer_pre_checkout_query(
-        self, pre_checkout_query_id: str, ol: bool, error_message: Optional[str]
+        self, pre_checkout_query_id: str, ok: bool, error_message: Optional[str] = ...
     ): ...
     async def set_passport_data_errors(
         self, user_id: int, errors: List[PassportElementError]
@@ -846,7 +806,7 @@ class Bot(BaseBot):
         message_id: Optional[int] = ...,
         inline_message_id: Optional[str] = ...,
     ): ...
-    async def get_game_high_score(
+    async def get_game_high_scores(
         self,
         user_id: int,
         chat_id: Optional[int] = ...,

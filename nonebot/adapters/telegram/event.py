@@ -4,7 +4,6 @@ from typing_extensions import Protocol, runtime_checkable
 from pydantic import Field
 from nonebot.typing import overrides
 from nonebot.utils import escape_tag
-from model import OrderInfo, PollOption, MessageEntity
 
 from nonebot.adapters import Event as BaseEvent
 
@@ -13,7 +12,10 @@ from .model import Chat, User, Update
 from .model import Message as TelegramMessage
 from .model import (
     Location,
+    OrderInfo,
     ChatMember,
+    PollOption,
+    MessageEntity,
     ChatInviteLink,
     ChatJoinRequest,
     ShippingAddress,

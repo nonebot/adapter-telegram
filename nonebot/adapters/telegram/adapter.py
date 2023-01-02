@@ -21,10 +21,10 @@ from nonebot.drivers import (
 )
 
 from nonebot.adapters import Adapter as BaseAdapter
-from nonebot.adapters.telegram.model import InputMedia
 
 from .bot import Bot
 from .event import Event
+from .model import InputMedia
 from .exception import NetworkError
 from .config import BotConfig, AdapterConfig
 
