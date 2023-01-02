@@ -22,7 +22,7 @@ class Bot(BaseBot):
         self.self_id = config.token.split(":")[0]
         self.bot_config = config
 
-    # TODO b2 重构
+    # TODO 重构
     @overrides(BaseBot)
     async def send(
         self,

@@ -1,12 +1,24 @@
+from typing import List, Optional
 from typing_extensions import Protocol, runtime_checkable
 
+from pydantic import Field
 from nonebot.typing import overrides
 from nonebot.utils import escape_tag
+from model import OrderInfo, PollOption, MessageEntity
 
 from nonebot.adapters import Event as BaseEvent
 
-from .model import *
 from .message import Message
+from .model import Chat, User, Update
+from .model import Message as TelegramMessage
+from .model import (
+    Location,
+    ChatMember,
+    ChatInviteLink,
+    ChatJoinRequest,
+    ShippingAddress,
+    ChosenInlineResult,
+)
 
 
 @runtime_checkable
@@ -425,17 +437,17 @@ class ChatJoinRequestEvent(NoticeEvent, ChatJoinRequest):
         return "notice.chat_join_request"
 
 
-# TODO b2
+# TODO
 class InlineQueryEvent(Event):
     id: str
     from_: User = Field(alias="from")
     query: str
     offset: str
     chat_type: Optional[str]
-    Location: Optional[Location]
+    location: Optional[Location]
 
 
-# TODO b2
+# TODO
 class ChosenInlineResultEvent(Event):
     result_id: str
     from_: User = Field(alias="from")
@@ -444,11 +456,11 @@ class ChosenInlineResultEvent(Event):
     query: str
 
 
-# TODO b2
+# TODO
 class CallbackQueryEvent(Event):
     id: str
     from_: Optional[User] = Field(default=None, alias="from")
-    message: Optional[Message_]
+    message: Optional[TelegramMessage]
     inline_message_id: Optional[str]
     chat_instance: Optional[str]
     data: Optional[str]
@@ -474,7 +486,7 @@ class PreCheckoutQueryEvent(Event):
     order_info: Optional[OrderInfo]
 
 
-# TODO b2
+# TODO
 class PollEvent(Event):
     id: str
     question: str
@@ -491,7 +503,7 @@ class PollEvent(Event):
     close_date: Optional[int]
 
 
-# TODO b2
+# TODO
 class PollAnswerEvent(Event):
     poll_id: str
     user: User

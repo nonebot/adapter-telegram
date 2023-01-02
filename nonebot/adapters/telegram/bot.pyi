@@ -3,12 +3,32 @@ from typing import Any, List, Union, Optional
 from nonebot.adapters import Bot as BaseBot
 from nonebot.adapters import Adapter as Adapter
 
-from .model import *
-from .event import Event as Event
-from .message import Message as Message
-from .config import BotConfig as BotConfig
-from .event import EventWithChat as EventWithChat
-from .message import MessageSegment as MessageSegment
+from .event import Event
+from .config import BotConfig
+from .message import Message, MessageSegment
+from .model import (
+    InputFile,
+    BotCommand,
+    ForceReply,
+    InputMedia,
+    MenuButton,
+    LabeledPrice,
+    MaskPosition,
+    MessageEntity,
+    ShippingOption,
+    BotCommandScope,
+    ChatPermissions,
+    InputMediaAudio,
+    InputMediaPhoto,
+    InputMediaVideo,
+    InlineQueryResult,
+    InputMediaDocument,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+    InlineKeyboardMarkup,
+    PassportElementError,
+    ChatAdministratorRights,
+)
 
 class Bot(BaseBot):
     adapter: Adapter

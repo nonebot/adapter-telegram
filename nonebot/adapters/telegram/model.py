@@ -5,10 +5,10 @@ from pydantic import Field, BaseModel
 
 class Update(BaseModel):
     update_id: int
-    message: Optional["Message_"] = None
-    edited_message: Optional["Message_"] = None
-    channel_post: Optional["Message_"] = None
-    edited_channel_post: Optional["Message_"] = None
+    message: Optional["Message"] = None
+    edited_message: Optional["Message"] = None
+    channel_post: Optional["Message"] = None
+    edited_channel_post: Optional["Message"] = None
     inline_query: Optional["InlineQuery"] = None
     chosen_inline_result: Optional["ChosenInlineResult"] = None
     callback_query: Optional["CallbackQuery"] = None
@@ -110,11 +110,11 @@ class Chat(BaseModel):
 
     :类型: ``Optional[str] = None``
     """
-    pinned_message: Optional["Message_"] = None
+    pinned_message: Optional["Message"] = None
     """
     :说明: 置顶消息，仅在使用 get_chat 方法时返回
 
-    :类型: ``Optional[Message_] = None``
+    :类型: ``Optional[Message] = None``
     """
     permissions: Optional["ChatPermissions"] = None
     """
@@ -143,7 +143,7 @@ class Chat(BaseModel):
 
     :类型: ``Optional[string] = None``
     """
-    can_set_sticker_set: Optional[bool] = None
+    can_set_sticker_set: Optional[Literal[True]] = None
     """
     :说明: 机器人是否可设置聊天表情包，仅在使用 get_chat 方法时返回
 
@@ -163,13 +163,13 @@ class Chat(BaseModel):
     """
 
 
-class Message_(BaseModel):
+class Message(BaseModel):
     message_id: int
     message_thread_id: Optional[int] = None
     from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat] = None
     date: int
-    chat: "Chat"
+    chat: Chat
     forward_from: Optional[User] = None
     forward_from_chat: Optional[Chat] = None
     forward_from_message_id: Optional[int] = None
@@ -178,7 +178,7 @@ class Message_(BaseModel):
     forward_date: Optional[int] = None
     is_topic_message: Optional[Literal[True]] = None
     is_automatic_forward: Optional[Literal[True]] = None
-    reply_to_message: Optional["Message_"] = None
+    reply_to_message: Optional["Message"] = None
     via_bot: Optional[User] = None
     edit_date: Optional[int] = None
     has_protected_content: Optional[Literal[True]] = None
@@ -214,7 +214,7 @@ class Message_(BaseModel):
     message_auto_delete_timer_changed: Optional["MessageAutoDeleteTimerChanged"] = None
     migrate_to_chat_id: Optional[int] = None
     migrate_from_chat_id: Optional[int] = None
-    pinned_message: Optional["Message_"] = None
+    pinned_message: Optional["Message"] = None
     invoice: Optional["Invoice"] = None
     successful_payment: Optional["SuccessfulPayment"] = None
     connected_website: Optional[str] = None
@@ -227,10 +227,10 @@ class Message_(BaseModel):
     general_forum_topic_unhidden: Optional["GeneralForumTopicUnhidden"] = None
     forum_topic_closed: Optional["ForumTopicClosed"] = None
     forum_topic_reopened: Optional["ForumTopicReopened"] = None
-    video_chat_scheduled: Optional["VoiceChatScheduled"] = None
-    video_chat_started: Optional["VoiceChatStarted"] = None
-    video_chat_ended: Optional["VoiceChatEnded"] = None
-    video_chat_participants_invited: Optional["VoiceChatParticipantsInvited"] = None
+    video_chat_scheduled: Optional["VideoChatScheduled"] = None
+    video_chat_started: Optional["VideoChatStarted"] = None
+    video_chat_ended: Optional["VideoChatEnded"] = None
+    video_chat_participants_invited: Optional["VideoChatParticipantsInvited"] = None
     web_app_data: Optional["WebAppData"] = None
     reply_markup: Optional["InlineKeyboardMarkup"] = None
 
@@ -424,20 +424,20 @@ class WriteAccessAllowed(BaseModel):
     pass
 
 
-class VoiceChatScheduled(BaseModel):
+class VideoChatScheduled(BaseModel):
     start_date: int
 
 
-class VoiceChatStarted(BaseModel):
+class VideoChatStarted(BaseModel):
     pass
 
 
-class VoiceChatEnded(BaseModel):
+class VideoChatEnded(BaseModel):
     duration: int
 
 
-class VoiceChatParticipantsInvited(BaseModel):
-    users: Optional[List[User]] = None
+class VideoChatParticipantsInvited(BaseModel):
+    users: List[User]
 
 
 class UserProfilePhotos(BaseModel):
@@ -478,7 +478,7 @@ class ReplyKeyboardMarkup(BaseModel):
 
 
 class ReplyKeyboardRemove(BaseModel):
-    remove_keyboard: bool = True
+    remove_keyboard: Literal[True]
     selective: Optional[bool] = None
 
 
@@ -492,9 +492,9 @@ class LoginUrl(BaseModel):
 class InlineKeyboardButton(BaseModel):
     text: str
     url: Optional[str] = None
-    login_url: Optional[LoginUrl] = None
     callback_data: Optional[str] = None
     web_app: Optional[WebAppInfo] = None
+    login_url: Optional[LoginUrl] = None
     switch_inline_query: Optional[str] = None
     switch_inline_query_current_chat: Optional[str] = None
     callback_game: Optional["CallbackGame"] = None
@@ -507,16 +507,16 @@ class InlineKeyboardMarkup(BaseModel):
 
 class CallbackQuery(BaseModel):
     id: str
-    from_: Optional[User] = Field(default=None, alias="from")
-    message: Optional[Message_] = None
+    from_: User = Field(alias="from")
+    message: Optional[Message] = None
     inline_message_id: Optional[str] = None
-    chat_instance: Optional[str] = None
-    date: Optional[str] = None
+    chat_instance: str
+    data: Optional[str] = None
     game_short_name: Optional[str] = None
 
 
 class ForceReply(BaseModel):
-    force_reply: bool = True
+    force_reply: Literal[True]
     input_field_placeholder: Optional[str] = None
     selective: Optional[bool] = None
 
@@ -561,13 +561,13 @@ class ChatMember(BaseModel):
 
 
 class ChatMemberOwner(ChatMember):
-    status: str = "creator"
+    status: Literal["creator"] = "creator"
     is_anonymous: bool
-    custom_title: str
+    custom_title: Optional[str] = None
 
 
 class ChatMemberAdministrator(ChatMember):
-    status: str = "administrator"
+    status: Literal["administrator"] = "administrator"
     can_be_edited: bool
     is_anonymous: bool
     can_manage_chat: bool
@@ -585,11 +585,11 @@ class ChatMemberAdministrator(ChatMember):
 
 
 class ChatMemberMember(ChatMember):
-    status: str = "member"
+    status: Literal["member"] = "member"
 
 
 class ChatMemberRestricted(ChatMember):
-    status: str = "restricted"
+    status: Literal["restricted"] = "restricted"
     is_member: bool
     can_change_info: bool
     can_invite_users: bool
@@ -604,11 +604,12 @@ class ChatMemberRestricted(ChatMember):
 
 
 class ChatMemberLeft(ChatMember):
-    status: str = "left"
+    status: Literal["left"] = "left"
 
 
 class ChatMemberBanned(ChatMember):
-    status: str = "kicked"
+    status: Literal["kicked"] = "kicked"
+    until_date: int
 
 
 class ChatMemberUpdated(BaseModel):
@@ -645,6 +646,13 @@ class ChatLocation(BaseModel):
     address: str
 
 
+class ForumTopic(BaseModel):
+    message_thread_id: int
+    name: str
+    icon_color: int
+    icon_custom_emoji_id: Optional[str] = None
+
+
 class BotCommand(BaseModel):
     command: str
     description: str
@@ -655,53 +663,53 @@ class BotCommandScope(BaseModel):
 
 
 class BotCommandScopeDefault(BotCommandScope):
-    type: str = "default"
+    type: Literal["default"] = "default"
 
 
 class BotCommandScopeAllPrivateChats(BotCommandScope):
-    type: str = "all_private_chats"
+    type: Literal["all_private_chats"] = "all_private_chats"
 
 
 class BotCommandScopeAllGroupChats(BotCommandScope):
-    type: str = "all_group_chats"
+    type: Literal["all_group_chats"] = "all_group_chats"
 
 
 class BotCommandScopeAllChatAdministrators(BotCommandScope):
-    type: str = "all_chat_administrators"
+    type: Literal["all_chat_administrators"] = "all_chat_administrators"
 
 
 class BotCommandScopeChat(BotCommandScope):
-    type: str = "chat"
+    type: Literal["chat"] = "chat"
     chat_id: Union[int, str]
 
 
 class BotCommandScopeChatAdministrators(BotCommandScope):
-    type: str = "chat_administrators"
+    type: Literal["chat_administrators"] = "chat_administrators"
     chat_id: Union[int, str]
 
 
 class BotCommandScopeChatMember(BotCommandScope):
-    type: str = "chat_member"
+    type: Literal["chat_member"] = "chat_member"
     chat_id: Union[int, str]
     user_id: int
 
 
 class MenuButton(BaseModel):
-    pass
+    type: str
 
 
-class MenuButtonCommands(BaseModel):
-    type: str = "commmands"
+class MenuButtonCommands(MenuButton):
+    type: Literal["commmands"] = "commmands"
 
 
-class MenuButtonWebApp(BaseModel):
-    type: str = "web_app"
+class MenuButtonWebApp(MenuButton):
+    type: Literal["web_app"] = "web_app"
     text: str
     web_app: WebAppInfo
 
 
-class MenuButtonDefault(BaseModel):
-    type: str = "default"
+class MenuButtonDefault(MenuButton):
+    type: Literal["default"] = "default"
 
 
 class ResponseParameters(BaseModel):
@@ -709,24 +717,24 @@ class ResponseParameters(BaseModel):
     retry_after: Optional[int] = None
 
 
-InputFile = Union[str, bytes]
+InputFile = bytes
 
 
 class InputMedia(BaseModel):
     type: str
-    media: Union[str, bytes]
+    media: str
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[List[MessageEntity]] = None
 
 
 class InputMediaPhoto(InputMedia):
-    type: str = "photo"
+    type: Literal["photo"] = "photo"
     has_spoiler: Optional[bool] = None
 
 
 class InputMediaVideo(InputMedia):
-    type: str = "video"
+    type: Literal["video"] = "video"
     thumb: Optional[Union[InputFile, str]] = None
     width: Optional[int] = None
     height: Optional[int] = None
@@ -736,7 +744,7 @@ class InputMediaVideo(InputMedia):
 
 
 class InputMediaAnimation(InputMedia):
-    type: str = "animation"
+    type: Literal["animation"] = "animation"
     thumb: Optional[Union[InputFile, str]] = None
     width: Optional[int] = None
     height: Optional[int] = None
@@ -745,7 +753,7 @@ class InputMediaAnimation(InputMedia):
 
 
 class InputMediaAudio(InputMedia):
-    type: str = "audio"
+    type: Literal["audio"] = "audio"
     thumb: Optional[Union[InputFile, str]] = None
     duration: Optional[int] = None
     performer: Optional[str] = None
@@ -753,7 +761,7 @@ class InputMediaAudio(InputMedia):
 
 
 class InputMediaDocument(InputMedia):
-    type: str = "document"
+    type: Literal["document"] = "document"
     thumb: Optional[Union[InputFile, str]] = None
     disable_content_type_detection: Optional[bool] = None
 
@@ -778,8 +786,8 @@ class Sticker(BaseModel):
     set_name: Optional[str] = None
     premium_animation: Optional[File] = None
     mask_position: Optional[MaskPosition] = None
-    file_size: Optional[int] = None
     custom_emoji_id: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 class StickerSet(BaseModel):
@@ -869,7 +877,7 @@ class InlineQueryResult(BaseModel):
 
 
 class InlineQueryResultArticle(InlineQueryResult):
-    type: str = "article"
+    type: Literal["article"] = "article"
     title: str
     input_message_content: InputMessageContent
     url: Optional[str] = None
@@ -881,7 +889,7 @@ class InlineQueryResultArticle(InlineQueryResult):
 
 
 class InlineQueryResultPhoto(InlineQueryResult):
-    type: str = "photo"
+    type: Literal["photo"] = "photo"
     photo_url: str
     thumb_url: str
     photo_width: Optional[int] = None
@@ -895,7 +903,7 @@ class InlineQueryResultPhoto(InlineQueryResult):
 
 
 class InlineQueryResultGif(InlineQueryResult):
-    type: str = "gif"
+    type: Literal["gif"] = "gif"
     gif_url: str
     gif_width: Optional[int] = None
     gif_height: Optional[int] = None
@@ -910,7 +918,7 @@ class InlineQueryResultGif(InlineQueryResult):
 
 
 class InlineQueryResultMpeg4Gif(InlineQueryResult):
-    type: str = "mpeg4_gif"
+    type: Literal["mpeg4_gif"] = "mpeg4_gif"
     mpeg4_url: str
     mpeg4_width: Optional[int] = None
     mpeg4_height: Optional[int] = None
@@ -925,7 +933,7 @@ class InlineQueryResultMpeg4Gif(InlineQueryResult):
 
 
 class InlineQueryResultVideo(InlineQueryResult):
-    type: str = "video"
+    type: Literal["video"] = "video"
     video_url: str
     mime_type: str
     thumb_url: str
@@ -941,7 +949,7 @@ class InlineQueryResultVideo(InlineQueryResult):
 
 
 class InlineQueryResultAudio(InlineQueryResult):
-    type: str = "audio"
+    type: Literal["audio"] = "audio"
     audio_url: str
     title: str
     caption: Optional[str] = None
@@ -953,7 +961,7 @@ class InlineQueryResultAudio(InlineQueryResult):
 
 
 class InlineQueryResultVoice(InlineQueryResult):
-    type: str = "voice"
+    type: Literal["voice"] = "voice"
     voice_url: str
     title: str
     caption: Optional[str] = None
@@ -964,7 +972,7 @@ class InlineQueryResultVoice(InlineQueryResult):
 
 
 class InlineQueryResultDocument(InlineQueryResult):
-    type: str = "document"
+    type: Literal["document"] = "document"
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
@@ -979,7 +987,7 @@ class InlineQueryResultDocument(InlineQueryResult):
 
 
 class InlineQueryResultLocation(InlineQueryResult):
-    type: str = "location"
+    type: Literal["location"] = "location"
     latitude: float
     longitude: float
     title: str
@@ -994,7 +1002,7 @@ class InlineQueryResultLocation(InlineQueryResult):
 
 
 class InlineQueryResultVenue(InlineQueryResult):
-    type: str = "venue"
+    type: Literal["venue"] = "venue"
     latitude: float
     longitude: float
     title: str
@@ -1010,7 +1018,7 @@ class InlineQueryResultVenue(InlineQueryResult):
 
 
 class InlineQueryResultContact(InlineQueryResult):
-    type: str = "contact"
+    type: Literal["contact"] = "contact"
     phone_number: str
     first_name: str
     last_name: Optional[str] = None
@@ -1023,12 +1031,12 @@ class InlineQueryResultContact(InlineQueryResult):
 
 
 class InlineQueryResultGame(InlineQueryResult):
-    type: str = "game"
+    type: Literal["game"] = "game"
     game_short_name: str
 
 
 class InlineQueryResultCachedPhoto(InlineQueryResult):
-    type: str = "photo"
+    type: Literal["photo"] = "photo"
     photo_file_id: str
     title: Optional[str] = None
     description: Optional[str] = None
@@ -1039,7 +1047,7 @@ class InlineQueryResultCachedPhoto(InlineQueryResult):
 
 
 class InlineQueryResultCachedGif(InlineQueryResult):
-    type: str = "gif"
+    type: Literal["gif"] = "gif"
     gif_file_id: str
     title: Optional[str] = None
     caption: Optional[str] = None
@@ -1049,7 +1057,7 @@ class InlineQueryResultCachedGif(InlineQueryResult):
 
 
 class InlineQueryResultCachedMpeg4Gif(InlineQueryResult):
-    type: str = "mpeg4_gif"
+    type: Literal["mpeg4_gif"] = "mpeg4_gif"
     mpeg4_file_id: str
     title: Optional[str] = None
     caption: Optional[str] = None
@@ -1059,13 +1067,13 @@ class InlineQueryResultCachedMpeg4Gif(InlineQueryResult):
 
 
 class InlineQueryResultCachedSticker(InlineQueryResult):
-    type: str = "sticker"
+    type: Literal["sticker"] = "sticker"
     sticker_file_id: str
     input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedDocument(InlineQueryResult):
-    type: str = "document"
+    type: Literal["document"] = "document"
     title: str
     document_file_id: str
     description: Optional[str] = None
@@ -1076,7 +1084,7 @@ class InlineQueryResultCachedDocument(InlineQueryResult):
 
 
 class InlineQueryResultCachedVideo(InlineQueryResult):
-    type: str = "video"
+    type: Literal["video"] = "video"
     video_file_id: str
     title: str
     description: Optional[str] = None
@@ -1087,7 +1095,7 @@ class InlineQueryResultCachedVideo(InlineQueryResult):
 
 
 class InlineQueryResultCachedVoice(InlineQueryResult):
-    type: str = "voice"
+    type: Literal["voice"] = "voice"
     voice_file_id: str
     title: str
     caption: Optional[str] = None
@@ -1097,7 +1105,7 @@ class InlineQueryResultCachedVoice(InlineQueryResult):
 
 
 class InlineQueryResultCachedAudio(InlineQueryResult):
-    type: str = "audio"
+    type: Literal["audio"] = "audio"
     audio_file_id: str
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
@@ -1202,7 +1210,7 @@ class EncryptedPassportElement(BaseModel):
 class EncryptedCredentials(BaseModel):
     data: str
     hash: str
-    secert: str
+    secret: str
 
 
 class PassportElementError(BaseModel):
@@ -1212,48 +1220,48 @@ class PassportElementError(BaseModel):
 
 
 class PassportElementErrorDataField(PassportElementError):
-    source: str = "data"
+    source: Literal["data"] = "data"
     field_name: str
     data_hash: str
 
 
 class PassportElementErrorFrontSide(PassportElementError):
-    source: str = "front_side"
+    source: Literal["front_side"] = "front_side"
     file_hash: str
 
 
 class PassportElementErrorReverseSide(PassportElementError):
-    source: str = "reverse_side"
+    source: Literal["reverse_side"] = "reverse_side"
     file_hash: str
 
 
 class PassportElementErrorSelfie(PassportElementError):
-    source: str = "selfie"
+    source: Literal["selfie"] = "selfie"
     file_hash: str
 
 
 class PassportElementErrorFile(PassportElementError):
-    source: str = "file"
+    source: Literal["file"] = "file"
     file_hash: str
 
 
 class PassportElementErrorFiles(PassportElementError):
-    source: str = "files"
+    source: Literal["files"] = "files"
     file_hashes: List[str]
 
 
 class PassportElementErrorTranslationFile(PassportElementError):
-    source: str = "translation_file"
+    source: Literal["translation_file"] = "translation_file"
     file_hash: str
 
 
 class PassportElementErrorTranslationFiles(PassportElementError):
-    source: str = "translation_files"
+    source: Literal["translation_files"] = "translation_files"
     file_hashes: List[str]
 
 
 class PassportElementErrorUnspecified(PassportElementError):
-    source: str = "unspecified"
+    source: Literal["unspecified"] = "unspecified"
     element_hash: str
 
 
@@ -1284,5 +1292,6 @@ class GameHighScore(BaseModel):
 # 动态语言的悲哀
 Update.update_forward_refs()
 Chat.update_forward_refs()
-Message_.update_forward_refs()
+Message.update_forward_refs()
 InlineKeyboardButton.update_forward_refs()
+InputInvoiceMessageContent.update_forward_refs()
