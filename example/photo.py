@@ -1,7 +1,7 @@
 """发送图片的示例，其他上传文件的操作同理"""
 
 
-import aiofiles
+from anyio import open_file
 
 from nonebot import on_command
 from nonebot.adapters.telegram import Bot
@@ -13,7 +13,7 @@ from nonebot.adapters.telegram.model import InputMediaPhoto
 # 用 bytes 发送图片
 @on_command("photo1").handle()
 async def _(bot: Bot, event: MessageEvent):
-    async with aiofiles.open("./docs/logo.png", "rb") as f:
+    async with await open_file("./docs/logo.png", "rb") as f:
         await bot.send(
             event,
             File.photo(await f.read()),

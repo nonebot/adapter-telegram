@@ -3,7 +3,7 @@ import asyncio
 import pathlib
 from typing import Any, List, Iterable, cast
 
-import aiofiles
+from anyio import open_file
 from nonebot.log import logger
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
@@ -159,7 +159,7 @@ class Adapter(BaseAdapter):
                     media.media = f"attach://upload{upload_count}"
                 else:
                     try:
-                        async with aiofiles.open(media.media, "rb") as f:
+                        async with await open_file(media.media, "rb") as f:
                             files[pathlib.Path(media.media).name] = (
                                 pathlib.Path(media.media).name,
                                 await f.read(),
@@ -173,7 +173,7 @@ class Adapter(BaseAdapter):
                     files[key] = ("upload", value)
                 elif isinstance(value, str) or not isinstance(value, Iterable):
                     try:
-                        async with aiofiles.open(value, "rb") as f:
+                        async with await open_file(value, "rb") as f:
                             files[key] = (pathlib.Path(value).name, await f.read())
                     except:
                         pass

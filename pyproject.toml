@@ -22,7 +22,7 @@ packages = [{ include = "nonebot" }]
 [tool.poetry.dependencies]
 python = "^3.8"
 nonebot2 = "^2.0.0b1"
-aiofiles = "^0.8.0"
+anyio = "^3.6.2"
 
 [tool.poetry.group.dev.dependencies]
 pycln = "^2.1.2"
