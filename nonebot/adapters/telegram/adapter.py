@@ -1,7 +1,7 @@
 import json
 import asyncio
 import pathlib
-from typing import Any, List, Iterable, cast
+from typing import Any, Dict, List, Iterable, cast
 
 from anyio import open_file
 from nonebot.log import logger
@@ -29,6 +29,10 @@ from .exception import NetworkError
 from .config import BotConfig, AdapterConfig
 
 
+def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
+    return {k: v for k, v in data.items() if v is not None}
+
+
 class Adapter(BaseAdapter):
     @overrides(BaseAdapter)
     def __init__(self, driver: Driver, **kwargs: Any):
@@ -54,13 +58,12 @@ class Adapter(BaseAdapter):
             for bot_config in bot_configs:
                 bot = Bot(self, bot_config)
                 logger.info("Delete old webhook")
-                await self._call_api(bot, "delete_webhook")
+                await bot.delete_webhook()
                 logger.info("Set new webhook")
-                await self._call_api(
-                    bot,
-                    "set_webhook",
-                    url=f"{bot.bot_config.webhook_url}/telegram/{bot.self_id}",
+                await bot.set_webhook(
+                    url=f"{bot.bot_config.webhook_url}/telegram/{bot.self_id}"
                 )
+
                 self.bot_connect(bot)
                 setup = HTTPServerSetup(
                     URL(f"/telegram/{bot.self_id}"),
@@ -75,23 +78,21 @@ class Adapter(BaseAdapter):
         async def _():
             async def poll(bot: Bot):
                 logger.info("Delete old webhook")
-                await self._call_api(bot, "delete_webhook")
+                await bot.delete_webhook()
                 logger.info("Start poll")
                 self.bot_connect(bot)
 
                 update_offset = 0
                 while True:
                     try:
-                        message = (
-                            await self._call_api(
-                                bot, "get_updates", offset=update_offset
-                            )
-                        )["result"]
+                        message = await bot.get_updates(offset=update_offset)
                         if update_offset:
                             for msg in message:
-                                if msg["update_id"] > update_offset:
-                                    update_offset = msg["update_id"]
-                                    event = Event.parse_event(msg)
+                                if msg.update_id > update_offset:
+                                    update_offset = msg.update_id
+                                    event = Event.parse_event(
+                                        msg.dict(by_alias=True, exclude_none=True)
+                                    )
                                     logger.debug(
                                         escape_tag(
                                             str(
@@ -104,7 +105,7 @@ class Adapter(BaseAdapter):
                                     )
                                     await handle_event(bot, event)
                         elif message:
-                            update_offset = message[0]["update_id"]
+                            update_offset = message[0].update_id
                     except Exception as e:
                         logger.error(e)
                     await asyncio.sleep(bot.bot_config.polling_interval)
@@ -144,6 +145,7 @@ class Adapter(BaseAdapter):
         api = api.split("_", maxsplit=1)[0] + "".join(
             s.capitalize() for s in api.split("_")[1:]
         )
+        data = _escape_none(data)
 
         # 分离文件到 files
         files = {}
@@ -210,8 +212,7 @@ class Adapter(BaseAdapter):
                 if 200 <= response.status_code < 300:
                     if not response.content:
                         raise ValueError("Empty response")
-                    result = json.loads(response.content)
-                    return result
+                    return json.loads(response.content)["result"]
                 raise NetworkError(
                     f"HTTP request received unexpected {response.status_code} {response.content}"
                 )

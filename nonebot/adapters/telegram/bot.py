@@ -5,6 +5,7 @@ from nonebot.typing import overrides
 from nonebot.adapters import Adapter
 from nonebot.adapters import Bot as BaseBot
 
+from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
 from .event import Event, EventWithChat
@@ -12,7 +13,7 @@ from .model import InputMedia, MessageEntity
 from .message import File, Entity, Message, MessageSegment
 
 
-class Bot(BaseBot):
+class Bot(BaseBot, API):
     """
     Telegram Bot 适配。继承属性参考 `BaseBot <./#class-basebot>`_ 。
     """
@@ -28,6 +29,10 @@ class Bot(BaseBot):
         self,
         event: Event,
         message: Union[str, Message, MessageSegment],
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        reply_to_message_id: Optional[int] = None,
+        allow_sending_without_reply: Optional[bool] = None,
         **kwargs,
     ) -> Any:
         """
@@ -36,6 +41,15 @@ class Bot(BaseBot):
         - `File` 或 `Entity` 可随意组合
         - 非 `File` 非 `Entity` 的 `MessageSegment` 无法组合
         """
+        kwargs.update(
+            {
+                "disable_notification": disable_notification,
+                "protect_content": protect_content,
+                "reply_to_message_id": reply_to_message_id,
+                "allow_sending_without_reply": allow_sending_without_reply,
+            }
+        )
+
         if isinstance(event, EventWithChat):
             message_thread_id = getattr(event, "message_thread_id", None)
             message_thread_id = cast(Optional[int], message_thread_id)
@@ -61,14 +75,13 @@ class Bot(BaseBot):
                                 user=message.data.get("user"),
                                 language=message.data.get("language"),
                             )
-                            if message.type != "text"
-                            else None
-                        ],
+                        ]
+                        if message.type != "text"
+                        else None,
                         **kwargs,
                     )
                 elif isinstance(message, File):
-                    return await self.call_api(
-                        f"send_{message.type}",
+                    return await getattr(self, f"send_{message.type}")(
                         chat_id=event.chat.id,
                         message_thread_id=message_thread_id,
                         **{message.type: message.data["file"]},
@@ -81,10 +94,9 @@ class Bot(BaseBot):
                             message_thread_id=message_thread_id,
                             action=message.data["action"],
                         )
-                        await self.send(event, message.data["message"], **kwargs)
+                        return await self.send(event, message.data["message"], **kwargs)
                     else:
-                        await self.call_api(
-                            f"send_{message.type}",
+                        await getattr(self, f"send_{message.type}")(
                             chat_id=event.chat.id,
                             message_thread_id=message_thread_id,
                             **message.data,
@@ -104,7 +116,7 @@ class Bot(BaseBot):
                         raise ApiNotAvailable
                 elif files:
                     if len(files) > 1:
-                        await self.send_media_group(
+                        return await self.send_media_group(
                             chat_id=event.chat.id,
                             message_thread_id=message_thread_id,
                             media=[
@@ -132,14 +144,13 @@ class Bot(BaseBot):
                                     media=file.data["file"],
                                 )
                                 for file in files[1:]
-                            ],
+                            ],  # type:ignore
                             **kwargs,
                         )
 
                     else:
                         file = files[0]
-                        return await self.call_api(
-                            f"send_{file.type}",
+                        return await getattr(self, f"send_{file.type}")(
                             chat_id=event.chat.id,
                             message_thread_id=message_thread_id,
                             **{
