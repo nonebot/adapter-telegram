@@ -9,7 +9,7 @@ from nonebot.exception import ApiNotAvailable as BaseApiNotAvailable
 
 class TelegramAdapterException(AdapterException):
     def __init__(self):
-        super().__init__("telegram")
+        super().__init__("Telegram")
 
 
 class NoLogException(BaseNoLogException, TelegramAdapterException):
@@ -20,20 +20,14 @@ class ActionFailed(BaseActionFailed, TelegramAdapterException):
     """
     :说明:
       API 请求返回错误信息。
-    :参数:
-      * ``retcode: Optional[int]``: 错误码
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, description: Optional[str] = None):
         super().__init__()
-        self.info = kwargs
+        self.description = description
 
     def __repr__(self):
-        return (
-            f"<ActionFailed "
-            + ", ".join(f"{k}={v}" for k, v in self.info.items())
-            + ">"
-        )
+        return f"<ActionFailed {self.description}>"
 
     def __str__(self):
         return self.__repr__()
@@ -43,8 +37,6 @@ class NetworkError(BaseNetworkError, TelegramAdapterException):
     """
     :说明:
       网络错误。
-    :参数:
-      * ``retcode: Optional[int]``: 错误码
     """
 
     def __init__(self, msg: Optional[str] = None):

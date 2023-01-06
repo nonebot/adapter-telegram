@@ -25,8 +25,13 @@ from nonebot.adapters import Adapter as BaseAdapter
 from .bot import Bot
 from .event import Event
 from .model import InputMedia
-from .exception import NetworkError
 from .config import BotConfig, AdapterConfig
+from .exception import (
+    ActionFailed,
+    NetworkError,
+    ApiNotAvailable,
+    TelegramAdapterException,
+)
 
 
 def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -130,14 +135,14 @@ class Adapter(BaseAdapter):
                     if isinstance(self.driver, ReverseDriver):
                         webhook_bot_configs.append(bot_config)
                     else:
-                        raise Exception
+                        raise ApiNotAvailable
                 else:
                     polling_bot_configs.append(bot_config)
 
             self.setup_webhook(webhook_bot_configs)
             self.setup_polling(polling_bot_configs)
         else:
-            raise Exception
+            raise ApiNotAvailable
 
     @overrides(BaseAdapter)
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:
@@ -213,10 +218,12 @@ class Adapter(BaseAdapter):
                     if not response.content:
                         raise ValueError("Empty response")
                     return json.loads(response.content)["result"]
+                if response.content:
+                    raise ActionFailed(json.loads(response.content)["description"])
                 raise NetworkError(
                     f"HTTP request received unexpected {response.status_code} {response.content}"
                 )
-            except NetworkError:
+            except TelegramAdapterException:
                 raise
             except Exception as e:
                 raise NetworkError("HTTP request failed") from e
