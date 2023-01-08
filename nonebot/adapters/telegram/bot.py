@@ -26,13 +26,25 @@ class Bot(BaseBot, API):
         self.self_id = config.token.split(":")[0]
         self.bot_config = config
 
-    async def call_api(self, api: str, **data: Any) -> Any:
-        result = await super().call_api(api, **data)
+    async def call_api(self, api: str, *args: Any, **kargs: Any) -> Any:
         if hasattr(API, api):
+            sign = inspect.signature(getattr(API, api))
+            args_ = list(args)
+            for param in sign.parameters.values():
+                if (
+                    param.name != "self"
+                    and param.default == param.empty
+                    and param.name not in kargs
+                ):
+                    try:
+                        kargs[param.name] = args_.pop(0)
+                    except IndexError:
+                        kargs[param.name] = None
             return parse_obj_as(
-                inspect.signature(getattr(API, api)).return_annotation, result
+                sign.return_annotation, await super().call_api(api, **kargs)
             )
-        return result
+        else:
+            return await super().call_api(api, **kargs)
 
     def __getattribute__(self, __name: str) -> Any:
         if not __name.startswith("__") and hasattr(API, __name):
