@@ -1,5 +1,8 @@
+import inspect
+from functools import partial
 from typing import Any, Union, Optional, cast
 
+from pydantic import parse_obj_as
 from nonebot.typing import overrides
 
 from nonebot.adapters import Adapter
@@ -22,6 +25,20 @@ class Bot(BaseBot, API):
         self.adapter = adapter
         self.self_id = config.token.split(":")[0]
         self.bot_config = config
+
+    async def call_api(self, api: str, **data: Any) -> Any:
+        result = await super().call_api(api, **data)
+        if hasattr(API, api):
+            return parse_obj_as(
+                inspect.signature(getattr(API, api)).return_annotation, result
+            )
+        return result
+
+    def __getattribute__(self, __name: str) -> Any:
+        if not __name.startswith("__") and hasattr(API, __name):
+            return partial(self.call_api, __name)
+        else:
+            return object.__getattribute__(self, __name)
 
     # TODO 重构
     @overrides(BaseBot)
@@ -51,8 +68,9 @@ class Bot(BaseBot, API):
         )
 
         if isinstance(event, EventWithChat):
-            message_thread_id = getattr(event, "message_thread_id", None)
-            message_thread_id = cast(Optional[int], message_thread_id)
+            message_thread_id = cast(
+                Optional[int], getattr(event, "message_thread_id", None)
+            )
             if isinstance(message, str):
                 return await self.send_message(
                     chat_id=event.chat.id,
@@ -81,7 +99,8 @@ class Bot(BaseBot, API):
                         **kwargs,
                     )
                 elif isinstance(message, File):
-                    return await getattr(self, f"send_{message.type}")(
+                    return await self.call_api(
+                        f"send_{message.type}",
                         chat_id=event.chat.id,
                         message_thread_id=message_thread_id,
                         **{message.type: message.data["file"]},
@@ -96,7 +115,8 @@ class Bot(BaseBot, API):
                         )
                         return await self.send(event, message.data["message"], **kwargs)
                     else:
-                        await getattr(self, f"send_{message.type}")(
+                        await self.call_api(
+                            f"send_{message.type}",
                             chat_id=event.chat.id,
                             message_thread_id=message_thread_id,
                             **message.data,
@@ -150,7 +170,8 @@ class Bot(BaseBot, API):
 
                     else:
                         file = files[0]
-                        return await getattr(self, f"send_{file.type}")(
+                        return await self.call_api(
+                            f"send_{file.type}",
                             chat_id=event.chat.id,
                             message_thread_id=message_thread_id,
                             **{
@@ -192,3 +213,5 @@ class Bot(BaseBot, API):
                         ],
                         **kwargs,
                     )
+        else:
+            raise ApiNotAvailable
