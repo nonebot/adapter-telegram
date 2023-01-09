@@ -214,15 +214,18 @@ class Adapter(BaseAdapter):
         if isinstance(self.driver, ForwardDriver):
             try:
                 response = await self.driver.request(request)
-                if 200 <= response.status_code < 300:
-                    if not response.content:
-                        raise ValueError("Empty response")
-                    return json.loads(response.content)["result"]
                 if response.content:
-                    raise ActionFailed(json.loads(response.content)["description"])
-                raise NetworkError(
-                    f"HTTP request received unexpected {response.status_code} {response.content}"
-                )
+                    if 200 <= response.status_code < 300:
+                        return json.loads(response.content)["result"]
+                    elif 400 <= response.status_code < 404:
+                        raise ActionFailed(json.loads(response.content)["description"])
+                    elif response.status_code == 404:
+                        raise ApiNotAvailable
+                    raise NetworkError(
+                        f"HTTP request received unexpected {response.status_code} {response.content}"
+                    )
+                else:
+                    raise ValueError("Empty response")
             except TelegramAdapterException:
                 raise
             except Exception as e:
