@@ -1,0 +1,38 @@
+{
+    "name": "Default Linux Universal",
+    "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+    "features": {
+        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {}
+    },
+    "postCreateCommand": "mkdir -p __pypackages__ && pipx install pdm && pdm --pep582 >> ~/.bashrc && pdm plugin add pdm-vscode && pdm use python && pdm install && pre-commit uninstall && pre-commit install",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.linting.pylintEnabled": false,
+                "python.analysis.diagnosticMode": "workspace",
+                "python.analysis.typeCheckingMode": "basic",
+                "[python]": {
+                    "editor.defaultFormatter": "ms-python.black-formatter",
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": true
+                    }
+                },
+                "files.exclude": {
+                    "**/__pycache__": true
+                },
+                "files.watcherExclude": {
+                    "**/target/**": true,
+                    "**/__pycache__": true
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.isort",
+                "ms-python.black-formatter",
+                "EditorConfig.EditorConfig",
+                "tamasfe.even-better-toml"
+            ]
+        }
+    }
+}
