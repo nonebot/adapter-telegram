@@ -1,13 +1,12 @@
-[tool.poetry]
+[project]
 name = "nonebot-adapter-telegram"
-version = "0.1.0-beta.4"
+version = "0.1.0b4"
 description = "Telegram Adapter for NoneBot2"
-authors = ["Jigsaw <j1g5aw@foxmail.com>"]
-license = "MIT"
+authors = [{ name = "Jigsaw", email = "j1g5aw@foxmail.com" }]
+dependencies = ["nonebot2<3.0.0,>=2.0.0b1", "anyio<4.0.0,>=3.6.2"]
+requires-python = ">=3.8,<4.0"
 readme = "README.md"
-homepage = "https://v2.nonebot.dev/"
-repository = "https://github.com/nonebot/adapter-telegram"
-documentation = "https://v2.nonebot.dev/"
+license = { text = "MIT" }
 keywords = ["bot", "telegram"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -17,23 +16,22 @@ classifiers = [
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
 ]
-packages = [{ include = "nonebot" }]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-nonebot2 = "^2.0.0b1"
-anyio = "^3.6.2"
+[project.urls]
+homepage = "https://v2.nonebot.dev/"
+repository = "https://github.com/nonebot/adapter-telegram"
+documentation = "https://github.com/nonebot/adapter-telegram/MANUAL.md"
 
-[tool.poetry.group.dev.dependencies]
-pycln = "^2.1.2"
-nonebot2 = { git = "https://github.com/nonebot/nonebot2.git" }
-httpx = "^0.23.0"
+[tool.pdm.dev-dependencies]
+nonebot = [
+  "httpx<1.0.0,>=0.23.0",
+  "fastapi<1.0.0,>=0.89.0",
+  "nonebot2 @ git+https://github.com/nonebot/nonebot2.git",
+]
+pre-commit = ["pycln", "isort", "black", "nonemoji", "pre-commit"]
 
-[tool.poetry.group.formatter.dependencies]
-isort = "^5.10.1"
-black = "^22.3.0"
-nonemoji = "^0.1.2"
-pre-commit = "^2.17.0"
+[tool.pdm.scripts]
+post_install = "pre-commit install"
 
 [tool.black]
 line-length = 88
@@ -54,6 +52,9 @@ extra_standard_library = ["typing_extensions"]
 path = "."
 all = false
 
+[tool.pdm.build]
+includes = ["nonebot"]
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-pep517>=1.0.0"]
+build-backend = "pdm.pep517.api"

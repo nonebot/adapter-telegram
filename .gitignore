@@ -112,6 +112,7 @@ ipython_config.py
 #Pipfile.lock
 
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
+.pdm.toml
 __pypackages__/
 
 # Celery stuff
