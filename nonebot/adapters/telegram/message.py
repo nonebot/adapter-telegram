@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Type, Union, Iterable
+from typing import Any, Dict, List, Type, Union, Literal, Iterable
 
 from nonebot.typing import overrides
 
@@ -26,18 +26,21 @@ class MessageSegment(BaseMessageSegment):
     def is_text(self) -> bool:
         return False
 
+    # TODO need test
     @staticmethod
     def location(latitude: float, longitude: float) -> "MessageSegment":
         return MessageSegment(
             "location", {"latitude": latitude, "longitute": longitude}
         )
 
+    # TODO need test
     @staticmethod
     def venue(
         latitude: float, longitude: float, title: str, address: str
     ) -> "MessageSegment":
         return MessageSegment("venue", {"latitude": latitude, "longitute": longitude})
 
+    # TODO DELAY
     @staticmethod
     def contact():
         pass
@@ -47,17 +50,29 @@ class MessageSegment(BaseMessageSegment):
         return MessageSegment("poll", {"question": question, "options": options})
 
     @staticmethod
-    def dice() -> "MessageSegment":
-        return MessageSegment("dice")
+    def dice(emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲") -> "MessageSegment":
+        return MessageSegment("dice", {"question": emoji})
 
     @staticmethod
     def chat_action(
-        action: str, message: Union["MessageSegment", "Message"]
+        action: Literal[
+            "typing",
+            "upload_photo",
+            "record_video",
+            "upload_video",
+            "record_voice",
+            "upload_voice",
+            "upload_document",
+            "choose_sticker",
+            "find_location",
+            "record_video_note",
+            "upload_video_note",
+        ]
     ) -> "MessageSegment":
         """
         仅发送，用于提醒用户机器人正在准备什么
         """
-        return MessageSegment("chat_action", {"action": action, "message": message})
+        return MessageSegment("chat_action", {"action": action})
 
     # TODO DELAY
     @staticmethod
@@ -69,11 +84,12 @@ class MessageSegment(BaseMessageSegment):
         currency: str,
         prices: List[LabeledPrice],
     ):
-        pass
+        raise NotImplementedError
 
+    # TODO DELAY
     @staticmethod
-    def game(game_short_name: str) -> "MessageSegment":
-        return MessageSegment("game", {"message": game_short_name})
+    def game(game_short_name: str):
+        raise NotImplementedError
 
 
 class Entity(MessageSegment):
@@ -175,10 +191,6 @@ class File(MessageSegment):
         return File("voice", {"file": file})
 
     @staticmethod
-    def sticker(file: Union[str, bytes]) -> "MessageSegment":
-        return File("video_note", {"file": file})
-
-    @staticmethod
     def animation(
         file: Union[str, bytes],
         thumb: Union[None, str, bytes] = None,
@@ -206,6 +218,12 @@ class File(MessageSegment):
     ) -> "MessageSegment":
         return File("video", {"file": file, "thumb": thumb})
 
+
+class UnCombinFile(File):
+    @staticmethod
+    def sticker(file: Union[str, bytes]) -> "MessageSegment":
+        return File("sticker", {"file": file})
+
     @staticmethod
     def video_note(
         file: Union[str, bytes],
@@ -229,9 +247,13 @@ class Message(BaseMessage[MessageSegment]):
     def parse_obj(cls, obj: Dict[str, Any]) -> "Message":
         msg = []
         if "text" in obj or "caption" in obj:
-            key = "text" if "text" in obj else "caption"
+            key, entities_key = (
+                ("text", "entities")
+                if "text" in obj
+                else ("caption", "caption_entities")
+            )
             offset = 0
-            for entity in obj.get("entities", obj.get("caption_entities", [])):
+            for entity in obj.get(entities_key, ()):
                 if entity["offset"] > offset:
                     msg.append(
                         Entity("text", {"text": obj[key][offset : entity["offset"]]})
@@ -251,15 +273,55 @@ class Message(BaseMessage[MessageSegment]):
                 if "user" in entity:
                     nb_entity.data["user"] = User(**entity["user"])
                 msg.append(nb_entity)
-
                 offset = entity["offset"] + entity["length"]
             if offset < len(obj[key]):
                 msg.append(Entity("text", {"text": obj[key][offset:]}))
-        for key in obj:
+            del obj[key]
+            obj.pop(entities_key, None)
+        if "animation" in obj:
+            del obj["document"]
+        for key in tuple(obj.keys()):
             if key == "photo":
                 msg.append(File("photo", {"file": obj[key][-1]["file_id"]}))
-            elif key in ["animation", "audio", "document", "video", "voice"]:
-                msg.append(File(key, {key: obj[key]}))
-            elif key in ["sticker", "video_note", "dice", "poll"]:
-                msg.append(MessageSegment(key, {key: obj[key]}))
+            elif key in ("voice", "audio"):
+                msg.append(File(key, {"file": obj[key]["file_id"]}))
+            elif key in ("animation", "document", "video"):
+                msg.append(
+                    File(
+                        key,
+                        {
+                            "file": obj[key]["file_id"],
+                            "thumb": obj[key].get("thumb", {}).get("file_id", None),
+                        },
+                    )
+                )
+            elif key in ("sticker", "video_note"):
+                msg.append(
+                    UnCombinFile(
+                        key,
+                        {
+                            "file": obj[key]["file_id"],
+                            "thumb": obj[key].get("thumb", {}).get("file_id", None),
+                        },
+                    )
+                )
+            elif key == "dice":
+                msg.append(
+                    MessageSegment(
+                        key, {"emoji": obj[key]["emoji"], "value": obj[key]["value"]}
+                    )
+                )
+            elif key == "poll":
+                msg.append(
+                    MessageSegment(
+                        key,
+                        {
+                            "question": obj[key]["question"],
+                            "options": obj[key]["options"],
+                        },
+                    )
+                )
+            else:
+                continue
+            del obj[key]
         return cls(msg)

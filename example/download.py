@@ -13,7 +13,7 @@ from nonebot.adapters.telegram.event import MessageEvent
 async def _(bot: Bot, event: MessageEvent):
     for seg in event.get_message():
         if isinstance(seg, File):
-            file = await bot.get_file(file_id=seg.get("data")["file"])
+            file = await bot.get_file(file_id=seg.data["file"])
             url = f"https://api.telegram.org/file/bot{bot.bot_config.token}/{file.file_path}"
             async with AsyncClient() as c:
                 async with await open_file(

@@ -13,7 +13,7 @@ from .config import BotConfig
 from .exception import ApiNotAvailable
 from .event import Event, EventWithChat
 from .model import InputMedia, MessageEntity
-from .message import File, Entity, Message, MessageSegment
+from .message import File, Entity, Message, UnCombinFile, MessageSegment
 
 
 class Bot(BaseBot, API):
@@ -119,27 +119,26 @@ class Bot(BaseBot, API):
                         **kwargs,
                     )
                 else:
-                    if message.type == "chat_action":
-                        await self.send_chat_action(
-                            chat_id=event.chat.id,
-                            message_thread_id=message_thread_id,
-                            action=message.data["action"],
-                        )
-                        return await self.send(event, message.data["message"], **kwargs)
-                    else:
-                        await self.call_api(
-                            f"send_{message.type}",
-                            chat_id=event.chat.id,
-                            message_thread_id=message_thread_id,
-                            **message.data,
-                            **kwargs,
-                        )
+                    return await self.call_api(
+                        f"send_{message.type}",
+                        chat_id=event.chat.id,
+                        message_thread_id=message_thread_id,
+                        **message.data,
+                        **kwargs,
+                    )
             else:
                 entities = Message(filter(lambda x: isinstance(x, Entity), message))
-                files = Message(filter(lambda x: isinstance(x, File), message))
+                files = Message(
+                    filter(
+                        lambda x: isinstance(x, File)
+                        and not isinstance(message, UnCombinFile),
+                        message,
+                    )
+                )
                 others = Message(
                     filter(
-                        lambda x: not (isinstance(x, Entity) or isinstance(x, File)),
+                        lambda x: not (isinstance(x, Entity) or isinstance(x, File))
+                        or isinstance(message, UnCombinFile),
                         message,
                     )
                 )
