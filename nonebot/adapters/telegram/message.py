@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Type, Union, Literal, Iterable
+from typing import Any, Dict, List, Type, Union, Literal, Iterable, Optional
 
 from nonebot.typing import overrides
 
@@ -181,8 +181,10 @@ class Entity(MessageSegment):
 
 class File(MessageSegment):
     @staticmethod
-    def photo(file: Union[str, bytes]) -> "MessageSegment":
-        return File("photo", {"file": file})
+    def photo(
+        file: Union[str, bytes], has_spoiler: Optional[bool] = None
+    ) -> "MessageSegment":
+        return File("photo", {"file": file, "has_spoiler": has_spoiler})
 
     @staticmethod
     def voice(
@@ -194,8 +196,11 @@ class File(MessageSegment):
     def animation(
         file: Union[str, bytes],
         thumb: Union[None, str, bytes] = None,
+        has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
-        return File("animation", {"file": file, "thumb": thumb})
+        return File(
+            "animation", {"file": file, "thumb": thumb, "has_spoiler": has_spoiler}
+        )
 
     @staticmethod
     def audio(
@@ -215,8 +220,9 @@ class File(MessageSegment):
     def video(
         file: Union[str, bytes],
         thumb: Union[None, str, bytes] = None,
+        has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
-        return File("video", {"file": file, "thumb": thumb})
+        return File("video", {"file": file, "thumb": thumb, "has_spoiler": has_spoiler})
 
 
 class UnCombinFile(File):
@@ -278,50 +284,33 @@ class Message(BaseMessage[MessageSegment]):
                 msg.append(Entity("text", {"text": obj[key][offset:]}))
             del obj[key]
             obj.pop(entities_key, None)
+        kargs = {}
+        if obj.get("has_media_spoiler", None):
+            kargs["has_spoiler"] = True
+        obj.pop("has_media_spoiler", None)
         if "animation" in obj:
             del obj["document"]
         for key in tuple(obj.keys()):
             if key == "photo":
-                msg.append(File("photo", {"file": obj[key][-1]["file_id"]}))
-            elif key in ("voice", "audio"):
-                msg.append(File(key, {"file": obj[key]["file_id"]}))
-            elif key in ("animation", "document", "video"):
-                msg.append(
-                    File(
-                        key,
-                        {
-                            "file": obj[key]["file_id"],
-                            "thumb": obj[key].get("thumb", {}).get("file_id", None),
-                        },
-                    )
-                )
+                seg = File("photo", {"file": obj[key][-1]["file_id"], **kargs})
+            elif key in ("voice", "audio", "animation", "document", "video"):
+                seg = File(key, {"file": obj[key]["file_id"]})
             elif key in ("sticker", "video_note"):
-                msg.append(
-                    UnCombinFile(
-                        key,
-                        {
-                            "file": obj[key]["file_id"],
-                            "thumb": obj[key].get("thumb", {}).get("file_id", None),
-                        },
-                    )
-                )
+                seg = UnCombinFile(key, {"file": obj[key]["file_id"]})
             elif key == "dice":
-                msg.append(
-                    MessageSegment(
-                        key, {"emoji": obj[key]["emoji"], "value": obj[key]["value"]}
-                    )
+                seg = MessageSegment(
+                    key, {"emoji": obj[key]["emoji"], "value": obj[key]["value"]}
                 )
             elif key == "poll":
-                msg.append(
-                    MessageSegment(
-                        key,
-                        {
-                            "question": obj[key]["question"],
-                            "options": obj[key]["options"],
-                        },
-                    )
+                seg = MessageSegment(
+                    key,
+                    {"question": obj[key]["question"], "options": obj[key]["options"]},
                 )
             else:
                 continue
+            if isinstance(obj[key], dict) and obj[key].get("thumb", None):
+                kargs["thumb"] = obj["key"]["thumb"]["file_id"]
+            seg.data.update(kargs)
+            msg.append(seg)
             del obj[key]
         return cls(msg)
