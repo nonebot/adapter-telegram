@@ -1,8 +1,14 @@
-"""Inline Mode 的示例，未来可能会有较大改动"""
+"""
+Inline Bots：https://core.telegram.org/bots/inline
+"""
 
 from nonebot import on, on_command
 from nonebot.adapters.telegram import Bot
-from nonebot.adapters.telegram.event import MessageEvent, InlineQueryEvent
+from nonebot.adapters.telegram.event import (
+    MessageEvent,
+    InlineQueryEvent,
+    CallbackQueryEvent,
+)
 from nonebot.adapters.telegram.model import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -11,8 +17,7 @@ from nonebot.adapters.telegram.model import (
 )
 
 
-# InlineKeyboard：https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating
-@on_command("inline1").handle()
+@on_command("inline").handle()
 async def _(bot: Bot, event: MessageEvent):
     await bot.send(
         event,
@@ -31,23 +36,37 @@ async def _(bot: Bot, event: MessageEvent):
                         url="https://core.telegram.org/bots/api",
                     )
                 ],
+                [
+                    InlineKeyboardButton(
+                        text="Say hello to me",
+                        callback_data="hello",
+                    )
+                ],
             ]
-        ).json(),
+        ),
     )
 
 
-# InlineQuery：https://core.telegram.org/bots/inline
-@on("").handle()  # 由于我还未给 InlineQueryEvent 分配 event_name，目前只能使用 on("") 来匹配
+@on("inline").handle()
 async def _(bot: Bot, event: InlineQueryEvent):
     await bot.answer_inline_query(
         inline_query_id=event.id,
         results=[
             InlineQueryResultArticle(
-                id="hello",
-                title="Hello InlineMode !",
+                id="hello1",
+                title="Hello",
                 input_message_content=InputTextMessageContent(
-                    message_text="Hello InlineMode !"
+                    message_text="Hello InlineQuery !"
                 ),
-            )
+            ),
         ],
     )
+
+
+@on("inline").handle()
+async def _(bot: Bot, event: CallbackQueryEvent):
+    if event.message:
+        await bot.edit_message_text(
+            "Hello CallbackQuery!", event.message.chat.id, event.message.message_id
+        )
+        await bot.answer_callback_query(event.id, text="Hello CallbackQuery!")

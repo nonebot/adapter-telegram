@@ -11,10 +11,11 @@ from .message import Message
 from .model import Chat, User, Update
 from .model import Message as TelegramMessage
 from .model import (
-    Location,
     OrderInfo,
     ChatMember,
     PollOption,
+    InlineQuery,
+    CallbackQuery,
     MessageEntity,
     ChatInviteLink,
     ChatJoinRequest,
@@ -40,7 +41,7 @@ class Event(BaseEvent):
             "channel_post": MessageEvent,
             "edited_channel_post": EditedMessageEvent,
             "inline_query": InlineQueryEvent,
-            "chosen_inline_result": ChosenInlineResult,
+            "chosen_inline_result": ChosenInlineResultEvent,
             "callback_query": CallbackQueryEvent,
             "shipping_query": ShippingQueryEvent,
             "pre_checkout_query": PreCheckoutQueryEvent,
@@ -99,10 +100,6 @@ class Event(BaseEvent):
         raise ValueError("Event has no message!")
 
     @overrides(BaseEvent)
-    def get_plaintext(self) -> str:
-        raise ValueError("Event has no message!")
-
-    @overrides(BaseEvent)
     def is_tome(self) -> bool:
         return False
 
@@ -119,7 +116,7 @@ class MessageEvent(Event):
     via_bot: Optional[User]
     media_group_id: Optional[str]
     author_signature: Optional[str]
-    reply_to_message: Optional["MessageEvent"] = None
+    reply_to_message: Optional[TelegramMessage]
     message: Message = Message()
 
     @classmethod
@@ -128,7 +125,6 @@ class MessageEvent(Event):
         if not message:
             return NoticeEvent.parse_event(obj)
         else:
-            reply_to_message = obj.pop("reply_to_message", None)
             message_type = obj["chat"]["type"]
             event_map = {
                 "private": PrivateMessageEvent,
@@ -138,8 +134,6 @@ class MessageEvent(Event):
             }
             event = event_map[message_type].parse_event(obj)
             setattr(event, "message", message)
-            if reply_to_message:
-                setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
             return event
 
     @overrides(Event)
@@ -154,10 +148,6 @@ class MessageEvent(Event):
     def get_message(self) -> Message:
         return self.message
 
-    @overrides(Event)
-    def get_plaintext(self) -> str:
-        return self.message.extract_plain_text()
-
     # TODO
     @overrides(Event)
     def is_tome(self) -> bool:
@@ -166,7 +156,7 @@ class MessageEvent(Event):
     @overrides(Event)
     def get_event_description(self) -> str:
         return escape_tag(
-            f"Message {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
+            f"Message {self.message_id} @[Chat {self.chat.id}]: {str(self.message)}"
         )
 
 
@@ -189,6 +179,12 @@ class PrivateMessageEvent(MessageEvent):
     def is_tome(self) -> bool:
         return True
 
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"Message {self.message_id} from {self.from_.id}: {str(self.message)}"
+        )
+
 
 class GroupMessageEvent(MessageEvent):
     from_: User = Field(alias="from")
@@ -206,6 +202,12 @@ class GroupMessageEvent(MessageEvent):
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_{self.from_.id}"
 
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {str(self.message)}"
+        )
+
 
 class ForumTopicMessageEvent(GroupMessageEvent):
     message_thread_id: int
@@ -217,6 +219,12 @@ class ForumTopicMessageEvent(GroupMessageEvent):
     @overrides(MessageEvent)
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {str(self.message)}"
+        )
 
 
 class ChannelPostEvent(MessageEvent):
@@ -239,7 +247,7 @@ class EditedMessageEvent(Event):
     edit_date: int
     media_group_id: Optional[str]
     author_signature: Optional[str]
-    reply_to_message: Optional["MessageEvent"]
+    reply_to_message: Optional["TelegramMessage"]
     message: Message = Message()
 
     @classmethod
@@ -279,7 +287,7 @@ class EditedMessageEvent(Event):
     @overrides(Event)
     def get_event_description(self) -> str:
         return escape_tag(
-            f"EditedMessage {self.message_id} from Chat {self.chat.id}: {str(self.message)}"
+            f"EditedMessage {self.message_id} @[Chat {self.chat.id}]: {str(self.message)}"
         )
 
 
@@ -303,6 +311,12 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
     def is_tome(self) -> bool:
         return True
 
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"EditedMessage {self.message_id} from {self.from_.id}: {str(self.message)}"
+        )
+
 
 class GroupEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(default=None, alias="from")
@@ -320,6 +334,12 @@ class GroupEditedMessageEvent(EditedMessageEvent):
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_{self.from_.id}"
 
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {str(self.message)}"
+        )
+
 
 class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
     message_thread_id: int
@@ -331,6 +351,12 @@ class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
     @overrides(MessageEvent)
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {str(self.message)}"
+        )
 
 
 class EditedChannelPostEvent(EditedMessageEvent):
@@ -372,24 +398,16 @@ class PinnedMessageEvent(NoticeEvent):
     sender_chat: Optional[Chat]
     chat: Chat
     date: int
-    pinned_message: MessageEvent
+    pinned_message: TelegramMessage
 
     @overrides(NoticeEvent)
     def get_event_name(self) -> str:
         return "notice.pinned_message"
 
-    @overrides(NoticeEvent)
-    def get_message(self) -> Message:
-        return self.pinned_message.get_message()
-
-    @overrides(NoticeEvent)
-    def get_plaintext(self) -> str:
-        return self.pinned_message.get_plaintext()
-
     @overrides(Event)
     def get_event_description(self) -> str:
         return escape_tag(
-            f"PinnedMessage {self.pinned_message.message_id} from Chat {self.pinned_message.chat.id}: {str(self.pinned_message.message)}"
+            f"PinnedMessage {self.pinned_message.message_id} @[Chat {self.pinned_message.chat.id}]"
         )
 
 
@@ -433,40 +451,76 @@ class ChatMemberUpdatedEvent(NoticeEvent):
         return "notice.chat_member.updated"
 
 
-class ChatJoinRequestEvent(NoticeEvent, ChatJoinRequest):
+class RequestEvent(Event):
+    @overrides(Event)
+    def get_type(self) -> str:
+        return "request"
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "request"
+
+
+class ChatJoinRequestEvent(RequestEvent, ChatJoinRequest):
     @overrides(NoticeEvent)
     def get_event_name(self) -> str:
-        return "notice.chat_join_request"
+        return "request.chat_join"
 
 
-# TODO
-class InlineQueryEvent(Event):
-    id: str
-    from_: User = Field(alias="from")
-    query: str
-    offset: str
-    chat_type: Optional[str]
-    location: Optional[Location]
+class InlineEvent(Event):
+    @overrides(Event)
+    def get_type(self) -> str:
+        return "inline"
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "inline"
 
 
-# TODO
-class ChosenInlineResultEvent(Event):
-    result_id: str
-    from_: User = Field(alias="from")
-    Location: Optional[Location]
-    inline_message_id: Optional[str]
-    query: str
+class InlineQueryEvent(InlineEvent, InlineQuery):
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "inline.query"
+
+    @overrides(Event)
+    def get_message(self) -> Message:
+        return Message(self.query)
+
+    @overrides(Event)
+    def get_plaintext(self) -> str:
+        return self.query
+
+    @overrides(Event)
+    def is_tome(self) -> bool:
+        return True
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"InlineQuery {self.id} from {self.from_.id}: {str(self.get_message())}"
+        )
 
 
-# TODO
-class CallbackQueryEvent(Event):
-    id: str
-    from_: Optional[User] = Field(default=None, alias="from")
-    message: Optional[TelegramMessage]
-    inline_message_id: Optional[str]
-    chat_instance: Optional[str]
-    data: Optional[str]
-    game_short_name: Optional[str]
+class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "inline.chosen_result"
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(
+            f"ChosenInlineResult {self.result_id} from {self.from_.id} for Query {self.query}"
+        )
+
+
+class CallbackQueryEvent(InlineEvent, CallbackQuery):
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "inline.callback_query"
+
+    @overrides(Event)
+    def get_event_description(self) -> str:
+        return escape_tag(f"CallbackQuery {self.id} from {self.from_.id}: {self.data}")
 
 
 # TODO DELAY
