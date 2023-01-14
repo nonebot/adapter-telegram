@@ -20,7 +20,8 @@ classifiers = [
 [project.urls]
 homepage = "https://v2.nonebot.dev/"
 repository = "https://github.com/nonebot/adapter-telegram"
-documentation = "https://github.com/nonebot/adapter-telegram/MANUAL.md"
+documentation = "https://github.com/nonebot/adapter-telegram/blob/beta/MANUAL.md"
+changelog = "https://github.com/nonebot/adapter-telegram/blob/beta/CHANGELOG.md"
 
 [tool.pdm.dev-dependencies]
 nonebot = [

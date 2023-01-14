@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.5] - 2023-01-14
+
+### 🚀 新功能
+
+- 自动解析 call_api 的返回值，并支持位置参数
+- 新增 `PRIVATE` `GROUP` 等 Permission
+- 部分 MessageSegment 增加 `has_spoiler` 字段
+- 新增 `InlineEvent` `PollEvent` `PollAnswerEvent` 等 Event
+
+### 🐛 Bug 修复
+
+- 修复许多错误字段
+- 不再将所有 Excetion 视为 `NetworkException` 处理
+- 修复部分 MessageSegment 的 data 错误
+
+### 📝 文档
+
+- 添加下载文件的示例
+
 ## [0.1.0-beta.4] - 2022-12-31
 
 ### 🚀 新功能
@@ -76,7 +95,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...HEAD
+[0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...v0.1.0b5
 [0.1.0-beta.4]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...v0.1.0b4
 [0.1.0-beta.3]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b2...v0.1.0b3
 [0.1.0-beta.2]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b1...v0.1.0b2
