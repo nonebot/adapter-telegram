@@ -8,18 +8,16 @@ from nonebot.utils import escape_tag
 from nonebot.adapters import Event as BaseEvent
 
 from .message import Message
-from .model import Chat, User, Update
+from .model import Chat, Poll, User, Update
 from .model import Message as TelegramMessage
 from .model import (
-    OrderInfo,
-    ChatMember,
-    PollOption,
+    PollAnswer,
     InlineQuery,
     CallbackQuery,
-    MessageEntity,
-    ChatInviteLink,
+    ShippingQuery,
     ChatJoinRequest,
-    ShippingAddress,
+    PreCheckoutQuery,
+    ChatMemberUpdated,
     ChosenInlineResult,
 )
 
@@ -438,17 +436,22 @@ class LeftChatMemberEvent(NoticeEvent):
         return "notice.chat_member.left"
 
 
-class ChatMemberUpdatedEvent(NoticeEvent):
-    chat: Chat
-    from_: User = Field(alias="from")
-    date: int
-    old_chat_member: ChatMember
-    new_chat_member: ChatMember
-    invite_link: Optional[ChatInviteLink]
-
+class ChatMemberUpdatedEvent(NoticeEvent, ChatMemberUpdated):
     @overrides(Event)
     def get_event_name(self) -> str:
         return "notice.chat_member.updated"
+
+
+class PollEvent(NoticeEvent, Poll):
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.poll"
+
+
+class PollAnswerEvent(NoticeEvent, PollAnswer):
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.poll_answer"
 
 
 class RequestEvent(Event):
@@ -524,43 +527,10 @@ class CallbackQueryEvent(InlineEvent, CallbackQuery):
 
 
 # TODO DELAY
-class ShippingQueryEvent(Event):
-    id: str
-    from_: User = Field(alias="from")
-    invoice_payload: str
-    shipping_address: ShippingAddress
+class ShippingQueryEvent(Event, ShippingQuery):
+    pass
 
 
 # TODO DELAY
-class PreCheckoutQueryEvent(Event):
-    id: str
-    from_: User = Field(alias="from")
-    currency: str
-    total_amount: int
-    invoice_payload: str
-    shipping_option_id: Optional[str]
-    order_info: Optional[OrderInfo]
-
-
-# TODO
-class PollEvent(Event):
-    id: str
-    question: str
-    options: List[PollOption]
-    total_voter_count: int
-    is_closed: bool
-    is_anonymous: bool
-    type: str
-    allows_multiple_answers: bool
-    correct_option_id: Optional[int]
-    explanation: Optional[str]
-    explanation_entities: Optional[List[MessageEntity]]
-    open_period: Optional[int]
-    close_date: Optional[int]
-
-
-# TODO
-class PollAnswerEvent(Event):
-    poll_id: str
-    user: User
-    option_ids: List[int]
+class PreCheckoutQueryEvent(Event, PreCheckoutQuery):
+    pass
