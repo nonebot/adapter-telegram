@@ -31,11 +31,7 @@ class Bot(BaseBot, API):
             sign = inspect.signature(getattr(API, api))
             args_ = list(args)
             for param in sign.parameters.values():
-                if (
-                    param.name != "self"
-                    and param.default == param.empty
-                    and param.name not in kargs
-                ):
+                if param.name != "self" and param.name not in kargs:
                     try:
                         kargs[param.name] = args_.pop(0)
                     except IndexError:
