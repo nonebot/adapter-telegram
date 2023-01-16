@@ -10,3 +10,7 @@ _✨ Telegram 协议适配 ✨_
 ## Manual
 
 [使用指南](./MANUAL.md)
+
+## Contributing
+
+[贡献指南](./CONTRIBUTING.md)

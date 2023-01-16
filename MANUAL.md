@@ -26,7 +26,7 @@ nb adapter install nonebot-adapter-telegram
 telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI"}]
 ```
 
-> NOTE
+> **Note**
 >
 > 如果你需要让你的 Bot 响应除了 `/` 开头之外的消息，你需要向 BotFather 发送 `/setprivacy` 并选择 `Disable`。
 >
@@ -58,7 +58,8 @@ driver=~fastapi+~httpx
 telegram_proxy = "http://127.0.0.1:10809"
 ```
 
-> NOTE 如果你的代理使用 socks 协议，你需要安装 httpx\[socks\]。
+> **Note**
+> 如果你的代理使用 socks 协议，你需要安装 httpx\[socks\]。
 
 ### 使用 Long polling 获取事件（推荐）
 
@@ -66,7 +67,8 @@ telegram_proxy = "http://127.0.0.1:10809"
 
 ### 使用 Webhook 获取事件（不推荐）
 
-> NOTE 如果你坚持使用此方式获取更新，请确保自己掌握基本的服务器运维知识。
+> **Warning**
+> 如果你坚持使用此方式获取更新，请确保自己掌握基本的服务器运维知识。
 
 <details><summary>点击展开</summary>
 <p>
@@ -83,6 +85,8 @@ telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI", web
 </details>
 
 ## 第一次对话
+
+新建或打开 `bot.py`，填入：
 
 ```python
 import nonebot
@@ -101,13 +105,20 @@ if __name__ == "__main__":
     nonebot.run(app="__mp_main__:app")
 ```
 
+接着：
+
+```shell
+nb run
+```
+
 现在，你可以私聊自己的 Telegram Bot `/echo hello world`，不出意外的话，它将回复你 `hello world`。
 
-> NOTE 更多示例：<https://github.com/nonebot/adapter-telegram/blob/beta/example>
+> **Note**
+> 更多示例：<https://github.com/nonebot/adapter-telegram/blob/beta/example>
 
 ## FAQ（常见问题解答）
 
 - 如何发图/回复/下载文件？  
-  **看[示例](https://github.com/nonebot/adapter-telegram/blob/beta/example)**，示例里没有可以提 Issue。
+  **看[示例](./example)**，示例里没有可以提 Issue。
 - 日志里有一堆 NetworkError 怎么办？  
   请检查你的网络环境。
