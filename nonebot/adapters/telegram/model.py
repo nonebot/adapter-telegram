@@ -217,6 +217,8 @@ class Message(BaseModel):
     pinned_message: Optional["Message"] = None
     invoice: Optional["Invoice"] = None
     successful_payment: Optional["SuccessfulPayment"] = None
+    user_shared: Optional["UserShared"] = None
+    chat_shared: Optional["ChatShared"] = None
     connected_website: Optional[str] = None
     write_access_allowed: Optional["WriteAccessAllowed"] = None
     passport_data: Optional["PassportData"] = None
@@ -420,6 +422,16 @@ class GeneralForumTopicUnhidden(BaseModel):
     pass
 
 
+class UserShared(BaseModel):
+    request_id: int
+    user_id: int
+
+
+class ChatShared(BaseModel):
+    request_id: int
+    chat_id: int
+
+
 class WriteAccessAllowed(BaseModel):
     pass
 
@@ -456,12 +468,31 @@ class WebAppInfo(BaseModel):
     url: str
 
 
+class KeyboardButtonRequestUser(BaseModel):
+    request_id: int
+    user_is_bot: Optional[bool] = None
+    user_is_premium: Optional[bool] = None
+
+
+class KeyboardButtonRequestChat(BaseModel):
+    request_id: int
+    chat_is_channel: bool
+    chat_is_forum: Optional[bool] = None
+    chat_has_username: Optional[bool] = None
+    chat_is_created: Optional[bool] = None
+    user_administrator_rights: Optional["ChatAdministratorRights"] = None
+    bot_administrator_rights: Optional["ChatAdministratorRights"] = None
+    bot_is_member: Optional[bool] = None
+
+
 class KeyboardButtonPollType(BaseModel):
     type: Optional[str] = None
 
 
 class KeyboardButton(BaseModel):
     text: str
+    request_user: Optional[KeyboardButtonRequestUser] = None
+    request_chat: Optional[KeyboardButtonRequestChat] = None
     request_contact: Optional[bool] = None
     request_location: Optional[bool] = None
     request_poll: Optional[KeyboardButtonPollType] = None
@@ -596,7 +627,12 @@ class ChatMemberRestricted(ChatMember):
     can_pin_messages: bool
     can_manage_topics: bool
     can_send_messages: bool
-    can_send_media_messages: bool
+    can_send_audios: bool
+    can_send_documents: bool
+    can_send_photos: bool
+    can_send_videos: bool
+    can_send_video_notes: bool
+    can_send_voice_notes: bool
     can_send_polls: bool
     can_send_other_messages: bool
     can_add_web_page_previews: bool
@@ -624,6 +660,7 @@ class ChatMemberUpdated(BaseModel):
 class ChatJoinRequest(BaseModel):
     chat: Chat
     from_: User = Field(alias="from")
+    user_chat_id: int
     date: int
     bio: Optional[str] = None
     invite_link: Optional[ChatInviteLink] = None
@@ -631,7 +668,12 @@ class ChatJoinRequest(BaseModel):
 
 class ChatPermissions(BaseModel):
     can_send_messages: Optional[bool] = None
-    can_send_media_messages: Optional[bool] = None
+    can_send_audios: Optional[bool] = None
+    can_send_documents: Optional[bool] = None
+    can_send_photos: Optional[bool] = None
+    can_send_videos: Optional[bool] = None
+    can_send_video_notes: Optional[bool] = None
+    can_send_voice_notes: Optional[bool] = None
     can_send_polls: Optional[bool] = None
     can_send_other_messages: Optional[bool] = None
     can_add_web_page_previews: Optional[bool] = None
@@ -1293,5 +1335,6 @@ class GameHighScore(BaseModel):
 Update.update_forward_refs()
 Chat.update_forward_refs()
 Message.update_forward_refs()
+KeyboardButtonRequestChat.update_forward_refs()
 InlineKeyboardButton.update_forward_refs()
 InputInvoiceMessageContent.update_forward_refs()

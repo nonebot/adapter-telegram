@@ -525,6 +525,7 @@ class API:
         chat_id: Union[int, str],
         user_id: int,
         permissions: ChatPermissions,
+        use_independent_chat_permissions: Optional[bool] = None,
         until_date: Optional[int] = None,
     ) -> Literal[True]:
         ...
@@ -564,7 +565,10 @@ class API:
         ...
 
     async def set_chat_permissions(
-        self, chat_id: Union[int, str], permissions: ChatPermissions
+        self,
+        chat_id: Union[int, str],
+        permissions: ChatPermissions,
+        use_independent_chat_permissions: Optional[bool] = None,
     ) -> Literal[True]:
         ...
 
