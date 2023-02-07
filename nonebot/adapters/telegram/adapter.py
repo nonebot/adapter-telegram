@@ -164,44 +164,47 @@ class Adapter(BaseAdapter):
                         media.media,
                     )
                     media.media = f"attach://upload{upload_count}"
-                else:
-                    try:
-                        async with await open_file(media.media, "rb") as f:
-                            files[pathlib.Path(media.media).name] = (
-                                pathlib.Path(media.media).name,
-                                await f.read(),
-                            )
-                        media.media = f"attach://{pathlib.Path(media.media).name}"
-                    except:
-                        pass
-        else:
-            for key, value in data.items():
+                elif (file := pathlib.Path(media.media)).is_file():
+                    async with await open_file(media.media, "rb") as f:
+                        files[file.name] = (file.name, await f.read())
+                    media.media = f"attach://{pathlib.Path(media.media).name}"
+        elif api in (
+            "sendPhoto",
+            "sendAudio",
+            "sendDocument",
+            "sendVideo",
+            "sendAnimation",
+            "sendVoice",
+            "sendVideoNote",
+        ):
+            type = api[4:].lower()
+            for key in (type, "thumb"):
+                value = data.pop(key, None)
                 if isinstance(value, bytes):
                     files[key] = ("upload", value)
-                elif isinstance(value, str) or not isinstance(value, Iterable):
-                    try:
-                        async with await open_file(value, "rb") as f:
-                            files[key] = (pathlib.Path(value).name, await f.read())
-                    except:
-                        pass
-            for key in files:
-                data.pop(key)
+                elif (
+                    isinstance(value, str)
+                    and (file := pathlib.Path(str(value))).is_file()
+                ):
+                    async with await open_file(value, "rb") as f:
+                        files[key] = (file.name, await f.read())
 
-        # 最后处理 data 以符合 DataTypes
-        for key in data:
-            if (
-                not isinstance(data[key], str)
-                and isinstance(data[key], Iterable)
-                or isinstance(data[key], BaseModel)
-            ):
-                data[key] = json.dumps(
-                    data[key],
-                    default=(
-                        lambda o: o.dict(exclude_none=True)
-                        if isinstance(o, BaseModel)
-                        else pydantic_encoder(o)
-                    ),
-                )
+        if files:
+            # 最后处理 data 以符合 DataTypes
+            for key in data:
+                if (
+                    not isinstance(data[key], str)
+                    and isinstance(data[key], Iterable)
+                    or isinstance(data[key], BaseModel)
+                ):
+                    data[key] = json.dumps(
+                        data[key],
+                        default=(
+                            lambda o: o.dict(exclude_none=True)
+                            if isinstance(o, BaseModel)
+                            else pydantic_encoder(o)
+                        ),
+                    )
 
         request = Request(
             "POST",
