@@ -701,7 +701,6 @@ class API:
     async def reopen_forum_topic(
         self, chat_id: Union[int, str], message_thread_id: int
     ) -> Literal[True]:
-
         ...
 
     async def delete_forum_topic(
