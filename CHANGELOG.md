@@ -108,7 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 支持多个机器人同时在线
 
 [Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b6...HEAD
-[0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...v0.1.0b6
+[0.1.0-beta.6]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...v0.1.0b6
 [0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...v0.1.0b5
 [0.1.0-beta.4]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...v0.1.0b4
 [0.1.0-beta.3]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b2...v0.1.0b3
