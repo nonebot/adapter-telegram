@@ -8,9 +8,11 @@ from nonebot.utils import escape_tag
 from nonebot.adapters import Event as BaseEvent
 
 from .message import Message
-from .model import Chat, Poll, User, Update
-from .model import Message as TelegramMessage
 from .model import (
+    Chat,
+    Poll,
+    User,
+    Update,
     PollAnswer,
     InlineQuery,
     CallbackQuery,
@@ -114,7 +116,7 @@ class MessageEvent(Event):
     via_bot: Optional[User]
     media_group_id: Optional[str]
     author_signature: Optional[str]
-    reply_to_message: Optional[TelegramMessage]
+    reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
 
     @classmethod
@@ -123,6 +125,7 @@ class MessageEvent(Event):
         if not message:
             return NoticeEvent.parse_event(obj)
         else:
+            reply_to_message = obj.pop("reply_to_message", None)
             message_type = obj["chat"]["type"]
             event_map = {
                 "private": PrivateMessageEvent,
@@ -132,6 +135,8 @@ class MessageEvent(Event):
             }
             event = event_map[message_type].parse_event(obj)
             setattr(event, "message", message)
+            if reply_to_message:
+                setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
             return event
 
     @overrides(Event)
@@ -245,11 +250,12 @@ class EditedMessageEvent(Event):
     edit_date: int
     media_group_id: Optional[str]
     author_signature: Optional[str]
-    reply_to_message: Optional["TelegramMessage"]
+    reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
 
     @classmethod
     def __parse_event(cls, obj: dict):
+        reply_to_message = obj.pop("reply_to_message", None)
         message_type = obj["chat"]["type"]
         event_map = {
             "private": PrivateEditedMessageEvent,
@@ -258,7 +264,11 @@ class EditedMessageEvent(Event):
             "channel": EditedChannelPostEvent,
         }
         event = event_map[message_type].parse_event(obj)
-        setattr(event, "message", Message.parse_obj(event))
+        setattr(event, "message", Message.parse_obj(obj))
+        if reply_to_message:
+            setattr(
+                event, "reply_to_message", MessageEvent.parse_event(reply_to_message)
+            )
         return event
 
     @overrides(Event)
@@ -396,16 +406,27 @@ class PinnedMessageEvent(NoticeEvent):
     sender_chat: Optional[Chat]
     chat: Chat
     date: int
-    pinned_message: TelegramMessage
+    pinned_message: MessageEvent = Field(default=None)
+
+    @classmethod
+    def __parse_event(cls, obj: dict):
+        pinned_message = obj.pop("pinned_message")
+        event = cls.parse_obj(obj)
+        setattr(event, "pinned_message", MessageEvent.parse_event(pinned_message))
+        return event
 
     @overrides(NoticeEvent)
     def get_event_name(self) -> str:
         return "notice.pinned_message"
 
+    @overrides(NoticeEvent)
+    def get_message(self) -> Message:
+        return self.pinned_message.get_message()
+
     @overrides(Event)
     def get_event_description(self) -> str:
         return escape_tag(
-            f"PinnedMessage {self.pinned_message.message_id} @[Chat {self.pinned_message.chat.id}]"
+            f"PinnedMessage {self.pinned_message.message_id} @[Chat {self.pinned_message.chat.id}]: {str(self.get_message())}"
         )
 
 

@@ -11,7 +11,11 @@ from nonebot.adapters.telegram.event import MessageEvent
 
 @on_command("download").handle()
 async def _(bot: Bot, event: MessageEvent):
-    for seg in event.get_message():
+    for seg in (
+        event.get_message() + event.reply_to_message.get_message()
+        if event.reply_to_message
+        else []
+    ):
         if isinstance(seg, File):
             file = await bot.get_file(file_id=seg.data["file"])
             url = f"https://api.telegram.org/file/bot{bot.bot_config.token}/{file.file_path}"
