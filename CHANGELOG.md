@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.6] - 2023-02-07
+
+### 🚀 新功能
+
+- 适配 Telegram Bot API 6.5
+- 将 `reply_to_message` `pinned_message` 解析为 `MessageEvent`
+- 使用真正的 Long Polling 获取事件
+
+### 🐛 Bug 修复
+
+- 为指定的 Method 而非全部 Method 检测文件
+
 ## [0.1.0-beta.5] - 2023-01-14
 
 ### 🚀 新功能
@@ -95,7 +107,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b6...HEAD
+[0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...v0.1.0b6
 [0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...v0.1.0b5
 [0.1.0-beta.4]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...v0.1.0b4
 [0.1.0-beta.3]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b2...v0.1.0b3
