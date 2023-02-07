@@ -87,33 +87,33 @@ class Adapter(BaseAdapter):
                 logger.info("Start poll")
                 self.bot_connect(bot)
 
-                update_offset = 0
+                update_offset = None
                 while True:
                     try:
-                        message = await bot.get_updates(offset=update_offset)
-                        if update_offset:
+                        message = await bot.get_updates(
+                            offset=update_offset, timeout=30
+                        )
+                        if update_offset is not None:
                             for msg in message:
-                                if msg.update_id > update_offset:
-                                    update_offset = msg.update_id
-                                    event = Event.parse_event(
-                                        msg.dict(by_alias=True, exclude_none=True)
-                                    )
-                                    logger.debug(
-                                        escape_tag(
-                                            str(
-                                                event.dict(
-                                                    exclude_none=True,
-                                                    exclude={"telegram_model"},
-                                                )
+                                update_offset = msg.update_id + 1
+                                event = Event.parse_event(
+                                    msg.dict(by_alias=True, exclude_none=True)
+                                )
+                                logger.debug(
+                                    escape_tag(
+                                        str(
+                                            event.dict(
+                                                exclude_none=True,
+                                                exclude={"telegram_model"},
                                             )
                                         )
                                     )
-                                    await handle_event(bot, event)
+                                )
+                                await handle_event(bot, event)
                         elif message:
                             update_offset = message[0].update_id
                     except Exception as e:
                         logger.error(e)
-                    await asyncio.sleep(bot.bot_config.polling_interval)
 
             for bot_config in bot_configs:
                 self.tasks.append(asyncio.create_task(poll(Bot(self, bot_config))))
