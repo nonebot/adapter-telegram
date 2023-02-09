@@ -1,7 +1,7 @@
 import json
 import asyncio
 import pathlib
-from typing import Any, Dict, List, Iterable, cast
+from typing import Any, Dict, List, cast
 
 from anyio import open_file
 from nonebot.log import logger
@@ -189,22 +189,17 @@ class Adapter(BaseAdapter):
                     async with await open_file(value, "rb") as f:
                         files[key] = (file.name, await f.read())
 
-        if files:
-            # 最后处理 data 以符合 DataTypes
-            for key in data:
-                if (
-                    not isinstance(data[key], str)
-                    and isinstance(data[key], Iterable)
-                    or isinstance(data[key], BaseModel)
-                ):
-                    data[key] = json.dumps(
-                        data[key],
-                        default=(
-                            lambda o: o.dict(exclude_none=True)
-                            if isinstance(o, BaseModel)
-                            else pydantic_encoder(o)
-                        ),
-                    )
+        # 最后处理 data 以符合 DataTypes
+        for key in data:
+            if not isinstance(data[key], str):
+                data[key] = json.dumps(
+                    data[key],
+                    default=(
+                        lambda o: o.dict(exclude_none=True)
+                        if isinstance(o, BaseModel)
+                        else pydantic_encoder(o)
+                    ),
+                )
 
         request = Request(
             "POST",
