@@ -4,12 +4,11 @@ import pathlib
 from typing import Any, Dict, List, cast
 
 from anyio import open_file
-from nonebot.log import logger
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
-from nonebot.utils import escape_tag
 from nonebot.message import handle_event
 from pydantic.json import pydantic_encoder
+from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import (
     URL,
     Driver,
@@ -38,6 +37,9 @@ def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in data.items() if v is not None}
 
 
+log = logger_wrapper("Telegram")
+
+
 class Adapter(BaseAdapter):
     @overrides(BaseAdapter)
     def __init__(self, driver: Driver, **kwargs: Any):
@@ -63,9 +65,9 @@ class Adapter(BaseAdapter):
             for bot_config in bot_configs:
                 bot = Bot(self, bot_config)
                 try:
-                    logger.info("Delete old webhook")
+                    log("INFO", "Delete old webhook")
                     await bot.delete_webhook()
-                    logger.info("Set new webhook")
+                    log("INFO", "Set new webhook")
                     await bot.set_webhook(
                         url=f"{bot.bot_config.webhook_url}/telegram/{bot.self_id}"
                     )
@@ -79,16 +81,16 @@ class Adapter(BaseAdapter):
                     )
                     self.setup_http_server(setup)
                 except Exception as e:
-                    logger.error(e)
+                    log("ERROR", f"Setup for bot {bot.self_id} failed", e)
 
     def setup_polling(self, bot_configs: List[BotConfig]):
         @self.driver.on_startup
         async def _():
             async def poll(bot: Bot):
                 try:
-                    logger.info("Delete old webhook")
+                    log("INFO", "Delete old webhook")
                     await bot.delete_webhook()
-                    logger.info("Start poll")
+                    log("INFO", "Start poll")
                     self.bot_connect(bot)
 
                     update_offset = None
@@ -103,7 +105,8 @@ class Adapter(BaseAdapter):
                                     event = Event.parse_event(
                                         msg.dict(by_alias=True, exclude_none=True)
                                     )
-                                    logger.debug(
+                                    log(
+                                        "DEBUG",
                                         escape_tag(
                                             str(
                                                 event.dict(
@@ -111,15 +114,15 @@ class Adapter(BaseAdapter):
                                                     exclude={"telegram_model"},
                                                 )
                                             )
-                                        )
+                                        ),
                                     )
                                     await handle_event(bot, event)
                             elif message:
                                 update_offset = message[0].update_id
                         except Exception as e:
-                            logger.error(e)
+                            log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
                 except Exception as e:
-                    logger.error(e)
+                    log("ERROR", f"Setup for bot {bot.self_id} failed", e)
 
             for bot_config in bot_configs:
                 self.tasks.append(asyncio.create_task(poll(Bot(self, bot_config))))
@@ -226,4 +229,4 @@ class Adapter(BaseAdapter):
         except TelegramAdapterException:
             raise
         except Exception as e:
-            raise e
+            raise NetworkError("HTTP request failed") from e
