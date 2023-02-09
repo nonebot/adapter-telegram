@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.7] - 2023-02-09
+
+### 🚀 新功能
+
+- 使用 NoneBot2 自带的 logger_wrapper
+
+### 🐛 Bug 修复
+
+- 修复上版本的 JSON 序列化错误
+
 ## [0.1.0-beta.6] - 2023-02-07
 
 ### 🚀 新功能
@@ -107,7 +117,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b6...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b7...HEAD
+[0.1.0-beta.7]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b6...v0.1.0b7
 [0.1.0-beta.6]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...v0.1.0b6
 [0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...v0.1.0b5
 [0.1.0-beta.4]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b3...v0.1.0b4
