@@ -62,58 +62,64 @@ class Adapter(BaseAdapter):
 
             for bot_config in bot_configs:
                 bot = Bot(self, bot_config)
-                logger.info("Delete old webhook")
-                await bot.delete_webhook()
-                logger.info("Set new webhook")
-                await bot.set_webhook(
-                    url=f"{bot.bot_config.webhook_url}/telegram/{bot.self_id}"
-                )
+                try:
+                    logger.info("Delete old webhook")
+                    await bot.delete_webhook()
+                    logger.info("Set new webhook")
+                    await bot.set_webhook(
+                        url=f"{bot.bot_config.webhook_url}/telegram/{bot.self_id}"
+                    )
 
-                self.bot_connect(bot)
-                setup = HTTPServerSetup(
-                    URL(f"/telegram/{bot.self_id}"),
-                    "POST",
-                    self.get_name(),
-                    handle_http,
-                )
-                self.setup_http_server(setup)
+                    self.bot_connect(bot)
+                    setup = HTTPServerSetup(
+                        URL(f"/telegram/{bot.self_id}"),
+                        "POST",
+                        self.get_name(),
+                        handle_http,
+                    )
+                    self.setup_http_server(setup)
+                except Exception as e:
+                    logger.error(e)
 
     def setup_polling(self, bot_configs: List[BotConfig]):
         @self.driver.on_startup
         async def _():
             async def poll(bot: Bot):
-                logger.info("Delete old webhook")
-                await bot.delete_webhook()
-                logger.info("Start poll")
-                self.bot_connect(bot)
+                try:
+                    logger.info("Delete old webhook")
+                    await bot.delete_webhook()
+                    logger.info("Start poll")
+                    self.bot_connect(bot)
 
-                update_offset = None
-                while True:
-                    try:
-                        message = await bot.get_updates(
-                            offset=update_offset, timeout=30
-                        )
-                        if update_offset is not None:
-                            for msg in message:
-                                update_offset = msg.update_id + 1
-                                event = Event.parse_event(
-                                    msg.dict(by_alias=True, exclude_none=True)
-                                )
-                                logger.debug(
-                                    escape_tag(
-                                        str(
-                                            event.dict(
-                                                exclude_none=True,
-                                                exclude={"telegram_model"},
+                    update_offset = None
+                    while True:
+                        try:
+                            message = await bot.get_updates(
+                                offset=update_offset, timeout=30
+                            )
+                            if update_offset is not None:
+                                for msg in message:
+                                    update_offset = msg.update_id + 1
+                                    event = Event.parse_event(
+                                        msg.dict(by_alias=True, exclude_none=True)
+                                    )
+                                    logger.debug(
+                                        escape_tag(
+                                            str(
+                                                event.dict(
+                                                    exclude_none=True,
+                                                    exclude={"telegram_model"},
+                                                )
                                             )
                                         )
                                     )
-                                )
-                                await handle_event(bot, event)
-                        elif message:
-                            update_offset = message[0].update_id
-                    except Exception as e:
-                        logger.error(e)
+                                    await handle_event(bot, event)
+                            elif message:
+                                update_offset = message[0].update_id
+                        except Exception as e:
+                            logger.error(e)
+                except Exception as e:
+                    logger.error(e)
 
             for bot_config in bot_configs:
                 self.tasks.append(asyncio.create_task(poll(Bot(self, bot_config))))
@@ -126,23 +132,17 @@ class Adapter(BaseAdapter):
             await asyncio.gather(*self.tasks, return_exceptions=True)
 
     def setup(self) -> None:
-        if isinstance(self.driver, ForwardDriver):
-            polling_bot_configs = []
-            webhook_bot_configs = []
+        polling_bot_configs = []
+        webhook_bot_configs = []
 
-            for bot_config in self.adapter_config.telegram_bots:
-                if bot_config.webhook_url:
-                    if isinstance(self.driver, ReverseDriver):
-                        webhook_bot_configs.append(bot_config)
-                    else:
-                        raise ApiNotAvailable
-                else:
-                    polling_bot_configs.append(bot_config)
+        for bot_config in self.adapter_config.telegram_bots:
+            if bot_config.webhook_url:
+                webhook_bot_configs.append(bot_config)
+            else:
+                polling_bot_configs.append(bot_config)
 
-            self.setup_webhook(webhook_bot_configs)
-            self.setup_polling(polling_bot_configs)
-        else:
-            raise ApiNotAvailable
+        self.setup_webhook(webhook_bot_configs)
+        self.setup_polling(polling_bot_configs)
 
     @overrides(BaseAdapter)
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:
@@ -209,22 +209,21 @@ class Adapter(BaseAdapter):
             files=files,
             proxy=self.adapter_config.proxy,
         )
-        if isinstance(self.driver, ForwardDriver):
-            try:
-                response = await self.driver.request(request)
-                if response.content:
-                    if 200 <= response.status_code < 300:
-                        return json.loads(response.content)["result"]
-                    elif 400 <= response.status_code < 404:
-                        raise ActionFailed(json.loads(response.content)["description"])
-                    elif response.status_code == 404:
-                        raise ApiNotAvailable
-                    raise NetworkError(
-                        f"HTTP request received unexpected {response.status_code} {response.content}"
-                    )
-                else:
-                    raise ValueError("Empty response")
-            except TelegramAdapterException:
-                raise
-            except Exception as e:
-                raise NetworkError("HTTP request failed") from e
+        try:
+            response = await self.request(request)
+            if response.content:
+                if 200 <= response.status_code < 300:
+                    return json.loads(response.content)["result"]
+                elif 400 <= response.status_code < 404:
+                    raise ActionFailed(json.loads(response.content)["description"])
+                elif response.status_code == 404:
+                    raise ApiNotAvailable
+                raise NetworkError(
+                    f"HTTP request received unexpected {response.status_code} {response.content}"
+                )
+            else:
+                raise ValueError("Empty response")
+        except TelegramAdapterException:
+            raise
+        except Exception as e:
+            raise e
