@@ -1,6 +1,7 @@
 import json
 import asyncio
 import pathlib
+from functools import partial
 from typing import Any, Dict, List, cast
 
 from anyio import open_file
@@ -56,7 +57,10 @@ class Adapter(BaseAdapter):
     def setup_webhook(self, bot_configs: List[BotConfig]):
         @self.driver.on_startup
         async def _():
-            async def handle_http(request: Request) -> Response:
+            async def handle_http(bot_config: BotConfig, request: Request) -> Response:
+                token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+                if bot_config.webhook_token and token != bot_config.webhook_token:
+                    return Response(401)
                 if request.content:
                     message: dict = json.loads(request.content)
                     await handle_event(bot, Event.parse_event(message))
@@ -69,7 +73,8 @@ class Adapter(BaseAdapter):
                     await bot.delete_webhook()
                     log("INFO", "Set new webhook")
                     await bot.set_webhook(
-                        url=f"{bot.bot_config.webhook_url}/telegram/{bot.self_id}"
+                        url=f"{bot_config.webhook_url}/telegram/{bot.self_id}",
+                        secret_token=bot_config.webhook_token,
                     )
 
                     self.bot_connect(bot)
@@ -77,7 +82,7 @@ class Adapter(BaseAdapter):
                         URL(f"/telegram/{bot.self_id}"),
                         "POST",
                         self.get_name(),
-                        handle_http,
+                        partial(handle_http, bot_config),
                     )
                     self.setup_http_server(setup)
                 except Exception as e:

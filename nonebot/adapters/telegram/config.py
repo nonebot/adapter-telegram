@@ -9,13 +9,16 @@ class BotConfig(BaseModel):
 
     :配置项:
       - ``token``: telegram bot token
-      - ``webhook_url``: WebHook 域名
       - ``api_server``: 自定义 API 服务器
+      - ``webhook_url``: WebHook 域名
+      - ``webhook_token``: WebHook secret_token
+
     """
 
     token: str
-    webhook_url: Optional[str] = None
     api_server: str = "https://api.telegram.org/"
+    webhook_url: Optional[str] = None
+    webhook_token: Optional[str] = None
 
     class Config:
         extra = "ignore"
