@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Literal, Optional
 from typing_extensions import Protocol, runtime_checkable
 
 from pydantic import Field
@@ -13,14 +13,21 @@ from .model import (
     Poll,
     User,
     Update,
+    PhotoSize,
     PollAnswer,
     InlineQuery,
     CallbackQuery,
     ShippingQuery,
     ChatJoinRequest,
+    ForumTopicClosed,
+    ForumTopicEdited,
     PreCheckoutQuery,
     ChatMemberUpdated,
+    ForumTopicCreated,
     ChosenInlineResult,
+    ForumTopicReopened,
+    GeneralForumTopicHidden,
+    GeneralForumTopicUnhidden,
 )
 
 
@@ -113,7 +120,9 @@ class MessageEvent(Event):
     forward_from_message_id: Optional[int]
     forward_signature: Optional[str]
     forward_sender_name: Optional[str]
+    forward_date: Optional[int]
     via_bot: Optional[User]
+    has_protected_content: Optional[Literal[True]]
     media_group_id: Optional[str]
     author_signature: Optional[str]
     reply_to_message: Optional["MessageEvent"] = None
@@ -384,10 +393,28 @@ class NoticeEvent(Event):
     def __parse_event(cls, obj: dict) -> "Event":
         if "pinned_message" in obj:
             return PinnedMessageEvent.parse_event(obj)
-        elif "new_chat_member" in obj:
+        elif "new_chat_members" in obj:
             return NewChatMemberEvent.parse_event(obj)
         elif "left_chat_member" in obj:
             return LeftChatMemberEvent.parse_event(obj)
+        elif "new_chat_title" in obj:
+            return NewChatTitleEvent.parse_event(obj)
+        elif "new_chat_photo" in obj:
+            return NewChatPhotoEvent.parse_event(obj)
+        elif "delete_chat_photo" in obj:
+            return DeleteChatPhotoEvent.parse_event(obj)
+        elif "forum_topic_created" in obj:
+            return ForumTopicCreatedEvent.parse_event(obj)
+        elif "forum_topic_edited" in obj:
+            return ForumTopicEditedEvent.parse_event(obj)
+        elif "forum_topic_closed" in obj:
+            return ForumTopicClosedEvent.parse_event(obj)
+        elif "forum_topic_reopened" in obj:
+            return ForumTopicReopenedEvent.parse_event(obj)
+        elif "general_forum_topic_hidden" in obj:
+            return GeneralForumTopicHiddenEvent.parse_event(obj)
+        elif "general_forum_topic_unhidden" in obj:
+            return GeneralForumTopicUnhiddenEvent.parse_event(obj)
         else:
             return cls._parse_event(obj)
 
@@ -435,9 +462,7 @@ class NewChatMemberEvent(NoticeEvent):
     from_: Optional[User] = Field(default=None, alias="from")
     chat: Chat
     date: int
-    new_chat_participant: Optional[User]
-    new_chat_member: User
-    new_chat_members: Optional[List[User]]
+    new_chat_members: List[User]
 
     @overrides(NoticeEvent)
     def get_event_name(self) -> str:
@@ -449,7 +474,6 @@ class LeftChatMemberEvent(NoticeEvent):
     from_: Optional[User] = Field(default=None, alias="from")
     chat: Chat
     date: int
-    left_chat_participant: Optional[User]
     left_chat_member: User
 
     @overrides(Event)
@@ -473,6 +497,109 @@ class PollAnswerEvent(NoticeEvent, PollAnswer):
     @overrides(Event)
     def get_event_name(self) -> str:
         return "notice.poll_answer"
+
+
+class NewChatTitleEvent(NoticeEvent):
+    date: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    new_chat_title: str
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat.new_title"
+
+
+class NewChatPhotoEvent(NoticeEvent):
+    date: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    new_chat_photo: List[PhotoSize]
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat.new_photo"
+
+
+class DeleteChatPhotoEvent(NoticeEvent):
+    date: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    delete_chat_photo: Literal[True]
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.chat.delete_photo"
+
+
+class ForumTopicCreatedEvent(NoticeEvent):
+    message_thread_id: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    forum_topic_created: ForumTopicCreated
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.forum_topic.created"
+
+
+class ForumTopicEditedEvent(NoticeEvent):
+    message_thread_id: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    forum_topic_edited: ForumTopicEdited
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.forum_topic.edited"
+
+
+class ForumTopicClosedEvent(NoticeEvent):
+    message_thread_id: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    forum_topic_closed: ForumTopicClosed
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.forum_topic.closed"
+
+
+class ForumTopicReopenedEvent(NoticeEvent):
+    message_thread_id: int
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    forum_topic_reopened: ForumTopicReopened
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.forum_topic.reopened"
+
+
+class GeneralForumTopicHiddenEvent(NoticeEvent):
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    general_forum_topic_hidden: GeneralForumTopicHidden
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.general_forum_topic.hidden"
+
+
+class GeneralForumTopicUnhiddenEvent(NoticeEvent):
+    from_: Optional[User] = Field(default=None, alias="from")
+    chat: Chat
+    date: int
+    general_forum_topic_unhidden: GeneralForumTopicUnhidden
+
+    @overrides(Event)
+    def get_event_name(self) -> str:
+        return "notice.general_forum_topic.unhidden"
 
 
 class RequestEvent(Event):
