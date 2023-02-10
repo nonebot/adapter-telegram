@@ -1,7 +1,6 @@
 import json
 import asyncio
 import pathlib
-from functools import partial
 from typing import Any, Dict, List, cast
 
 from anyio import open_file
@@ -57,14 +56,26 @@ class Adapter(BaseAdapter):
     def setup_webhook(self, bot_configs: List[BotConfig]):
         @self.driver.on_startup
         async def _():
-            async def handle_http(bot_config: BotConfig, request: Request) -> Response:
+            async def handle_http(request: Request) -> Response:
                 token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-                if bot_config.webhook_token and token != bot_config.webhook_token:
-                    return Response(401)
-                if request.content:
-                    message: dict = json.loads(request.content)
-                    await handle_event(bot, Event.parse_event(message))
-                return Response(204)
+                for bot in self.bots.values():
+                    bot = cast(Bot, bot)
+                    if bot.secret_token == token:
+                        if request.content:
+                            message: dict = json.loads(request.content)
+                            asyncio.create_task(
+                                handle_event(bot, Event.parse_event(message))
+                            )
+                        return Response(204)
+                return Response(401)
+
+            setup = HTTPServerSetup(
+                URL(f"/telegram"),
+                "POST",
+                self.get_name(),
+                handle_http,
+            )
+            self.setup_http_server(setup)
 
             for bot_config in bot_configs:
                 bot = Bot(self, bot_config)
@@ -73,18 +84,11 @@ class Adapter(BaseAdapter):
                     await bot.delete_webhook()
                     log("INFO", "Set new webhook")
                     await bot.set_webhook(
-                        url=f"{bot_config.webhook_url}/telegram/{bot.self_id}",
-                        secret_token=bot_config.webhook_token,
+                        url=f"{self.adapter_config.telegram_webhook_url}/telegram",
+                        secret_token=bot.secret_token,
                     )
-
                     self.bot_connect(bot)
-                    setup = HTTPServerSetup(
-                        URL(f"/telegram/{bot.self_id}"),
-                        "POST",
-                        self.get_name(),
-                        partial(handle_http, bot_config),
-                    )
-                    self.setup_http_server(setup)
+
                 except Exception as e:
                     log("ERROR", f"Setup for bot {bot.self_id} failed", e)
 
@@ -144,7 +148,7 @@ class Adapter(BaseAdapter):
         webhook_bot_configs = []
 
         for bot_config in self.adapter_config.telegram_bots:
-            if bot_config.webhook_url:
+            if bot_config.is_webhook:
                 webhook_bot_configs.append(bot_config)
             else:
                 polling_bot_configs.append(bot_config)

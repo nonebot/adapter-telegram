@@ -1,4 +1,5 @@
 import inspect
+from uuid import uuid4
 from functools import partial
 from typing import Any, Union, Optional, cast
 
@@ -25,6 +26,7 @@ class Bot(BaseBot, API):
         self.adapter = adapter
         self.self_id = config.token.split(":")[0]
         self.bot_config = config
+        self.secret_token = uuid4().hex
 
     async def call_api(self, api: str, *args: Any, **kargs: Any) -> Any:
         if hasattr(API, api):

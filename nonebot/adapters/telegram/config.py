@@ -10,15 +10,13 @@ class BotConfig(BaseModel):
     :配置项:
       - ``token``: telegram bot token
       - ``api_server``: 自定义 API 服务器
-      - ``webhook_url``: WebHook 域名
-      - ``webhook_token``: WebHook secret_token
+      - ``is_webhook``: 是否使用 webhook
 
     """
 
     token: str
     api_server: str = "https://api.telegram.org/"
-    webhook_url: Optional[str] = None
-    webhook_token: Optional[str] = None
+    is_webhook: bool = False
 
     class Config:
         extra = "ignore"
@@ -33,10 +31,12 @@ class AdapterConfig(BaseModel):
 
       - ``proxy``: 自定义代理
       - ``telegram_bots`` 机器人单独配置
+      - ``telegram_webhook_url``: 自定义 webhook url
     """
 
     proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
     telegram_bots: List["BotConfig"] = []
+    telegram_webhook_url: Optional[str] = None
 
     class Config:
         extra = "ignore"
