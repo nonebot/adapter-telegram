@@ -20,7 +20,15 @@ class MessageSegment(BaseMessageSegment):
 
     @overrides(BaseMessageSegment)
     def __str__(self) -> str:
+        if self.is_text():
+            return self.data.get("text", "")
         return ""
+
+    def __repr__(self) -> str:
+        if self.is_text():
+            return self.data.get("text", "")
+        params = ", ".join([f"{k}={v}" for k, v in self.data.items() if v is not None])
+        return f"[{self.type}{':' if params else ''}{params}]"
 
     @overrides(BaseMessageSegment)
     def is_text(self) -> bool:
@@ -93,10 +101,6 @@ class MessageSegment(BaseMessageSegment):
 
 
 class Entity(MessageSegment):
-    @overrides(BaseMessageSegment)
-    def __str__(self) -> str:
-        return self.data["text"]
-
     @overrides(BaseMessageSegment)
     def is_text(self) -> bool:
         return True
@@ -239,6 +243,9 @@ class UnCombinFile(File):
 
 
 class Message(BaseMessage[MessageSegment]):
+    def __repr__(self) -> str:
+        return "".join(repr(seg) for seg in self)
+
     @classmethod
     @overrides(BaseMessage)
     def get_segment_class(cls) -> Type["MessageSegment"]:

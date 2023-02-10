@@ -76,7 +76,6 @@ class Bot(BaseBot, API):
                 "allow_sending_without_reply": allow_sending_without_reply,
             }
         )
-
         if isinstance(event, EventWithChat):
             message_thread_id = cast(
                 Optional[int], getattr(event, "message_thread_id", None)

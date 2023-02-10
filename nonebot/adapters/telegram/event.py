@@ -110,6 +110,16 @@ class Event(BaseEvent):
     def is_tome(self) -> bool:
         return False
 
+    def get_message_description(self) -> str:
+        msg_string: List[str] = []
+        for seg in self.get_message():
+            text = escape_tag(repr(seg))
+            if seg.type == "text":
+                msg_string.append(text)
+            else:
+                msg_string.append(f"<le>{text}</le>")
+        return "".join(msg_string)
+
 
 class MessageEvent(Event):
     message_id: int
@@ -167,9 +177,7 @@ class MessageEvent(Event):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"Message {self.message_id} @[Chat {self.chat.id}]: {str(self.message)}"
-        )
+        return f"Message {self.message_id} @[Chat {self.chat.id}]: {self.get_message_description()}"
 
 
 class PrivateMessageEvent(MessageEvent):
@@ -193,9 +201,7 @@ class PrivateMessageEvent(MessageEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"Message {self.message_id} from {self.from_.id}: {str(self.message)}"
-        )
+        return f"Message {self.message_id} from {self.from_.id}: {self.get_message_description()}"
 
 
 class GroupMessageEvent(MessageEvent):
@@ -216,9 +222,7 @@ class GroupMessageEvent(MessageEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {str(self.message)}"
-        )
+        return f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {self.get_message_description()}"
 
 
 class ForumTopicMessageEvent(GroupMessageEvent):
@@ -234,9 +238,7 @@ class ForumTopicMessageEvent(GroupMessageEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {str(self.message)}"
-        )
+        return f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {self.get_message_description()}"
 
 
 class ChannelPostEvent(MessageEvent):
@@ -303,9 +305,7 @@ class EditedMessageEvent(Event):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"EditedMessage {self.message_id} @[Chat {self.chat.id}]: {str(self.message)}"
-        )
+        return f"EditedMessage {self.message_id} @[Chat {self.chat.id}]: {self.get_message_description()}"
 
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
@@ -330,9 +330,7 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"EditedMessage {self.message_id} from {self.from_.id}: {str(self.message)}"
-        )
+        return f"EditedMessage {self.message_id} from {self.from_.id}: {self.get_message_description()}"
 
 
 class GroupEditedMessageEvent(EditedMessageEvent):
@@ -353,9 +351,7 @@ class GroupEditedMessageEvent(EditedMessageEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {str(self.message)}"
-        )
+        return f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {self.get_message_description()}"
 
 
 class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
@@ -371,9 +367,7 @@ class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {str(self.message)}"
-        )
+        return f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {self.get_message_description()}"
 
 
 class EditedChannelPostEvent(EditedMessageEvent):
@@ -452,9 +446,7 @@ class PinnedMessageEvent(NoticeEvent):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"PinnedMessage {self.pinned_message.message_id} @[Chat {self.pinned_message.chat.id}]: {str(self.get_message())}"
-        )
+        return f"PinnedMessage {self.pinned_message.message_id} @[Chat {self.pinned_message.chat.id}]: {self.get_message_description()}"
 
 
 class NewChatMemberEvent(NoticeEvent):
@@ -647,9 +639,7 @@ class InlineQueryEvent(InlineEvent, InlineQuery):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"InlineQuery {self.id} from {self.from_.id}: {str(self.get_message())}"
-        )
+        return f"InlineQuery {self.id} from {self.from_.id}: {self.get_message_description()}"
 
 
 class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
@@ -659,9 +649,7 @@ class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(
-            f"ChosenInlineResult {self.result_id} from {self.from_.id} for Query {self.query}"
-        )
+        return f"ChosenInlineResult {self.result_id} from {self.from_.id} for Query {self.query}"
 
 
 class CallbackQueryEvent(InlineEvent, CallbackQuery):
@@ -671,7 +659,7 @@ class CallbackQueryEvent(InlineEvent, CallbackQuery):
 
     @overrides(Event)
     def get_event_description(self) -> str:
-        return escape_tag(f"CallbackQuery {self.id} from {self.from_.id}: {self.data}")
+        return f"CallbackQuery {self.id} from {self.from_.id}: {self.data}"
 
 
 # TODO DELAY
