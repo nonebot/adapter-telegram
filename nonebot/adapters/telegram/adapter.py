@@ -191,7 +191,8 @@ class Adapter(BaseAdapter):
         ):
             type = api[4:].lower()
             for key in (type, "thumb"):
-                value = data.pop(key, None)
+                if (value := data.pop(key, None)) is None:
+                    continue
                 if isinstance(value, bytes):
                     files[key] = ("upload", value)
                 elif (
@@ -200,6 +201,8 @@ class Adapter(BaseAdapter):
                 ):
                     async with await open_file(value, "rb") as f:
                         files[key] = (file.name, await f.read())
+                else:
+                    data[key] = value
 
         # 最后处理 data 以符合 DataTypes
         for key in data:
