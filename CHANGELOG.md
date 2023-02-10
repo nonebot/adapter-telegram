@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.8] - 2023-02-10
+
+### 💥 破坏性变更
+
+- WebHook 模式下自动生成 secret_token ([#22](https://github.com/nonebot/adapter-telegram/issues/22))
+
+### 🚀 新功能
+
+- 新增更多 NoticeEvent
+- 更好的 MessageSegment 显示
+
+### 🐛 Bug 修复
+
+- 修复上版本会在发送时删除 `File` 的问题
+
 ## [0.1.0-beta.7] - 2023-02-09
 
 ### 🚀 新功能
@@ -117,7 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b7...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b8...HEAD
+[0.1.0-beta.8]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b7...v0.1.0b8
 [0.1.0-beta.7]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b6...v0.1.0b7
 [0.1.0-beta.6]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...v0.1.0b6
 [0.1.0-beta.5]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b4...v0.1.0b5

@@ -57,12 +57,12 @@ summary = "Distribution utilities"
 
 [[package]]
 name = "fastapi"
-version = "0.90.0"
+version = "0.90.1"
 requires_python = ">=3.7"
 summary = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 dependencies = [
     "pydantic!=1.7,!=1.7.1,!=1.7.2,!=1.7.3,!=1.8,!=1.8.1,<2.0.0,>=1.6.2",
-    "starlette<=0.23.0,>=0.22.0",
+    "starlette<0.24.0,>=0.22.0",
 ]
 
 [[package]]
@@ -165,7 +165,7 @@ name = "nonebot2"
 version = "2.0.0rc3"
 requires_python = ">=3.8,<4.0"
 git = "https://github.com/nonebot/nonebot2.git"
-revision = "c03e4161c7573e441b16e080ba65cb0d7f30e1f7"
+revision = "635668e6d4fd02f4c5f9504b7db964183a89e541"
 summary = "An asynchronous python bot framework."
 dependencies = [
     "loguru<1.0.0,>=0.6.0",
@@ -445,9 +445,9 @@ content_hash = "sha256:480fb2e2728126ae6984a6da53d67a5dac9660fb92357f970208cb1cd
     {url = "https://files.pythonhosted.org/packages/58/07/815476ae605bcc5f95c87a62b95e74a1bce0878bc7a3119bc2bf4178f175/distlib-0.3.6.tar.gz", hash = "sha256:14bad2d9b04d3a36127ac97f30b12a19268f211063d8f8ee4f47108896e11b46"},
     {url = "https://files.pythonhosted.org/packages/76/cb/6bbd2b10170ed991cf64e8c8b85e01f2fb38f95d1bc77617569e0b0b26ac/distlib-0.3.6-py2.py3-none-any.whl", hash = "sha256:f35c4b692542ca110de7ef0bea44d73981caeb34ca0b9b6b2e6d7790dda8f80e"},
 ]
-"fastapi 0.90.0" = [
-    {url = "https://files.pythonhosted.org/packages/0a/5d/bc9d118f2ab83d1a08afbf47d5e8cb73e73f7bb54cc441d88f2c605030e3/fastapi-0.90.0.tar.gz", hash = "sha256:8ebb3e1349f8f8a9932fb7cbc072e502c405298bc9145fdb2cca085a138f692b"},
-    {url = "https://files.pythonhosted.org/packages/9c/76/a127502eb94aed0ad863ead6a8c9ccdf1e77b7b3a840cdc78ba6fa3c3296/fastapi-0.90.0-py3-none-any.whl", hash = "sha256:e95fc14d7823db6b70c409288edec7823150e77d5c4a28da2794d3b24979eefe"},
+"fastapi 0.90.1" = [
+    {url = "https://files.pythonhosted.org/packages/2f/91/8abc12dcec2427c9631fdf15bff006ab5c6cba04b420d346b6c101740db8/fastapi-0.90.1-py3-none-any.whl", hash = "sha256:d4e4bd820204eeaa19879bf129bbce73db09bdc209d5d83a064b40b2b00557b0"},
+    {url = "https://files.pythonhosted.org/packages/82/e3/bae55c2b6c93bf20a3fddc7227500e49d5b7e8e58d351f0317ad0f9ce73f/fastapi-0.90.1.tar.gz", hash = "sha256:d17e85deb3a350b731467e7bf035e158faffa381310a1b7356421e916fcc64f2"},
 ]
 "filelock 3.9.0" = [
     {url = "https://files.pythonhosted.org/packages/0b/dc/eac02350f06c6ed78a655ceb04047df01b02c6b7ea3fc02d4df24ca87d24/filelock-3.9.0.tar.gz", hash = "sha256:7b319f24340b51f55a2bf7a12ac0755a9b03e718311dac567a0f4f7fabd2f5de"},
