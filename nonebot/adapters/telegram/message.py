@@ -316,7 +316,7 @@ class Message(BaseMessage[MessageSegment]):
             else:
                 continue
             if isinstance(obj[key], dict) and obj[key].get("thumb", None):
-                kargs["thumb"] = obj["key"]["thumb"]["file_id"]
+                kargs["thumb"] = obj[key]["thumb"]["file_id"]
             seg.data.update(kargs)
             msg.append(seg)
             del obj[key]
