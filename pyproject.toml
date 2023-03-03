@@ -27,9 +27,16 @@ changelog = "https://github.com/nonebot/adapter-telegram/blob/beta/CHANGELOG.md"
 nonebot = [
   "httpx<1.0.0,>=0.23.0",
   "fastapi<1.0.0,>=0.89.0",
+  "uvicorn>=0.12.0,<0.21.0",
   "nonebot2 @ git+https://github.com/nonebot/nonebot2.git",
 ]
 pre-commit = ["pycln", "isort", "black", "nonemoji", "pre-commit"]
+tests = [
+    "nonebug>=0.3.1",
+    "pytest-asyncio>=0.20.3",
+    "pytest-cov>=4.0.0",
+    "pytest-xdist>=3.2.0",
+]
 
 [tool.black]
 line-length = 88
@@ -50,8 +57,18 @@ extra_standard_library = ["typing_extensions"]
 path = "."
 all = false
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [tool.pyright]
+reportShadowedImports = false
+pythonVersion = "3.8"
+pythonPlatform = "All"
 exclude = ["__pypackages__"]
+executionEnvironments = [
+  { root = "./tests", extraPaths = ["./"] },
+  { root = "./" },
+]
 
 [tool.pdm.build]
 includes = ["nonebot"]
