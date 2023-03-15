@@ -137,6 +137,7 @@ class MessageEvent(Event):
     author_signature: Optional[str]
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
+    _tome: bool = False
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
@@ -170,10 +171,9 @@ class MessageEvent(Event):
     def get_message(self) -> Message:
         return self.message
 
-    # TODO
     @overrides(Event)
     def is_tome(self) -> bool:
-        return super().is_tome()
+        return self._tome
 
     @overrides(Event)
     def get_event_description(self) -> str:
@@ -297,11 +297,6 @@ class EditedMessageEvent(Event):
     @overrides(Event)
     def get_plaintext(self) -> str:
         return self.message.extract_plain_text()
-
-    # TODO
-    @overrides(Event)
-    def is_tome(self) -> bool:
-        return super().is_tome()
 
     @overrides(Event)
     def get_event_description(self) -> str:

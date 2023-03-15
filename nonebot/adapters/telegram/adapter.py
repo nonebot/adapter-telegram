@@ -6,18 +6,9 @@ from typing import Any, Dict, List, cast
 from anyio import open_file
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
-from nonebot.message import handle_event
 from pydantic.json import pydantic_encoder
 from nonebot.utils import escape_tag, logger_wrapper
-from nonebot.drivers import (
-    URL,
-    Driver,
-    Request,
-    Response,
-    ForwardDriver,
-    ReverseDriver,
-    HTTPServerSetup,
-)
+from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
 
 from nonebot.adapters import Adapter as BaseAdapter
 
@@ -53,88 +44,63 @@ class Adapter(BaseAdapter):
     def get_name(cls) -> str:
         return "Telegram"
 
-    def setup_webhook(self, bot_configs: List[BotConfig]):
+    def setup_webhook(self, bot: Bot):
         @self.driver.on_startup
         async def _():
-            async def handle_http(request: Request) -> Response:
-                token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-                for bot in self.bots.values():
-                    bot = cast(Bot, bot)
-                    if bot.secret_token == token:
-                        if request.content:
-                            message: dict = json.loads(request.content)
-                            asyncio.create_task(
-                                handle_event(bot, Event.parse_event(message))
-                            )
-                        return Response(204)
-                return Response(401)
+            try:
+                bot.username = (await bot.get_me()).username
+                log("INFO", "Delete old webhook")
+                await bot.delete_webhook()
+                log("INFO", "Set new webhook")
+                await bot.set_webhook(
+                    url=f"{self.adapter_config.telegram_webhook_url}/telegram",
+                    secret_token=bot.secret_token,
+                )
+                self.bot_connect(bot)
+            except Exception as e:
+                log("ERROR", f"Setup for bot {bot.self_id} failed", e)
 
-            setup = HTTPServerSetup(
-                URL(f"/telegram"),
-                "POST",
-                self.get_name(),
-                handle_http,
-            )
-            self.setup_http_server(setup)
+    async def poll(self, bot: Bot):
+        try:
+            bot.username = (await bot.get_me()).username
+            log("INFO", "Delete old webhook")
+            await bot.delete_webhook()
+            log("INFO", "Start poll")
+            self.bot_connect(bot)
 
-            for bot_config in bot_configs:
-                bot = Bot(self, bot_config)
+            update_offset = None
+            while True:
                 try:
-                    log("INFO", "Delete old webhook")
-                    await bot.delete_webhook()
-                    log("INFO", "Set new webhook")
-                    await bot.set_webhook(
-                        url=f"{self.adapter_config.telegram_webhook_url}/telegram",
-                        secret_token=bot.secret_token,
-                    )
-                    self.bot_connect(bot)
-
+                    updates = await bot.get_updates(offset=update_offset, timeout=30)
+                    if update_offset is not None:
+                        for update in updates:
+                            update_offset = update.update_id + 1
+                            event = Event.parse_event(
+                                update.dict(by_alias=True, exclude_none=True)
+                            )
+                            log(
+                                "DEBUG",
+                                escape_tag(
+                                    str(
+                                        event.dict(
+                                            exclude_none=True,
+                                            exclude={"telegram_model"},
+                                        )
+                                    )
+                                ),
+                            )
+                            await bot.handle_event(event)
+                    elif updates:
+                        update_offset = updates[0].update_id
                 except Exception as e:
-                    log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+                    log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
+        except Exception as e:
+            log("ERROR", f"Setup for bot {bot.self_id} failed", e)
 
-    def setup_polling(self, bot_configs: List[BotConfig]):
+    def setup_polling(self, bot: Bot):
         @self.driver.on_startup
         async def _():
-            async def poll(bot: Bot):
-                try:
-                    log("INFO", "Delete old webhook")
-                    await bot.delete_webhook()
-                    log("INFO", "Start poll")
-                    self.bot_connect(bot)
-
-                    update_offset = None
-                    while True:
-                        try:
-                            message = await bot.get_updates(
-                                offset=update_offset, timeout=30
-                            )
-                            if update_offset is not None:
-                                for msg in message:
-                                    update_offset = msg.update_id + 1
-                                    event = Event.parse_event(
-                                        msg.dict(by_alias=True, exclude_none=True)
-                                    )
-                                    log(
-                                        "DEBUG",
-                                        escape_tag(
-                                            str(
-                                                event.dict(
-                                                    exclude_none=True,
-                                                    exclude={"telegram_model"},
-                                                )
-                                            )
-                                        ),
-                                    )
-                                    await handle_event(bot, event)
-                            elif message:
-                                update_offset = message[0].update_id
-                        except Exception as e:
-                            log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
-                except Exception as e:
-                    log("ERROR", f"Setup for bot {bot.self_id} failed", e)
-
-            for bot_config in bot_configs:
-                self.tasks.append(asyncio.create_task(poll(Bot(self, bot_config))))
+            self.tasks.append(asyncio.create_task(self.poll(bot)))
 
         @self.driver.on_shutdown
         async def _():
@@ -143,18 +109,32 @@ class Adapter(BaseAdapter):
                     task.cancel()
             await asyncio.gather(*self.tasks, return_exceptions=True)
 
+    async def handle_http(self, request: Request) -> Response:
+        token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
+        for bot in self.bots.values():
+            bot = cast(Bot, bot)
+            if bot.secret_token == token:
+                if request.content:
+                    update: dict = json.loads(request.content)
+                    asyncio.create_task(bot.handle_event(Event.parse_event(update)))
+                return Response(204)
+        return Response(401)
+
     def setup(self) -> None:
-        polling_bot_configs = []
-        webhook_bot_configs = []
-
+        self.setup_http_server(
+            HTTPServerSetup(
+                URL("/telegram"),
+                "POST",
+                self.get_name(),
+                self.handle_http,
+            )
+        )
         for bot_config in self.adapter_config.telegram_bots:
+            bot = Bot(self, bot_config)
             if bot_config.is_webhook:
-                webhook_bot_configs.append(bot_config)
+                self.setup_webhook(bot)
             else:
-                polling_bot_configs.append(bot_config)
-
-        self.setup_webhook(webhook_bot_configs)
-        self.setup_polling(polling_bot_configs)
+                self.setup_polling(bot)
 
     @overrides(BaseAdapter)
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:

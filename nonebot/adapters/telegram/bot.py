@@ -5,6 +5,7 @@ from typing import Any, Union, Optional, cast
 
 from pydantic import parse_obj_as
 from nonebot.typing import overrides
+from nonebot.message import handle_event
 
 from nonebot.adapters import Adapter
 from nonebot.adapters import Bot as BaseBot
@@ -12,8 +13,8 @@ from nonebot.adapters import Bot as BaseBot
 from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
-from .event import Event, EventWithChat
 from .model import InputMedia, MessageEntity
+from .event import Event, MessageEvent, EventWithChat
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 
 
@@ -25,8 +26,36 @@ class Bot(BaseBot, API):
     def __init__(self, adapter: "Adapter", config: BotConfig):
         self.adapter = adapter
         self.self_id = config.token.split(":")[0]
+        self.username: Optional[str] = None
         self.bot_config = config
         self.secret_token = uuid4().hex
+
+    def _check_tome(self, event: MessageEvent):
+        def del_first_segment(message: Message):
+            del message[0]
+            if not message:
+                message.append(Entity.text(""))
+            elif message[0].is_text():
+                message[0].data["text"] = message[0].data["text"].lstrip()
+                if not str(message[0]):
+                    del_first_segment(message)
+
+        segment = event.message[0]
+        if segment.type == "mention":
+            if segment.data.get("text", "")[1:] == self.username:
+                del_first_segment(event.message)
+                event._tome = True
+        elif segment.type == "text":
+            for nickname in self.config.nickname:
+                if nickname in segment.data.get("text", ""):
+                    del_first_segment(event.message)
+                    event._tome = True
+                    break
+
+    async def handle_event(self, event: Event):
+        if isinstance(event, MessageEvent):
+            self._check_tome(event)
+        await handle_event(self, event)
 
     async def call_api(self, api: str, *args: Any, **kargs: Any) -> Any:
         if hasattr(API, api):

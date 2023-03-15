@@ -3,13 +3,11 @@ from pathlib import Path
 
 import pytest
 
+from nonebot.adapters.telegram.event import Event, PrivateMessageEvent
+
 
 @pytest.mark.asyncio
 async def test_message_parse_obj():
-    from nonebot.adapters.telegram.message import File, Entity
-    from nonebot.adapters.telegram.event import PrivateMessageEvent
-    from nonebot.adapters.telegram import Event, Message, MessageSegment
-
     with (Path(__file__).parent / "updates.json").open("r", encoding="utf8") as f:
         test_updates = json.load(f)
 
