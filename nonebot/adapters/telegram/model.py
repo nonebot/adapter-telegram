@@ -225,10 +225,10 @@ class Message(BaseModel):
     proximity_alert_triggered: Optional["ProximityAlertTriggered"] = None
     forum_topic_created: Optional["ForumTopicCreated"] = None
     forum_topic_edited: Optional["ForumTopicEdited"] = None
-    general_forum_topic_hidden: Optional["GeneralForumTopicHidden"] = None
-    general_forum_topic_unhidden: Optional["GeneralForumTopicUnhidden"] = None
     forum_topic_closed: Optional["ForumTopicClosed"] = None
     forum_topic_reopened: Optional["ForumTopicReopened"] = None
+    general_forum_topic_hidden: Optional["GeneralForumTopicHidden"] = None
+    general_forum_topic_unhidden: Optional["GeneralForumTopicUnhidden"] = None
     video_chat_scheduled: Optional["VideoChatScheduled"] = None
     video_chat_started: Optional["VideoChatStarted"] = None
     video_chat_ended: Optional["VideoChatEnded"] = None
@@ -265,7 +265,7 @@ class Animation(BaseModel):
     width: int
     height: int
     duration: int
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
@@ -280,13 +280,13 @@ class Audio(BaseModel):
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
 
 
 class Document(BaseModel):
     file_id: str
     file_unique_id: str
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
@@ -298,7 +298,7 @@ class Video(BaseModel):
     width: int
     height: int
     duration: int
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     file_name: Optional[str] = None
     mime_type: Optional[str] = None
     file_size: Optional[int] = None
@@ -309,7 +309,7 @@ class VideoNote(BaseModel):
     file_unique_id: str
     length: int
     duration: int
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     file_size: Optional[int] = None
 
 
@@ -736,6 +736,14 @@ class BotCommandScopeChatMember(BotCommandScope):
     user_id: int
 
 
+class BotDescription(BaseModel):
+    description: str
+
+
+class BotShortDescription(BaseModel):
+    short_description: str
+
+
 class MenuButton(BaseModel):
     type: str
 
@@ -777,7 +785,7 @@ class InputMediaPhoto(InputMedia):
 
 class InputMediaVideo(InputMedia):
     type: Literal["video"] = "video"
-    thumb: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[InputFile, str]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -787,7 +795,7 @@ class InputMediaVideo(InputMedia):
 
 class InputMediaAnimation(InputMedia):
     type: Literal["animation"] = "animation"
-    thumb: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[InputFile, str]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -796,7 +804,7 @@ class InputMediaAnimation(InputMedia):
 
 class InputMediaAudio(InputMedia):
     type: Literal["audio"] = "audio"
-    thumb: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[InputFile, str]] = None
     duration: Optional[int] = None
     performer: Optional[str] = None
     title: Optional[str] = None
@@ -804,7 +812,7 @@ class InputMediaAudio(InputMedia):
 
 class InputMediaDocument(InputMedia):
     type: Literal["document"] = "document"
-    thumb: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[InputFile, str]] = None
     disable_content_type_detection: Optional[bool] = None
 
 
@@ -823,12 +831,13 @@ class Sticker(BaseModel):
     height: int
     is_animated: bool
     is_video: bool
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
     emoji: Optional[str] = None
     set_name: Optional[str] = None
     premium_animation: Optional[File] = None
     mask_position: Optional[MaskPosition] = None
     custom_emoji_id: Optional[str] = None
+    needs_repainting: Optional[Literal[True]] = None
     file_size: Optional[int] = None
 
 
@@ -839,7 +848,14 @@ class StickerSet(BaseModel):
     is_animated: bool
     is_video: bool
     stickers: List[Sticker]
-    thumb: Optional[PhotoSize] = None
+    thumbnail: Optional[PhotoSize] = None
+
+
+class InputSticker(BaseModel):
+    sticker: Union[InputFile, str]
+    emoji_list: List[str]
+    mask_position: Optional[MaskPosition] = None
+    keywords: Optional[List[str]] = None
 
 
 class InlineQuery(BaseModel):
@@ -925,15 +941,15 @@ class InlineQueryResultArticle(InlineQueryResult):
     url: Optional[str] = None
     hide_url: Optional[bool] = None
     description: Optional[str] = None
-    thumb_url: Optional[str] = None
-    thumb_width: Optional[int] = None
-    thumb_height: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultPhoto(InlineQueryResult):
     type: Literal["photo"] = "photo"
     photo_url: str
-    thumb_url: str
+    thumbnail_url: str
     photo_width: Optional[int] = None
     photo_height: Optional[int] = None
     title: Optional[str] = None
@@ -950,8 +966,8 @@ class InlineQueryResultGif(InlineQueryResult):
     gif_width: Optional[int] = None
     gif_height: Optional[int] = None
     gif_duration: Optional[int] = None
-    thumb_url: str
-    thumb_mime_type: Optional[str] = None
+    thumbnail_url: str
+    thumbnail_mime_type: Optional[str] = None
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
@@ -965,8 +981,8 @@ class InlineQueryResultMpeg4Gif(InlineQueryResult):
     mpeg4_width: Optional[int] = None
     mpeg4_height: Optional[int] = None
     mpeg4_duration: Optional[int] = None
-    thumb_url: str
-    thumb_mime_type: Optional[str] = None
+    thumbnail_url: str
+    thumbnail_mime_type: Optional[str] = None
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
@@ -978,7 +994,7 @@ class InlineQueryResultVideo(InlineQueryResult):
     type: Literal["video"] = "video"
     video_url: str
     mime_type: str
-    thumb_url: str
+    thumbnail_url: str
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
@@ -1023,9 +1039,9 @@ class InlineQueryResultDocument(InlineQueryResult):
     mime_type: str
     description: Optional[str] = None
     input_message_content: Optional[InputMessageContent] = None
-    thumb_url: Optional[str] = None
-    thumb_width: Optional[int] = None
-    thumb_height: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultLocation(InlineQueryResult):
@@ -1038,9 +1054,9 @@ class InlineQueryResultLocation(InlineQueryResult):
     heading: Optional[int] = None
     proximity_alert_radius: Optional[int] = None
     input_message_content: Optional[InputMessageContent] = None
-    thumb_url: Optional[str] = None
-    thumb_width: Optional[int] = None
-    thumb_height: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultVenue(InlineQueryResult):
@@ -1054,9 +1070,9 @@ class InlineQueryResultVenue(InlineQueryResult):
     google_place_id: Optional[str] = None
     google_place_type: Optional[str] = None
     input_message_content: Optional[InputMessageContent] = None
-    thumb_url: Optional[str] = None
-    thumb_width: Optional[int] = None
-    thumb_height: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultContact(InlineQueryResult):
@@ -1067,9 +1083,9 @@ class InlineQueryResultContact(InlineQueryResult):
     user_id: Optional[int] = None
     vcard: Optional[str] = None
     input_message_content: Optional[InputMessageContent] = None
-    thumb_url: Optional[str] = None
-    thumb_width: Optional[int] = None
-    thumb_height: Optional[int] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnali_height: Optional[int] = None
 
 
 class InlineQueryResultGame(InlineQueryResult):

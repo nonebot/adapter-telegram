@@ -22,6 +22,7 @@ from .model import (
     MaskPosition,
     GameHighScore,
     MessageEntity,
+    BotDescription,
     ChatInviteLink,
     ShippingOption,
     BotCommandScope,
@@ -33,6 +34,7 @@ from .model import (
     SentWebAppMessage,
     UserProfilePhotos,
     InputMediaDocument,
+    BotShortDescription,
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
     InlineKeyboardMarkup,
@@ -179,7 +181,7 @@ class API:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumb: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[InputFile, str]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -200,7 +202,7 @@ class API:
         chat_id: Union[int, str],
         document: Union[InputFile, str],
         message_thread_id: Optional[int] = None,
-        thumb: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[InputFile, str]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
@@ -228,7 +230,7 @@ class API:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[InputFile, str]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
@@ -257,7 +259,7 @@ class API:
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumb: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[InputFile, str]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
@@ -308,7 +310,7 @@ class API:
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumb: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[InputFile, str]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -768,6 +770,28 @@ class API:
     ) -> List[BotCommand]:
         ...
 
+    async def set_my_description(
+        self, description: Optional[str] = None, language_code: Optional[str] = None
+    ) -> Literal[True]:
+        ...
+
+    async def get_my_description(
+        self, language_code: Optional[str] = None
+    ) -> BotDescription:
+        ...
+
+    async def set_my_short_description(
+        self,
+        short_description: Optional[str] = None,
+        language_code: Optional[str] = None,
+    ) -> Literal[True]:
+        ...
+
+    async def get_my_short_description(
+        self, language_code: Optional[str] = None
+    ) -> BotShortDescription:
+        ...
+
     async def set_chat_menu_button(
         self, chat_id: Optional[int] = None, menu_button: Optional[MenuButton] = None
     ) -> Literal[True]:
@@ -850,6 +874,7 @@ class API:
         chat_id: Union[int, str],
         sticker: Union[InputFile, str],
         message_thread_id: Optional[int] = None,
+        emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -873,7 +898,9 @@ class API:
     ) -> List[Sticker]:
         ...
 
-    async def upload_sticker_file(self, user_id: int, png_sticker: InputFile) -> File:
+    async def upload_sticker_file(
+        self, user_id: int, sticker: InputFile, sticker_format: str
+    ) -> File:
         ...
 
     async def create_new_sticker_set(
@@ -881,12 +908,10 @@ class API:
         user_id: int,
         name: str,
         title: str,
-        emojis: str,
-        png_sticker: Optional[Union[InputFile, str]] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
+        stickers: List[InputSticker],
+        sticker_format: str,
         sticker_type: Optional[str] = None,
-        mask_position: Optional[MaskPosition] = None,
+        needs_repainting: Optional[bool] = None,
     ) -> Literal[True]:
         ...
 
@@ -894,11 +919,7 @@ class API:
         self,
         user_id: int,
         name: str,
-        emojis: str,
-        png_sticker: Optional[Union[InputFile, str]] = None,
-        tgs_sticker: Optional[InputFile] = None,
-        webm_sticker: Optional[InputFile] = None,
-        mask_position: Optional[MaskPosition] = None,
+        sticker: InputSticker,
     ) -> Literal[True]:
         ...
 
@@ -910,9 +931,35 @@ class API:
     async def delete_sticker_from_set(self, sticker: str) -> Literal[True]:
         ...
 
-    async def set_sticker_set_thumb(
-        self, name: str, user_id: int, thumb: Optional[Union[InputFile, str]] = None
+    async def set_sticker_emoji_list(
+        self, sticker: str, emoji_list: List[str]
     ) -> Literal[True]:
+        ...
+
+    async def set_sticker_keywords(
+        self, sticker: str, keywords: Optional[List[str]] = None
+    ) -> Literal[True]:
+        ...
+
+    async def set_sticker_mask_position(
+        self, sticker: str, mask_position: Optional[MaskPosition] = None
+    ) -> Literal[True]:
+        ...
+
+    async def set_sticker_set_title(self, name: str, title: str) -> Literal[True]:
+        ...
+
+    async def set_sticker_set_thumbnail(
+        self, name: str, user_id: int, thumbnail: Optional[Union[InputFile, str]] = None
+    ) -> Literal[True]:
+        ...
+
+    async def set_custom_emoji_sticker_set_thumbnail(
+        self, name: str, custom_emoji_id: Optional[str] = None
+    ) -> Literal[True]:
+        ...
+
+    async def delete_sticker_set(self, name: str) -> Literal[True]:
         ...
 
     async def answer_inline_query(
