@@ -59,11 +59,13 @@ all = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+addopts = "--cov nonebot.adapters.telegram --cov-report term-missing"
 
 [tool.pyright]
 reportShadowedImports = false
 pythonVersion = "3.8"
 pythonPlatform = "All"
+extraPaths= ["__pypackages__/3.10/lib"]
 exclude = ["__pypackages__"]
 executionEnvironments = [
   { root = "./tests", extraPaths = ["./"] },
