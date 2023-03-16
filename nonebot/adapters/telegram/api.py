@@ -18,6 +18,7 @@ from .model import (
     MenuButton,
     StickerSet,
     WebhookInfo,
+    InputSticker,
     LabeledPrice,
     MaskPosition,
     GameHighScore,
