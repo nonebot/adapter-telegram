@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.9] - 2023-03-19
+
+### 🚀 新功能
+
+- 为非私聊的 MessageEvent 检测 to_me
+- 适配 Telegram Bot API 6.6
+
+### 🐛 Bug 修复
+
+修复 Message 处理时的 KeyError
+
 ## [0.1.0-beta.8] - 2023-02-10
 
 ### 💥 破坏性变更
@@ -132,7 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b8...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b9...HEAD
+[0.1.0-beta.9]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b8...v0.1.09b
 [0.1.0-beta.8]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b7...v0.1.0b8
 [0.1.0-beta.7]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b6...v0.1.0b7
 [0.1.0-beta.6]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b5...v0.1.0b6
