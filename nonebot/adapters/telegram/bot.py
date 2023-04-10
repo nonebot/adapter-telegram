@@ -14,8 +14,14 @@ from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
 from .model import InputMedia, MessageEntity
-from .event import Event, MessageEvent, EventWithChat
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
+from .event import (
+    Event,
+    MessageEvent,
+    EventWithChat,
+    GroupMessageEvent,
+    PrivateMessageEvent,
+)
 
 
 class Bot(BaseBot, API):
@@ -39,6 +45,17 @@ class Bot(BaseBot, API):
                 if not str(message[0]):
                     del message[0]
                     process_first_segment(message)
+
+        if (
+            event.reply_to_message
+            and (
+                isinstance(event.reply_to_message, GroupMessageEvent)
+                or isinstance(event.reply_to_message, PrivateMessageEvent)
+            )
+            and str(event.reply_to_message.from_.id) == self.self_id
+        ):
+            event._tome = True
+            return
 
         segment = event.message[0]
         if segment.type == "mention":
