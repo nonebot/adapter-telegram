@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import List, Literal, Optional
 from typing_extensions import Protocol, runtime_checkable
 
@@ -137,6 +138,7 @@ class MessageEvent(Event):
     author_signature: Optional[str]
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
+    original_message: Message = Message()
     _tome: bool = False
 
     @classmethod
@@ -155,6 +157,7 @@ class MessageEvent(Event):
             }
             event = event_map[message_type].parse_event(obj)
             setattr(event, "message", message)
+            setattr(event, "original_message", deepcopy(message))
             if reply_to_message:
                 setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
             return event
