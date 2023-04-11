@@ -170,7 +170,7 @@ class Adapter(BaseAdapter):
             "sendVideoNote",
         ):
             type = api[4:].lower()
-            for key in (type, "thumb"):
+            for key in (type, "thumb", "thumbnail"):
                 if (value := data.pop(key, None)) is None:
                     continue
                 if isinstance(value, bytes):
