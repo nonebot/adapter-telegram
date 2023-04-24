@@ -199,34 +199,37 @@ class File(MessageSegment):
     @staticmethod
     def animation(
         file: Union[str, bytes],
-        thumb: Union[None, str, bytes] = None,
+        thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
         return File(
-            "animation", {"file": file, "thumb": thumb, "has_spoiler": has_spoiler}
+            "animation",
+            {"file": file, "thumbnail": thumbnail, "has_spoiler": has_spoiler},
         )
 
     @staticmethod
     def audio(
         file: Union[str, bytes],
-        thumb: Union[None, str, bytes] = None,
+        thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
-        return File("audio", {"file": file, "thumb": thumb})
+        return File("audio", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def document(
         file: Union[str, bytes],
-        thumb: Union[None, str, bytes] = None,
+        thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
-        return File("document", {"file": file, "thumb": thumb})
+        return File("document", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def video(
         file: Union[str, bytes],
-        thumb: Union[None, str, bytes] = None,
+        thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
-        return File("video", {"file": file, "thumb": thumb, "has_spoiler": has_spoiler})
+        return File(
+            "video", {"file": file, "thumbnail": thumbnail, "has_spoiler": has_spoiler}
+        )
 
 
 class UnCombinFile(File):
@@ -237,9 +240,9 @@ class UnCombinFile(File):
     @staticmethod
     def video_note(
         file: Union[str, bytes],
-        thumb: Union[None, str, bytes] = None,
+        thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
-        return File("video_note", {"file": file, "thumb": thumb})
+        return File("video_note", {"file": file, "thumbnail": thumbnail})
 
 
 class Message(BaseMessage[MessageSegment]):
@@ -315,8 +318,8 @@ class Message(BaseMessage[MessageSegment]):
                 )
             else:
                 continue
-            if isinstance(obj[key], dict) and obj[key].get("thumb", None):
-                kargs["thumb"] = obj[key]["thumb"]["file_id"]
+            if isinstance(obj[key], dict) and obj[key].get("thumbnail", None):
+                kargs["thumbnail"] = obj[key]["thumbnail"]["file_id"]
             seg.data.update(kargs)
             msg.append(seg)
             del obj[key]

@@ -14,8 +14,14 @@ from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
 from .model import InputMedia, MessageEntity
-from .event import Event, MessageEvent, EventWithChat
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
+from .event import (
+    Event,
+    MessageEvent,
+    EventWithChat,
+    GroupMessageEvent,
+    PrivateMessageEvent,
+)
 
 
 class Bot(BaseBot, API):
@@ -31,24 +37,38 @@ class Bot(BaseBot, API):
         self.secret_token = uuid4().hex
 
     def _check_tome(self, event: MessageEvent):
-        def del_first_segment(message: Message):
-            del message[0]
+        def process_first_segment(message: Message):
             if not message:
                 message.append(Entity.text(""))
             elif message[0].is_text():
                 message[0].data["text"] = message[0].data["text"].lstrip()
                 if not str(message[0]):
-                    del_first_segment(message)
+                    del message[0]
+                    process_first_segment(message)
+
+        if (
+            event.reply_to_message
+            and (
+                isinstance(event.reply_to_message, GroupMessageEvent)
+                or isinstance(event.reply_to_message, PrivateMessageEvent)
+            )
+            and str(event.reply_to_message.from_.id) == self.self_id
+        ):
+            event._tome = True
+            return
 
         segment = event.message[0]
         if segment.type == "mention":
             if segment.data.get("text", "")[1:] == self.username:
-                del_first_segment(event.message)
+                del event.message[0]
+                process_first_segment(event.message)
                 event._tome = True
         elif segment.type == "text":
+            text = str(segment)
             for nickname in self.config.nickname:
-                if nickname in segment.data.get("text", ""):
-                    del_first_segment(event.message)
+                if nickname in text:
+                    event.message[0].data["text"] = text.replace(nickname, "", 1)
+                    process_first_segment(event.message)
                     event._tome = True
                     break
 
