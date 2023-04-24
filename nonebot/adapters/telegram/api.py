@@ -6,6 +6,7 @@ from .model import (
     Poll,
     User,
     Update,
+    BotName,
     Message,
     Sticker,
     InputFile,
@@ -41,6 +42,7 @@ from .model import (
     InlineKeyboardMarkup,
     PassportElementError,
     ChatAdministratorRights,
+    InlineQueryResultsButton,
 )
 
 
@@ -364,29 +366,6 @@ class API:
             ]
         ] = None,
     ) -> Message:
-        ...
-
-    async def edit_message_live_location(
-        self,
-        latitude: float,
-        longitude: float,
-        chat_id: Optional[Union[int, str]] = None,
-        message_id: Optional[int] = None,
-        inline_message_id: Optional[str] = None,
-        horizontal_accuracy: Optional[float] = None,
-        heading: Optional[int] = None,
-        proximity_alert_radius: Optional[int] = None,
-        reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
-
-    async def stop_message_live_location(
-        self,
-        chat_id: Optional[Union[int, str]] = None,
-        message_id: Optional[int] = None,
-        inline_message_id: Optional[str] = None,
-        reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
         ...
 
     async def send_venue(
@@ -771,6 +750,14 @@ class API:
     ) -> List[BotCommand]:
         ...
 
+    async def set_my_name(
+        self, name: Optional[str] = None, language_code: Optional[str] = None
+    ) -> Literal[True]:
+        ...
+
+    async def get_my_name(self, language_code: Optional[str] = None) -> BotName:
+        ...
+
     async def set_my_description(
         self, description: Optional[str] = None, language_code: Optional[str] = None
     ) -> Literal[True]:
@@ -841,6 +828,29 @@ class API:
     async def edit_message_media(
         self,
         media: InputMedia,
+        chat_id: Optional[Union[int, str]] = None,
+        message_id: Optional[int] = None,
+        inline_message_id: Optional[str] = None,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Union[Message, Literal[True]]:
+        ...
+
+    async def edit_message_live_location(
+        self,
+        latitude: float,
+        longitude: float,
+        chat_id: Optional[Union[int, str]] = None,
+        message_id: Optional[int] = None,
+        inline_message_id: Optional[str] = None,
+        horizontal_accuracy: Optional[float] = None,
+        heading: Optional[int] = None,
+        proximity_alert_radius: Optional[int] = None,
+        reply_markup: Optional[InlineKeyboardMarkup] = None,
+    ) -> Union[Message, Literal[True]]:
+        ...
+
+    async def stop_message_live_location(
+        self,
         chat_id: Optional[Union[int, str]] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
@@ -970,8 +980,7 @@ class API:
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
-        switch_pm_text: Optional[str] = None,
-        switch_pm_parameter: Optional[str] = None,
+        button: Optional[InlineQueryResultsButton] = None,
     ) -> Literal[True]:
         ...
 
