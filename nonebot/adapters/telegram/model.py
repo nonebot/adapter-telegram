@@ -433,7 +433,7 @@ class ChatShared(BaseModel):
 
 
 class WriteAccessAllowed(BaseModel):
-    pass
+    web_app_name: Optional[str] = None
 
 
 class VideoChatScheduled(BaseModel):
@@ -520,6 +520,14 @@ class LoginUrl(BaseModel):
     request_write_access: Optional[bool] = None
 
 
+class SwitchInlineQueryChosenChat(BaseModel):
+    query: Optional[str] = None
+    allow_user_chats: Optional[bool] = None
+    allow_bot_chats: Optional[bool] = None
+    allow_group_chats: Optional[bool] = None
+    allow_channel_chats: Optional[bool] = None
+
+
 class InlineKeyboardButton(BaseModel):
     text: str
     url: Optional[str] = None
@@ -528,6 +536,7 @@ class InlineKeyboardButton(BaseModel):
     login_url: Optional[LoginUrl] = None
     switch_inline_query: Optional[str] = None
     switch_inline_query_current_chat: Optional[str] = None
+    switch_inline_query_chosen_chat: Optional[SwitchInlineQueryChosenChat] = None
     callback_game: Optional["CallbackGame"] = None
     pay: Optional[bool] = None
 
@@ -622,10 +631,6 @@ class ChatMemberMember(ChatMember):
 class ChatMemberRestricted(ChatMember):
     status: Literal["restricted"] = "restricted"
     is_member: bool
-    can_change_info: bool
-    can_invite_users: bool
-    can_pin_messages: bool
-    can_manage_topics: bool
     can_send_messages: bool
     can_send_audios: bool
     can_send_documents: bool
@@ -636,6 +641,10 @@ class ChatMemberRestricted(ChatMember):
     can_send_polls: bool
     can_send_other_messages: bool
     can_add_web_page_previews: bool
+    can_change_info: bool
+    can_invite_users: bool
+    can_pin_messages: bool
+    can_manage_topics: bool
     until_date: int
 
 
@@ -655,6 +664,7 @@ class ChatMemberUpdated(BaseModel):
     old_chat_member: ChatMember
     new_chat_member: ChatMember
     invite_link: Optional[ChatInviteLink] = None
+    via_chat_folder_invite_link: Optional[bool] = None
 
 
 class ChatJoinRequest(BaseModel):
@@ -734,6 +744,10 @@ class BotCommandScopeChatMember(BotCommandScope):
     type: Literal["chat_member"] = "chat_member"
     chat_id: Union[int, str]
     user_id: int
+
+
+class BotName(BaseModel):
+    name: str
 
 
 class BotDescription(BaseModel):
@@ -928,6 +942,12 @@ class InputInvoiceMessageContent(InputMessageContent):
     is_flexible: Optional[bool] = None
 
 
+class InlineQueryResultsButton(BaseModel):
+    text: str
+    web_app: Optional[WebAppInfo] = None
+    start_parameter: Optional[str] = None
+
+
 class InlineQueryResult(BaseModel):
     type: str
     id: str
@@ -1080,7 +1100,6 @@ class InlineQueryResultContact(InlineQueryResult):
     phone_number: str
     first_name: str
     last_name: Optional[str] = None
-    user_id: Optional[int] = None
     vcard: Optional[str] = None
     input_message_content: Optional[InputMessageContent] = None
     thumbnail_url: Optional[str] = None
