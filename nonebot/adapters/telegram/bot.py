@@ -12,8 +12,8 @@ from nonebot.adapters import Bot as BaseBot
 
 from .api import API
 from .config import BotConfig
-from .exception import ApiNotAvailable
 from .model import MessageEntity
+from .exception import ApiNotAvailable
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 from .event import (
     Event,
