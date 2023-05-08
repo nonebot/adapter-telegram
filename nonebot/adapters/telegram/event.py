@@ -421,7 +421,7 @@ class NoticeEvent(Event):
 
 class PinnedMessageEvent(NoticeEvent):
     message_id: int
-    from_: User = Field(alias="from")
+    from_: Optional[User] = Field(alias="from")
     sender_chat: Optional[Chat]
     chat: Chat
     date: int
