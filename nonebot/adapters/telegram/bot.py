@@ -13,7 +13,7 @@ from nonebot.adapters import Bot as BaseBot
 from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
-from .model import InputMedia, MessageEntity
+from .model import MessageEntity
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 from .event import (
     Event,
@@ -224,11 +224,13 @@ class Bot(BaseBot, API):
         # 发送带文件的消息
         if len(files) > 1:
             # 多个文件
+            # InputMedia 不能用 bytes 类型 和 指定文件名，特殊处理一下
             medias = [
-                InputMedia(
-                    type=file.type,
-                    media=file.data["file"],
-                )
+                {
+                    "type": file.type,
+                    "media": file.data["file"],
+                    "filename": file.data.get("filename"),
+                }
                 for file in files
             ]
 
@@ -237,8 +239,8 @@ class Bot(BaseBot, API):
             except IndexError:
                 media_will_edit = medias[0]
 
-            media_will_edit.caption = str(entities)
-            media_will_edit.caption_entities = [
+            media_will_edit["caption"] = str(entities)
+            media_will_edit["caption_entities"] = [
                 MessageEntity(
                     type=entity.type,
                     offset=sum(map(len, message[:i])),
@@ -254,7 +256,7 @@ class Bot(BaseBot, API):
             return await self.send_media_group(
                 chat_id=event.chat.id,
                 message_thread_id=message_thread_id,
-                media=medias,  # type:ignore
+                media=medias,  # type: ignore
                 **kwargs,
             )
 

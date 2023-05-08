@@ -1,9 +1,8 @@
 import json
 import asyncio
-import pathlib
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast, overload
 
-from anyio import open_file
+import anyio
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
@@ -132,6 +131,21 @@ class Adapter(BaseAdapter):
             else:
                 self.setup_polling(bot)
 
+    @overload
+    async def __read_file(self, file: bytes) -> Tuple[None, bytes]:
+        ...
+
+    @overload
+    async def __read_file(self, file: str) -> Optional[Tuple[str, bytes]]:
+        ...
+
+    async def __read_file(self, file):
+        if isinstance(file, bytes):
+            return None, file
+        if isinstance(file, str) and await (path := anyio.Path(file)).is_file():
+            return path.name, await path.read_bytes()
+        return None
+
     @overrides(BaseAdapter)
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:
         # 将方法名称改为驼峰式
@@ -141,21 +155,30 @@ class Adapter(BaseAdapter):
         data = _escape_none(data)
 
         # 分离文件到 files
-        files = {}
+        files: Dict[str, Tuple[str, bytes]] = {}
+
+        # 多个文件
         if api == "sendMediaGroup":
-            upload_count = 0
-            for media in data["media"]:
-                media = cast(InputMedia, media)
-                if isinstance(media.media, bytes):
-                    files[f"upload{upload_count}"] = (
-                        f"upload{upload_count}",
-                        media.media,
-                    )
-                    media.media = f"attach://upload{upload_count}"
-                elif (file := pathlib.Path(media.media)).is_file():
-                    async with await open_file(media.media, "rb") as f:
-                        files[file.name] = (file.name, await f.read())
-                    media.media = f"attach://{pathlib.Path(media.media).name}"
+            medias = [
+                x.dict() if isinstance(x, InputMedia) else x for x in data["media"]
+            ]
+            upload_bytes_count = 0
+            for media in medias:
+                # 需要处理 bot.send 传过来的 bytes media 和 filename
+                file: Union[str, bytes] = media["media"]
+                filename = cast(Optional[str], media.pop("filename", None))
+                file_data = await self.__read_file(file)
+
+                if file_data:
+                    name, value = file_data
+                    if not (filename and name):
+                        name = f"upload{upload_bytes_count}"
+                        upload_bytes_count += 1
+
+                    files[name] = (name, value)
+                    media["media"] = f"attach://{name}"
+
+        # 单个文件
         elif api in (
             "sendPhoto",
             "sendAudio",
@@ -166,19 +189,17 @@ class Adapter(BaseAdapter):
             "sendVideoNote",
         ):
             type = api[4:].lower()
+            filename = cast(Optional[str], data.pop("filename", None))
+
             for key in (type, "thumbnail"):
-                if (value := data.pop(key, None)) is None:
-                    continue
-                if isinstance(value, bytes):
-                    files[key] = ("upload", value)
-                elif (
-                    isinstance(value, str)
-                    and (file := pathlib.Path(str(value))).is_file()
-                ):
-                    async with await open_file(value, "rb") as f:
-                        files[key] = (file.name, await f.read())
-                else:
-                    data[key] = value
+                value = cast(Optional[Union[str, bytes]], data.pop(key, None))
+                if value:
+                    file_data = await self.__read_file(value)
+                    if file_data:
+                        name, value = file_data
+                        files[key] = ((filename if key == type else name) or key, value)
+                    else:
+                        data[key] = value
 
         # 最后处理 data 以符合 DataTypes
         for key in data:
@@ -197,7 +218,7 @@ class Adapter(BaseAdapter):
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
             data=data if files else None,
             json=data if not files else None,
-            files=files,
+            files=files,  # type: ignore
             proxy=self.adapter_config.proxy,
         )
         try:
