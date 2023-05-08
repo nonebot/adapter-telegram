@@ -15,13 +15,8 @@ from nonebot.adapters import Adapter as BaseAdapter
 from .bot import Bot
 from .event import Event
 from .model import InputMedia
-from .config import BotConfig, AdapterConfig
-from .exception import (
-    ActionFailed,
-    NetworkError,
-    ApiNotAvailable,
-    TelegramAdapterException,
-)
+from .config import AdapterConfig
+from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
 def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -207,19 +202,17 @@ class Adapter(BaseAdapter):
         )
         try:
             response = await self.request(request)
-            if response.content:
-                if 200 <= response.status_code < 300:
-                    return json.loads(response.content)["result"]
-                elif 400 <= response.status_code < 404:
-                    raise ActionFailed(json.loads(response.content)["description"])
-                elif response.status_code == 404:
-                    raise ApiNotAvailable
-                raise NetworkError(
-                    f"HTTP request received unexpected {response.status_code} {response.content}"
-                )
-            else:
-                raise ValueError("Empty response")
-        except TelegramAdapterException:
-            raise
         except Exception as e:
             raise NetworkError("HTTP request failed") from e
+
+        if not response.content:
+            raise ValueError("Empty response")
+        if 200 <= response.status_code < 300:
+            return json.loads(response.content)["result"]
+        if 400 <= response.status_code < 404:
+            raise ActionFailed(json.loads(response.content)["description"])
+        if response.status_code == 404:
+            raise ApiNotAvailable
+        raise NetworkError(
+            f"HTTP request received unexpected {response.status_code} {response.content}",
+        )
