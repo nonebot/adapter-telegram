@@ -1,9 +1,9 @@
 import json
 import asyncio
-import pathlib
 from typing import Any, Dict, List, cast
 
-from anyio import open_file
+import anyio
+from nonebot import logger
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
@@ -15,7 +15,7 @@ from nonebot.adapters import Adapter as BaseAdapter
 from .bot import Bot
 from .event import Event
 from .model import InputMedia
-from .config import BotConfig, AdapterConfig
+from .config import AdapterConfig
 from .exception import (
     ActionFailed,
     NetworkError,
@@ -147,19 +147,27 @@ class Adapter(BaseAdapter):
         # 分离文件到 files
         files = {}
         if api == "sendMediaGroup":
-            upload_count = 0
+            bytes_upload_count = 0
             for media in data["media"]:
-                media = cast(InputMedia, media)
-                if isinstance(media.media, bytes):
-                    files[f"upload{upload_count}"] = (
-                        f"upload{upload_count}",
-                        media.media,
-                    )
-                    media.media = f"attach://upload{upload_count}"
-                elif (file := pathlib.Path(media.media)).is_file():
-                    async with await open_file(media.media, "rb") as f:
-                        files[file.name] = (file.name, await f.read())
-                    media.media = f"attach://{pathlib.Path(media.media).name}"
+                input_media = cast(InputMedia, media)
+                media = input_media.media
+
+                if isinstance(media, tuple):
+                    filename, content = media
+                elif isinstance(media, bytes):
+                    filename = f"upload{bytes_upload_count}"
+                    content = media
+                    bytes_upload_count += 1
+                elif await (path := anyio.Path(media)).is_file():
+                    filename = path.name
+                    content = await path.read_bytes()
+                else:
+                    logger.warning(f"Unsupported media type: {media}")
+                    continue
+
+                files[filename] = (filename, content)
+                input_media.media = f"attach://{filename}"
+
         elif api in (
             "sendPhoto",
             "sendAudio",
@@ -170,17 +178,16 @@ class Adapter(BaseAdapter):
             "sendVideoNote",
         ):
             type = api[4:].lower()
-            for key in (type, "thumbnail"):
+            for key in (type, "thumb"):
                 if (value := data.pop(key, None)) is None:
                     continue
                 if isinstance(value, bytes):
                     files[key] = ("upload", value)
                 elif (
                     isinstance(value, str)
-                    and (file := pathlib.Path(str(value))).is_file()
+                    and await (file := anyio.Path(value)).is_file()
                 ):
-                    async with await open_file(value, "rb") as f:
-                        files[key] = (file.name, await f.read())
+                    files[key] = (file.name, await file.read_bytes())
                 else:
                     data[key] = value
 
