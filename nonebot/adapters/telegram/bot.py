@@ -109,6 +109,7 @@ class Bot(BaseBot, API):
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
         allow_sending_without_reply: Optional[bool] = None,
+        media_group_caption_index: int = 0,
         **kwargs,
     ) -> Any:
         """
@@ -193,35 +194,37 @@ class Bot(BaseBot, API):
                         raise ApiNotAvailable
                 elif files:
                     if len(files) > 1:
+                        medias = [
+                            InputMedia(
+                                type=file.type,
+                                media=file.data["file"],
+                            )
+                            for file in files
+                        ]
+
+                        try:
+                            media_will_edit = medias[media_group_caption_index]
+                        except IndexError:
+                            media_will_edit = medias[0]
+
+                        media_will_edit.caption = str(entities)
+                        media_will_edit.caption_entities = [
+                            MessageEntity(
+                                type=entity.type,
+                                offset=sum(map(len, message[:i])),
+                                length=len(entity.data["text"]),
+                                url=entity.data.get("url"),
+                                user=entity.data.get("user"),
+                                language=entity.data.get("language"),
+                            )
+                            for i, entity in enumerate(message)
+                            if entity.is_text() and entity.type != "text"
+                        ]
+
                         return await self.send_media_group(
                             chat_id=event.chat.id,
                             message_thread_id=message_thread_id,
-                            media=[
-                                InputMedia(
-                                    type=files[0].type,
-                                    media=files[0].data["file"],
-                                    caption=str(entities),
-                                    caption_entities=[
-                                        MessageEntity(
-                                            type=entity.type,
-                                            offset=sum(map(len, message[:i])),
-                                            length=len(entity.data["text"]),
-                                            url=entity.data.get("url"),
-                                            user=entity.data.get("user"),
-                                            language=entity.data.get("language"),
-                                        )
-                                        for i, entity in enumerate(message)
-                                        if entity.is_text() and entity.type != "text"
-                                    ],
-                                )
-                            ]
-                            + [
-                                InputMedia(
-                                    type=file.type,
-                                    media=file.data["file"],
-                                )
-                                for file in files[1:]
-                            ],  # type:ignore
+                            media=medias,  # type:ignore
                             **kwargs,
                         )
 
