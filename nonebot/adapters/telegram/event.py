@@ -208,6 +208,15 @@ class PrivateMessageEvent(MessageEvent):
 
 
 class GroupMessageEvent(MessageEvent):
+    @classmethod
+    def __parse_event(cls, obj: dict) -> "Event":
+        if obj.pop("is_forum_message", None):
+            event = ForumTopicMessageEvent.parse_event(obj)
+        else:
+            obj.pop("message_thread_id", None)
+            event = cls.parse_obj(obj)
+        return event
+
     from_: User = Field(alias="from")
     sender_chat: Optional[Chat]
 
@@ -334,6 +343,15 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 class GroupEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(default=None, alias="from")
     sender_chat: Optional[Chat]
+
+    @classmethod
+    def __parse_event(cls, obj: dict) -> "Event":
+        if obj.pop("is_forum_message", None):
+            event = ForumTopicEditedMessageEvent.parse_event(obj)
+        else:
+            obj.pop("message_thread_id", None)
+            event = cls.parse_obj(obj)
+        return event
 
     @overrides(EditedMessageEvent)
     def get_event_name(self) -> str:
