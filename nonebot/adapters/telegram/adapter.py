@@ -121,14 +121,15 @@ class Adapter(BaseAdapter):
         return Response(401)
 
     def setup(self) -> None:
-        self.setup_http_server(
-            HTTPServerSetup(
-                URL("/telegram"),
-                "POST",
-                self.get_name(),
-                self.handle_http,
+        if list(filter(lambda b: b.is_webhook, self.adapter_config.telegram_bots)):
+            self.setup_http_server(
+                HTTPServerSetup(
+                    URL("/telegram"),
+                    "POST",
+                    self.get_name(),
+                    self.handle_http,
+                )
             )
-        )
         for bot_config in self.adapter_config.telegram_bots:
             bot = Bot(self, bot_config)
             if bot_config.is_webhook:
