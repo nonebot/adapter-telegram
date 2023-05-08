@@ -1,4 +1,4 @@
-from typing import List, Union, Literal, Optional
+from typing import List, Tuple, Union, Literal, Optional
 
 from pydantic import Field, BaseModel
 
@@ -786,7 +786,7 @@ InputFile = bytes
 
 class InputMedia(BaseModel):
     type: str
-    media: Union[str, bytes]
+    media: Union[str, bytes, Tuple[str, bytes]]
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[List[MessageEntity]] = None
