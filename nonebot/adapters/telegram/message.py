@@ -38,13 +38,17 @@ class MessageSegment(BaseMessageSegment):
     @staticmethod
     def location(latitude: float, longitude: float) -> "MessageSegment":
         return MessageSegment(
-            "location", {"latitude": latitude, "longitute": longitude}
+            "location",
+            {"latitude": latitude, "longitute": longitude},
         )
 
     # TODO need test
     @staticmethod
     def venue(
-        latitude: float, longitude: float, title: str, address: str
+        latitude: float,
+        longitude: float,
+        title: str,
+        address: str,
     ) -> "MessageSegment":
         return MessageSegment("venue", {"latitude": latitude, "longitute": longitude})
 
@@ -75,7 +79,7 @@ class MessageSegment(BaseMessageSegment):
             "find_location",
             "record_video_note",
             "upload_video_note",
-        ]
+        ],
     ) -> "MessageSegment":
         """
         仅发送，用于提醒用户机器人正在准备什么
@@ -179,14 +183,16 @@ class Entity(MessageSegment):
     @staticmethod
     def custom_emoji(text: str, custom_emoji_id: str) -> "Entity":
         return Entity(
-            "custom_emoji", {"text": text, "custom_emoji_id": custom_emoji_id}
+            "custom_emoji",
+            {"text": text, "custom_emoji_id": custom_emoji_id},
         )
 
 
 class File(MessageSegment):
     @staticmethod
     def photo(
-        file: Union[str, bytes], has_spoiler: Optional[bool] = None
+        file: Union[str, bytes],
+        has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
         return File("photo", {"file": file, "has_spoiler": has_spoiler})
 
@@ -228,7 +234,8 @@ class File(MessageSegment):
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
         return File(
-            "video", {"file": file, "thumbnail": thumbnail, "has_spoiler": has_spoiler}
+            "video",
+            {"file": file, "thumbnail": thumbnail, "has_spoiler": has_spoiler},
         )
 
 
@@ -272,14 +279,14 @@ class Message(BaseMessage[MessageSegment]):
             for entity in obj.get(entities_key, ()):
                 if entity["offset"] > offset:
                     msg.append(
-                        Entity("text", {"text": obj[key][offset : entity["offset"]]})
+                        Entity("text", {"text": obj[key][offset : entity["offset"]]}),
                     )
                 nb_entity = Entity(
                     entity["type"],
                     {
                         "text": obj[key][
                             entity["offset"] : entity["offset"] + entity["length"]
-                        ]
+                        ],
                     },
                 )
                 if "language" in entity:
@@ -309,7 +316,8 @@ class Message(BaseMessage[MessageSegment]):
                 seg = UnCombinFile(key, {"file": obj[key]["file_id"]})
             elif key == "dice":
                 seg = MessageSegment(
-                    key, {"emoji": obj[key]["emoji"], "value": obj[key]["value"]}
+                    key,
+                    {"emoji": obj[key]["emoji"], "value": obj[key]["value"]},
                 )
             elif key == "poll":
                 seg = MessageSegment(

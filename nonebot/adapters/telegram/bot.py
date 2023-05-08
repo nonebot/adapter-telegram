@@ -49,8 +49,10 @@ class Bot(BaseBot, API):
         if (
             event.reply_to_message
             and (
-                isinstance(event.reply_to_message, GroupMessageEvent)
-                or isinstance(event.reply_to_message, PrivateMessageEvent)
+                isinstance(
+                    event.reply_to_message,
+                    (GroupMessageEvent, PrivateMessageEvent),
+                )
             )
             and str(event.reply_to_message.from_.id) == self.self_id
         ):
@@ -88,16 +90,15 @@ class Bot(BaseBot, API):
                     except IndexError:
                         kargs[param.name] = None
             return parse_obj_as(
-                sign.return_annotation, await super().call_api(api, **kargs)
+                sign.return_annotation,
+                await super().call_api(api, **kargs),
             )
-        else:
-            return await super().call_api(api, **kargs)
+        return await super().call_api(api, **kargs)
 
     def __getattribute__(self, __name: str) -> Any:
         if not __name.startswith("__") and hasattr(API, __name):
             return partial(self.call_api, __name)
-        else:
-            return object.__getattribute__(self, __name)
+        return object.__getattribute__(self, __name)
 
     # TODO 重构
     @overrides(BaseBot)
@@ -124,14 +125,15 @@ class Bot(BaseBot, API):
                 "protect_content": protect_content,
                 "reply_to_message_id": reply_to_message_id,
                 "allow_sending_without_reply": allow_sending_without_reply,
-            }
+            },
         )
 
         if not isinstance(event, EventWithChat):
             raise ApiNotAvailable
 
         message_thread_id = cast(
-            Optional[int], getattr(event, "message_thread_id", None)
+            Optional[int],
+            getattr(event, "message_thread_id", None),
         )
 
         # 普通文本
@@ -158,7 +160,7 @@ class Bot(BaseBot, API):
                             url=message.data.get("url"),
                             user=message.data.get("user"),
                             language=message.data.get("language"),
-                        )
+                        ),
                     ]
                     if message.type != "text"
                     else None,
@@ -188,20 +190,19 @@ class Bot(BaseBot, API):
             filter(
                 lambda x: isinstance(x, File) and not isinstance(message, UnCombinFile),
                 message,
-            )
+            ),
         )
         others = Message(
             filter(
-                lambda x: not (isinstance(x, Entity) or isinstance(x, File))
+                lambda x: not (isinstance(x, (Entity, File)))
                 or isinstance(message, UnCombinFile),
                 message,
-            )
+            ),
         )
 
         # 处理只能单独发送的特殊消息
-        if others:
-            if len(others) > 1 or files or entities:
-                raise ApiNotAvailable
+        if others and (len(others) > 1 or files or entities):
+            raise ApiNotAvailable
 
         if not files:
             return await self.send_message(

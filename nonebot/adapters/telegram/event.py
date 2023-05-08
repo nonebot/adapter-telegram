@@ -65,7 +65,9 @@ class Event(BaseEvent):
         return event
 
     @classmethod
-    def _parse_event(cls, obj: dict, failed: set = set()) -> "Event":
+    def _parse_event(cls, obj: dict, failed: Optional[set] = None) -> "Event":
+        if not failed:
+            failed = set()
         for subclass in cls.__subclasses__():
             if subclass not in failed:
                 try:
@@ -78,8 +80,7 @@ class Event(BaseEvent):
     def parse_event(cls, obj: dict) -> "Event":
         if hasattr(cls, f"_{cls.__name__}__parse_event"):
             return getattr(cls, f"_{cls.__name__}__parse_event")(obj)
-        else:
-            return cls._parse_event(obj)
+        return cls._parse_event(obj)
 
     @overrides(BaseEvent)
     def get_type(self) -> str:
@@ -92,7 +93,9 @@ class Event(BaseEvent):
     @overrides(BaseEvent)
     def get_event_description(self) -> str:
         return escape_tag(
-            str(self.dict(by_alias=True, exclude_none=True, exclude={"telegram_model"}))
+            str(
+                self.dict(by_alias=True, exclude_none=True, exclude={"telegram_model"}),
+            ),
         )
 
     @overrides(BaseEvent)
@@ -146,21 +149,21 @@ class MessageEvent(Event):
         message = Message.parse_obj(obj)
         if not message:
             return NoticeEvent.parse_event(obj)
-        else:
-            reply_to_message = obj.pop("reply_to_message", None)
-            message_type = obj["chat"]["type"]
-            event_map = {
-                "private": PrivateMessageEvent,
-                "group": GroupMessageEvent,
-                "supergroup": GroupMessageEvent,
-                "channel": ChannelPostEvent,
-            }
-            event = event_map[message_type].parse_event(obj)
-            setattr(event, "message", message)
-            setattr(event, "original_message", deepcopy(message))
-            if reply_to_message:
-                setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
-            return event
+
+        reply_to_message = obj.pop("reply_to_message", None)
+        message_type = obj["chat"]["type"]
+        event_map = {
+            "private": PrivateMessageEvent,
+            "group": GroupMessageEvent,
+            "supergroup": GroupMessageEvent,
+            "channel": ChannelPostEvent,
+        }
+        event = event_map[message_type].parse_event(obj)
+        setattr(event, "message", message)
+        setattr(event, "original_message", deepcopy(message))
+        if reply_to_message:
+            setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
+        return event
 
     @overrides(Event)
     def get_type(self) -> str:
@@ -281,7 +284,9 @@ class EditedMessageEvent(Event):
         setattr(event, "message", Message.parse_obj(obj))
         if reply_to_message:
             setattr(
-                event, "reply_to_message", MessageEvent.parse_event(reply_to_message)
+                event,
+                "reply_to_message",
+                MessageEvent.parse_event(reply_to_message),
             )
         return event
 
@@ -337,7 +342,7 @@ class GroupEditedMessageEvent(EditedMessageEvent):
 
     @overrides(EditedMessageEvent)
     def get_event_name(self) -> str:
-        return f"edited_message.group"
+        return "edited_message.group"
 
     @overrides(EditedMessageEvent)
     def get_user_id(self) -> str:
@@ -385,30 +390,29 @@ class NoticeEvent(Event):
     def __parse_event(cls, obj: dict) -> "Event":
         if "pinned_message" in obj:
             return PinnedMessageEvent.parse_event(obj)
-        elif "new_chat_members" in obj:
+        if "new_chat_members" in obj:
             return NewChatMemberEvent.parse_event(obj)
-        elif "left_chat_member" in obj:
+        if "left_chat_member" in obj:
             return LeftChatMemberEvent.parse_event(obj)
-        elif "new_chat_title" in obj:
+        if "new_chat_title" in obj:
             return NewChatTitleEvent.parse_event(obj)
-        elif "new_chat_photo" in obj:
+        if "new_chat_photo" in obj:
             return NewChatPhotoEvent.parse_event(obj)
-        elif "delete_chat_photo" in obj:
+        if "delete_chat_photo" in obj:
             return DeleteChatPhotoEvent.parse_event(obj)
-        elif "forum_topic_created" in obj:
+        if "forum_topic_created" in obj:
             return ForumTopicCreatedEvent.parse_event(obj)
-        elif "forum_topic_edited" in obj:
+        if "forum_topic_edited" in obj:
             return ForumTopicEditedEvent.parse_event(obj)
-        elif "forum_topic_closed" in obj:
+        if "forum_topic_closed" in obj:
             return ForumTopicClosedEvent.parse_event(obj)
-        elif "forum_topic_reopened" in obj:
+        if "forum_topic_reopened" in obj:
             return ForumTopicReopenedEvent.parse_event(obj)
-        elif "general_forum_topic_hidden" in obj:
+        if "general_forum_topic_hidden" in obj:
             return GeneralForumTopicHiddenEvent.parse_event(obj)
-        elif "general_forum_topic_unhidden" in obj:
+        if "general_forum_topic_unhidden" in obj:
             return GeneralForumTopicUnhiddenEvent.parse_event(obj)
-        else:
-            return cls._parse_event(obj)
+        return cls._parse_event(obj)
 
     @overrides(Event)
     def get_type(self) -> str:

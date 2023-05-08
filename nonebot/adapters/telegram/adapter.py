@@ -19,7 +19,6 @@ from .exception import (
     ActionFailed,
     NetworkError,
     ApiNotAvailable,
-    TelegramAdapterException,
 )
 
 
@@ -75,7 +74,7 @@ class Adapter(BaseAdapter):
                         for update in updates:
                             update_offset = update.update_id + 1
                             event = Event.parse_event(
-                                update.dict(by_alias=True, exclude_none=True)
+                                update.dict(by_alias=True, exclude_none=True),
                             )
                             log(
                                 "DEBUG",
@@ -84,8 +83,8 @@ class Adapter(BaseAdapter):
                                         event.dict(
                                             exclude_none=True,
                                             exclude={"telegram_model"},
-                                        )
-                                    )
+                                        ),
+                                    ),
                                 ),
                             )
                             await bot.handle_event(event)
@@ -126,7 +125,7 @@ class Adapter(BaseAdapter):
                 "POST",
                 self.get_name(),
                 self.handle_http,
-            )
+            ),
         )
         for bot_config in self.adapter_config.telegram_bots:
             bot = Bot(self, bot_config)
@@ -213,21 +212,20 @@ class Adapter(BaseAdapter):
             files=files,
             proxy=self.adapter_config.proxy,
         )
+
         try:
             response = await self.request(request)
-            if response.content:
-                if 200 <= response.status_code < 300:
-                    return json.loads(response.content)["result"]
-                elif 400 <= response.status_code < 404:
-                    raise ActionFailed(json.loads(response.content)["description"])
-                elif response.status_code == 404:
-                    raise ApiNotAvailable
-                raise NetworkError(
-                    f"HTTP request received unexpected {response.status_code} {response.content}"
-                )
-            else:
-                raise ValueError("Empty response")
-        except TelegramAdapterException:
-            raise
         except Exception as e:
             raise NetworkError("HTTP request failed") from e
+
+        if not response.content:
+            raise ValueError("Empty response")
+        if 200 <= response.status_code < 300:
+            return json.loads(response.content)["result"]
+        if 400 <= response.status_code < 404:
+            raise ActionFailed(json.loads(response.content)["description"])
+        if response.status_code == 404:
+            raise ApiNotAvailable
+        raise NetworkError(
+            f"HTTP request received unexpected {response.status_code} {response.content}",
+        )
