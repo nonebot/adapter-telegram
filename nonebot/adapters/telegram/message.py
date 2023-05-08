@@ -27,7 +27,13 @@ class MessageSegment(BaseMessageSegment):
     def __repr__(self) -> str:
         if self.is_text():
             return self.data.get("text", "")
-        params = ", ".join([f"{k}={v}" for k, v in self.data.items() if v is not None])
+        params = ", ".join(
+            [
+                f"{k}={'<bytes>' if isinstance(v, bytes) else v}"
+                for k, v in self.data.items()
+                if v is not None
+            ]
+        )
         return f"[{self.type}{':' if params else ''}{params}]"
 
     @overrides(BaseMessageSegment)

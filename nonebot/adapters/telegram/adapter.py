@@ -171,7 +171,9 @@ class Adapter(BaseAdapter):
 
                 if file_data:
                     name, value = file_data
-                    if not (filename and name):
+                    if filename:
+                        name = filename
+                    if not name:
                         name = f"upload{upload_bytes_count}"
                         upload_bytes_count += 1
 
@@ -213,6 +215,7 @@ class Adapter(BaseAdapter):
                     ),
                 )
 
+        log("DEBUG", f"Calling API <y>{api}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
