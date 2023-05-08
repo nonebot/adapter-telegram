@@ -169,7 +169,10 @@ class Bot(BaseBot, API):
                     f"send_{message.type}",
                     chat_id=event.chat.id,
                     message_thread_id=message_thread_id,
-                    **{message.type: message.data["file"]},
+                    **{
+                        message.type: message.data["file"],
+                        "filename": message.data.get("filename"),
+                    },
                     **kwargs,
                 )
 
@@ -268,6 +271,7 @@ class Bot(BaseBot, API):
             message_thread_id=message_thread_id,
             **{
                 file.type: file.data.get("file"),
+                "filename": file.data.get("filename"),
                 "caption": str(entities) if entities else None,
                 "caption_entities": [
                     MessageEntity(
