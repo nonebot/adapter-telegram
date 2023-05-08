@@ -15,11 +15,7 @@ from .bot import Bot
 from .event import Event
 from .model import InputMedia
 from .config import AdapterConfig
-from .exception import (
-    ActionFailed,
-    NetworkError,
-    ApiNotAvailable,
-)
+from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
 def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
