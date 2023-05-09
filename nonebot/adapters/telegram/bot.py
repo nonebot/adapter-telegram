@@ -107,7 +107,7 @@ class Bot(BaseBot, API):
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
         allow_sending_without_reply: Optional[bool] = None,
-        media_group_caption_index: int = 0, # 非 Telegram 原生参数
+        media_group_caption_index: int = 0,  # 非 Telegram 原生参数
         **kwargs,
     ) -> Any:
         """
