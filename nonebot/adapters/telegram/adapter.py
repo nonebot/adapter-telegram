@@ -48,8 +48,8 @@ class Adapter(BaseAdapter):
     async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
         try:
             event = Event.parse_event(update)
-        except:
-            logger.exception(f"Error when parsing event {update}")
+        except Exception as e:
+            log("ERROR", f"Error when parsing event {update}", e)
             return
 
         log(
