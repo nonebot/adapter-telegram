@@ -169,10 +169,7 @@ class Bot(BaseBot, API):
                     f"send_{message.type}",
                     chat_id=event.chat.id,
                     message_thread_id=message_thread_id,
-                    **{
-                        message.type: message.data["file"],
-                        "filename": message.data.get("filename"),
-                    },
+                    **{message.type: message.data["file"]},
                     **kwargs,
                 )
 
@@ -228,14 +225,7 @@ class Bot(BaseBot, API):
         if len(files) > 1:
             # 多个文件
             # InputMedia 不能用 bytes 类型 和 指定文件名，特殊处理一下
-            medias = [
-                {
-                    "type": file.type,
-                    "media": file.data["file"],
-                    "filename": file.data.get("filename"),
-                }
-                for file in files
-            ]
+            medias = [{"type": file.type, "media": file.data["file"]} for file in files]
 
             try:
                 media_will_edit = medias[media_group_caption_index]
@@ -271,7 +261,6 @@ class Bot(BaseBot, API):
             message_thread_id=message_thread_id,
             **{
                 file.type: file.data.get("file"),
-                "filename": file.data.get("filename"),
                 "caption": str(entities) if entities else None,
                 "caption_entities": [
                     MessageEntity(

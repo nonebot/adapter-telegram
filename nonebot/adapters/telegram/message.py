@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Type, Union, Literal, Iterable, Optional
+from typing import Any, Dict, List, Tuple, Type, Union, Literal, Iterable, Optional
 
 from nonebot.typing import overrides
 
@@ -192,93 +192,62 @@ class Entity(MessageSegment):
 class File(MessageSegment):
     @staticmethod
     def photo(
-        file: Union[str, bytes],
-        has_spoiler: Optional[bool] = None,
-        filename: Optional[str] = None,
+        file: Union[str, bytes, Tuple[str, bytes]], has_spoiler: Optional[bool] = None
     ) -> "MessageSegment":
-        return File(
-            "photo", {"file": file, "has_spoiler": has_spoiler, "filename": filename}
-        )
+        return File("photo", {"file": file, "has_spoiler": has_spoiler})
 
     @staticmethod
-    def voice(
-        file: Union[str, bytes],
-        filename: Optional[str] = None,
-    ) -> "MessageSegment":
-        return File("voice", {"file": file, "filename": filename})
+    def voice(file: Union[str, bytes, Tuple[str, bytes]]) -> "MessageSegment":
+        return File("voice", {"file": file})
 
     @staticmethod
     def animation(
-        file: Union[str, bytes],
+        file: Union[str, bytes, Tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
-        filename: Optional[str] = None,
     ) -> "MessageSegment":
         return File(
             "animation",
-            {
-                "file": file,
-                "thumbnail": thumbnail,
-                "has_spoiler": has_spoiler,
-                "filename": filename,
-            },
+            {"file": file, "thumbnail": thumbnail, "has_spoiler": has_spoiler},
         )
 
     @staticmethod
     def audio(
-        file: Union[str, bytes],
+        file: Union[str, bytes, Tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
-        filename: Optional[str] = None,
     ) -> "MessageSegment":
-        return File(
-            "audio", {"file": file, "thumbnail": thumbnail, "filename": filename}
-        )
+        return File("audio", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def document(
-        file: Union[str, bytes],
+        file: Union[str, bytes, Tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
-        filename: Optional[str] = None,
     ) -> "MessageSegment":
-        return File(
-            "document", {"file": file, "thumbnail": thumbnail, "filename": filename}
-        )
+        return File("document", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def video(
-        file: Union[str, bytes],
+        file: Union[str, bytes, Tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
-        filename: Optional[str] = None,
     ) -> "MessageSegment":
         return File(
             "video",
-            {
-                "file": file,
-                "thumbnail": thumbnail,
-                "has_spoiler": has_spoiler,
-                "filename": filename,
-            },
+            {"file": file, "thumbnail": thumbnail, "has_spoiler": has_spoiler},
         )
 
 
 class UnCombinFile(File):
     @staticmethod
-    def sticker(
-        file: Union[str, bytes],
-        filename: Optional[str] = None,
-    ) -> "MessageSegment":
-        return File("sticker", {"file": file, "filename": filename})
+    def sticker(file: Union[str, bytes, Tuple[str, bytes]]) -> "MessageSegment":
+        return File("sticker", {"file": file})
 
     @staticmethod
     def video_note(
-        file: Union[str, bytes],
+        file: Union[str, bytes, Tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
-        filename: Optional[str] = None,
     ) -> "MessageSegment":
-        return File(
-            "video_note", {"file": file, "thumbnail": thumbnail, "filename": filename}
-        )
+        return File("video_note", {"file": file, "thumbnail": thumbnail})
 
 
 class Message(BaseMessage[MessageSegment]):
