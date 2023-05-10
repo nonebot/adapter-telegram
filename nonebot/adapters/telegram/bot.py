@@ -1,7 +1,7 @@
 import inspect
 from uuid import uuid4
 from functools import partial
-from typing import Any, List, Sequence, Union, Optional, cast
+from typing import Any, List, Union, Optional, Sequence, cast
 
 from pydantic import parse_obj_as
 from nonebot.typing import overrides
@@ -12,8 +12,8 @@ from nonebot.adapters import Bot as BaseBot
 
 from .api import API
 from .config import BotConfig
-from .model import InputMedia, MessageEntity
 from .exception import ApiNotAvailable
+from .model import InputMedia, MessageEntity
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 from .event import (
     Event,
