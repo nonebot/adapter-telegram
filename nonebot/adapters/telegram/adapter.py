@@ -153,11 +153,12 @@ class Adapter(BaseAdapter):
                 files[filename] = file
                 return filename
 
-            if isinstance(file, str) and await (path := anyio.Path(file)).exists():
-                file = await path.read_bytes()
-                filename = path.name
-            else:
-                return None
+            if isinstance(file, str):
+                if await (path := anyio.Path(file)).exists():
+                    file = await path.read_bytes()
+                    filename = path.name
+                else:
+                    return None
 
             if not filename:
                 filename = f"upload{bytes_upload_count}"
