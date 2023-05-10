@@ -9,7 +9,6 @@ from pydantic.json import pydantic_encoder
 from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
 from nonebot.adapters import Adapter as BaseAdapter
-from nonebot.internal.driver.model import FileTypes
 
 from .bot import Bot
 from .event import Event
@@ -140,7 +139,7 @@ class Adapter(BaseAdapter):
         data = _escape_none(data)
 
         # 分离文件到 files
-        files: List[Tuple[str, FileTypes]] = []
+        files: Dict[str, Tuple[str, bytes]] = {}
         bytes_upload_count = 0
 
         async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
@@ -149,8 +148,8 @@ class Adapter(BaseAdapter):
             filename = None
 
             if isinstance(file, tuple):
-                filename = file[0]
-                files.append(file)
+                filename, data = file
+                files[filename] = file
                 return filename
 
             if isinstance(file, str):
@@ -163,7 +162,7 @@ class Adapter(BaseAdapter):
             if not filename:
                 filename = f"upload{bytes_upload_count}"
                 bytes_upload_count += 1
-            files.append((filename, file))
+            files[filename] = (filename, file)
             return filename
 
         # 多个文件
@@ -209,7 +208,7 @@ class Adapter(BaseAdapter):
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
             data=data if files else None,
             json=data if not files else None,
-            files=files,
+            files=files,  # type: ignore  # pyright 你 tm 在干什么啊草
             proxy=self.adapter_config.proxy,
         )
         try:
