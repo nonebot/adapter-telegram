@@ -44,13 +44,29 @@ class Adapter(BaseAdapter):
     def get_name(cls) -> str:
         return "Telegram"
 
+    async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
+        try:
+            event = Event.parse_event(update)
+        except Exception as e:
+            log("ERROR", f"Error when parsing event {update}", e)
+            return
+
+        log(
+            "DEBUG",
+            escape_tag(str(event.dict(exclude_none=True, exclude={"telegram_model"}))),
+        )
+        await bot.handle_event(event)
+
+    async def __bot_pre_setup(self, bot: Bot):
+        bot.username = (await bot.get_me()).username
+        log("INFO", "Delete old webhook")
+        await bot.delete_webhook()
+
     def setup_webhook(self, bot: Bot):
         @self.driver.on_startup
         async def _():
             try:
-                bot.username = (await bot.get_me()).username
-                log("INFO", "Delete old webhook")
-                await bot.delete_webhook()
+                await self.__bot_pre_setup(bot)
                 log("INFO", "Set new webhook")
                 await bot.set_webhook(
                     url=f"{self.adapter_config.telegram_webhook_url}/telegram",
@@ -62,40 +78,28 @@ class Adapter(BaseAdapter):
 
     async def poll(self, bot: Bot):
         try:
-            bot.username = (await bot.get_me()).username
-            log("INFO", "Delete old webhook")
-            await bot.delete_webhook()
+            await self.__bot_pre_setup(bot)
             log("INFO", "Start poll")
             self.bot_connect(bot)
-
-            update_offset = None
-            while True:
-                try:
-                    updates = await bot.get_updates(offset=update_offset, timeout=30)
-                    if update_offset is not None:
-                        for update in updates:
-                            update_offset = update.update_id + 1
-                            event = Event.parse_event(
-                                update.dict(by_alias=True, exclude_none=True)
-                            )
-                            log(
-                                "DEBUG",
-                                escape_tag(
-                                    str(
-                                        event.dict(
-                                            exclude_none=True,
-                                            exclude={"telegram_model"},
-                                        )
-                                    )
-                                ),
-                            )
-                            await bot.handle_event(event)
-                    elif updates:
-                        update_offset = updates[0].update_id
-                except Exception as e:
-                    log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
         except Exception as e:
             log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+
+        update_offset = None
+        while True:
+            try:
+                updates = await bot.get_updates(offset=update_offset, timeout=30)
+                if update_offset is not None:
+                    for update in updates:
+                        update_offset = update.update_id + 1
+                        asyncio.create_task(
+                            self.__handle_update(
+                                bot, update.dict(by_alias=True, exclude_none=True)
+                            )
+                        )
+                elif updates:
+                    update_offset = updates[0].update_id
+            except Exception as e:
+                log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
 
     def setup_polling(self, bot: Bot):
         @self.driver.on_startup
@@ -116,7 +120,7 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    asyncio.create_task(bot.handle_event(Event.parse_event(update)))
+                    asyncio.create_task(self.__handle_update(bot, update))
                 return Response(204)
         return Response(401)
 
