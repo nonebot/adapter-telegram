@@ -209,7 +209,7 @@ class Adapter(BaseAdapter):
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
             data=data if files else None,
             json=data if not files else None,
-            files=files,  # type: ignore  # pyright 你 tm 在干什么啊草
+            files=files,  # type: ignore
             proxy=self.adapter_config.proxy,
         )
         try:

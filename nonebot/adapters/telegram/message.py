@@ -29,7 +29,7 @@ class MessageSegment(BaseMessageSegment):
             return self.data.get("text", "")
         params = ", ".join(
             [
-                f"{k}={'<bytes>' if isinstance(v, bytes) else v}"
+                f"{k}={f'<file {v[0]}>' if isinstance(v, tuple) else ('<bytes>' if isinstance(v, bytes) else v)}"
                 for k, v in self.data.items()
                 if v is not None
             ]
