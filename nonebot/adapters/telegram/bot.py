@@ -1,7 +1,7 @@
 import inspect
 from uuid import uuid4
 from functools import partial
-from typing import Any, Union, Optional, cast
+from typing import Any, List, Sequence, Union, Optional, cast
 
 from pydantic import parse_obj_as
 from nonebot.typing import overrides
@@ -12,7 +12,7 @@ from nonebot.adapters import Bot as BaseBot
 
 from .api import API
 from .config import BotConfig
-from .model import MessageEntity
+from .model import InputMedia, MessageEntity
 from .exception import ApiNotAvailable
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 from .event import (
@@ -97,6 +97,29 @@ class Bot(BaseBot, API):
             return partial(self.call_api, __name)
         return object.__getattribute__(self, __name)
 
+    def __build_entities_form_msg(
+        self, message: Sequence[MessageSegment]
+    ) -> Optional[List[MessageEntity]]:
+        return (
+            (
+                [
+                    MessageEntity(
+                        type=entity.type,
+                        offset=sum(map(len, message[:i])),
+                        length=len(entity.data["text"]),
+                        url=entity.data.get("url"),
+                        user=entity.data.get("user"),
+                        language=entity.data.get("language"),
+                    )
+                    for i, entity in enumerate(message)
+                    if entity.is_text() and entity.type != "text"
+                ]
+                or None
+            )
+            if message
+            else None
+        )
+
     # TODO 重构
     @overrides(BaseBot)
     async def send(
@@ -149,18 +172,7 @@ class Bot(BaseBot, API):
                     chat_id=event.chat.id,
                     message_thread_id=message_thread_id,
                     text=str(message),
-                    entities=[
-                        MessageEntity(
-                            type=message.type,
-                            offset=0,
-                            length=len(message.data["text"]),
-                            url=message.data.get("url"),
-                            user=message.data.get("user"),
-                            language=message.data.get("language"),
-                        ),
-                    ]
-                    if message.type != "text"
-                    else None,
+                    entities=self.__build_entities_form_msg([message]),
                     **kwargs,
                 )
 
@@ -181,70 +193,48 @@ class Bot(BaseBot, API):
                 **kwargs,
             )
 
-        # message 处理
-        entities = Message(filter(lambda x: isinstance(x, Entity), message))
+        # 处理 Message 的发送
+        # 分离各类型 seg
+        entities = Message(x for x in message if isinstance(x, Entity))
         files = Message(
-            filter(
-                lambda x: isinstance(x, File) and not isinstance(message, UnCombinFile),
-                message,
-            ),
+            x
+            for x in message
+            if isinstance(x, File) and not isinstance(message, UnCombinFile)
         )
         others = Message(
-            filter(
-                lambda x: not (isinstance(x, (Entity, File)))
-                or isinstance(message, UnCombinFile),
-                message,
-            ),
+            x
+            for x in message
+            if not (isinstance(x, (Entity, File))) or isinstance(message, UnCombinFile)
         )
 
-        # 处理只能单独发送的特殊消息
+        # 如果只能单独发送的消息段和其他消息段在一起，那么抛出错误
         if others and (len(others) > 1 or files or entities):
             raise ApiNotAvailable
 
+        # 发送纯文本消息
         if not files:
             return await self.send_message(
                 chat_id=event.chat.id,
                 message_thread_id=message_thread_id,
                 text=str(message),
-                entities=[
-                    MessageEntity(
-                        type=entity.type,
-                        offset=sum(map(len, message[:i])),
-                        length=len(entity.data["text"]),
-                        url=entity.data.get("url"),
-                        user=entity.data.get("user"),
-                        language=entity.data.get("language"),
-                    )
-                    for i, entity in enumerate(message)
-                    if entity.is_text() and entity.type != "text"
-                ],
+                entities=self.__build_entities_form_msg(message),
                 **kwargs,
             )
 
         # 发送带文件的消息
         if len(files) > 1:
             # 多个文件
-            # InputMedia 不能用 bytes 类型 和 指定文件名，特殊处理一下
-            medias = [{"type": file.type, "media": file.data["file"]} for file in files]
+            medias = [
+                InputMedia(type=file.type, media=file.data["file"]) for file in files
+            ]
 
             try:
                 media_will_edit = medias[media_group_caption_index]
             except IndexError:
                 media_will_edit = medias[0]
 
-            media_will_edit["caption"] = str(entities)
-            media_will_edit["caption_entities"] = [
-                MessageEntity(
-                    type=entity.type,
-                    offset=sum(map(len, message[:i])),
-                    length=len(entity.data["text"]),
-                    url=entity.data.get("url"),
-                    user=entity.data.get("user"),
-                    language=entity.data.get("language"),
-                )
-                for i, entity in enumerate(message)
-                if entity.is_text() and entity.type != "text"
-            ]
+            media_will_edit.caption = str(entities) if entities else None
+            media_will_edit.caption_entities = self.__build_entities_form_msg(entities)
 
             return await self.send_media_group(
                 chat_id=event.chat.id,
@@ -262,20 +252,7 @@ class Bot(BaseBot, API):
             **{
                 file.type: file.data.get("file"),
                 "caption": str(entities) if entities else None,
-                "caption_entities": [
-                    MessageEntity(
-                        type=entity.type,
-                        offset=sum(map(len, message[:i])),
-                        length=len(entity.data["text"]),
-                        url=entity.data.get("url"),
-                        user=entity.data.get("user"),
-                        language=entity.data.get("language"),
-                    )
-                    for i, entity in enumerate(message)
-                    if entity.is_text() and entity.type != "text"
-                ]
-                if entities
-                else None,
+                "caption_entities": self.__build_entities_form_msg(entities),
             },
             **kwargs,
         )
