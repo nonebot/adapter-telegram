@@ -4,6 +4,7 @@ import pathlib
 from typing import Any, Dict, List, cast
 
 from anyio import open_file
+from nonebot import logger
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
@@ -60,6 +61,19 @@ class Adapter(BaseAdapter):
             except Exception as e:
                 log("ERROR", f"Setup for bot {bot.self_id} failed", e)
 
+    async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
+        try:
+            event = Event.parse_event(update)
+        except:
+            logger.exception(f"Error when parsing event {update}")
+            return
+
+        log(
+            "DEBUG",
+            escape_tag(str(event.dict(exclude_none=True, exclude={"telegram_model"}))),
+        )
+        await bot.handle_event(event)
+
     async def poll(self, bot: Bot):
         try:
             bot.username = (await bot.get_me()).username
@@ -67,35 +81,25 @@ class Adapter(BaseAdapter):
             await bot.delete_webhook()
             log("INFO", "Start poll")
             self.bot_connect(bot)
-
-            update_offset = None
-            while True:
-                try:
-                    updates = await bot.get_updates(offset=update_offset, timeout=30)
-                    if update_offset is not None:
-                        for update in updates:
-                            update_offset = update.update_id + 1
-                            event = Event.parse_event(
-                                update.dict(by_alias=True, exclude_none=True)
-                            )
-                            log(
-                                "DEBUG",
-                                escape_tag(
-                                    str(
-                                        event.dict(
-                                            exclude_none=True,
-                                            exclude={"telegram_model"},
-                                        )
-                                    )
-                                ),
-                            )
-                            await bot.handle_event(event)
-                    elif updates:
-                        update_offset = updates[0].update_id
-                except Exception as e:
-                    log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
         except Exception as e:
             log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+
+        update_offset = None
+        while True:
+            try:
+                updates = await bot.get_updates(offset=update_offset, timeout=30)
+                if update_offset is not None:
+                    for update in updates:
+                        update_offset = update.update_id + 1
+                        asyncio.create_task(
+                            self.__handle_update(
+                                bot, update.dict(by_alias=True, exclude_none=True)
+                            )
+                        )
+                elif updates:
+                    update_offset = updates[0].update_id
+            except Exception as e:
+                log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
 
     def setup_polling(self, bot: Bot):
         @self.driver.on_startup
@@ -116,7 +120,7 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    asyncio.create_task(bot.handle_event(Event.parse_event(update)))
+                    asyncio.create_task(self.__handle_update(bot, update))
                 return Response(204)
         return Response(401)
 
