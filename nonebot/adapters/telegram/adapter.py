@@ -1,6 +1,6 @@
 import json
 import asyncio
-from typing import Any, Dict, List, Tuple, Union, Optional, cast, overload
+from typing import Any, Dict, Iterable, List, Tuple, Union, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
@@ -13,7 +13,7 @@ from nonebot.adapters import Adapter as BaseAdapter
 
 from .bot import Bot
 from .event import Event
-from .model import InputMedia
+from .model import InputFile, InputMedia
 from .config import AdapterConfig
 from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
@@ -131,21 +131,6 @@ class Adapter(BaseAdapter):
             else:
                 self.setup_polling(bot)
 
-    @overload
-    async def __read_file(self, file: bytes) -> Tuple[None, bytes]:
-        ...
-
-    @overload
-    async def __read_file(self, file: str) -> Optional[Tuple[str, bytes]]:
-        ...
-
-    async def __read_file(self, file):
-        if isinstance(file, bytes):
-            return None, file
-        if isinstance(file, str) and await (path := anyio.Path(file)).is_file():
-            return path.name, await path.read_bytes()
-        return None
-
     @overrides(BaseAdapter)
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:
         # 将方法名称改为驼峰式
@@ -156,29 +141,37 @@ class Adapter(BaseAdapter):
 
         # 分离文件到 files
         files: Dict[str, Tuple[str, bytes]] = {}
+        bytes_upload_count = 0
+
+        async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
+            """处理传过来的文件，如果文件被添加到 files 字典则返回文件名"""
+            nonlocal bytes_upload_count
+            filename = None
+
+            if isinstance(file, tuple):
+                filename, _ = file
+                files[filename] = file
+                return filename
+
+            if isinstance(file, str) and await (path := anyio.Path(file)).exists():
+                file = await path.read_bytes()
+                filename = path.name
+            else:
+                return None
+
+            if not filename:
+                filename = f"upload{bytes_upload_count}"
+                bytes_upload_count += 1
+            files[filename] = (filename, file)
+            return filename
 
         # 多个文件
         if api == "sendMediaGroup":
-            medias = [
-                x.dict() if isinstance(x, InputMedia) else x for x in data["media"]
-            ]
-            upload_bytes_count = 0
+            medias: Iterable[InputMedia] = data["media"]
             for media in medias:
-                # 需要处理 bot.send 传过来的 bytes media 和 filename
-                file: Union[str, bytes] = media["media"]
-                filename = cast(Optional[str], media.pop("filename", None))
-                file_data = await self.__read_file(file)
-
-                if file_data:
-                    name, value = file_data
-                    if filename:
-                        name = filename
-                    if not name:
-                        name = f"upload{upload_bytes_count}"
-                        upload_bytes_count += 1
-
-                    files[name] = (name, value)
-                    media["media"] = f"attach://{name}"
+                filename = await process_input_file(media.media)
+                if filename:
+                    media.media = f"attach://{filename}"
 
         # 单个文件
         elif api in (
@@ -191,17 +184,10 @@ class Adapter(BaseAdapter):
             "sendVideoNote",
         ):
             type = api[4:].lower()
-            filename = cast(Optional[str], data.pop("filename", None))
-
             for key in (type, "thumbnail"):
                 value = cast(Optional[Union[str, bytes]], data.pop(key, None))
-                if value:
-                    file_data = await self.__read_file(value)
-                    if file_data:
-                        name, value = file_data
-                        files[key] = ((filename if key == type else name) or key, value)
-                    else:
-                        data[key] = value
+                if value and (not await process_input_file(value)):
+                    data[key] = value
 
         # 最后处理 data 以符合 DataTypes
         for key in data:
