@@ -6,7 +6,6 @@ import anyio
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
-from nonebot.internal.driver.model import FileTypes
 from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
 
