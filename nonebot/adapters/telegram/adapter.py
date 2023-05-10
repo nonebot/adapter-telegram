@@ -149,7 +149,7 @@ class Adapter(BaseAdapter):
             filename = None
 
             if isinstance(file, tuple):
-                filename, data = file
+                filename = file[0]
                 files[filename] = file
                 return filename
 
