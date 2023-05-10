@@ -10,7 +10,6 @@ from pydantic.json import pydantic_encoder
 from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
 
-from nonebot import logger
 from nonebot.adapters import Adapter as BaseAdapter
 
 from .bot import Bot
