@@ -45,22 +45,6 @@ class Adapter(BaseAdapter):
     def get_name(cls) -> str:
         return "Telegram"
 
-    def setup_webhook(self, bot: Bot):
-        @self.driver.on_startup
-        async def _():
-            try:
-                bot.username = (await bot.get_me()).username
-                log("INFO", "Delete old webhook")
-                await bot.delete_webhook()
-                log("INFO", "Set new webhook")
-                await bot.set_webhook(
-                    url=f"{self.adapter_config.telegram_webhook_url}/telegram",
-                    secret_token=bot.secret_token,
-                )
-                self.bot_connect(bot)
-            except Exception as e:
-                log("ERROR", f"Setup for bot {bot.self_id} failed", e)
-
     async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
         try:
             event = Event.parse_event(update)
@@ -74,11 +58,28 @@ class Adapter(BaseAdapter):
         )
         await bot.handle_event(event)
 
+    async def __bot_pre_setup(self, bot: Bot):
+        bot.username = (await bot.get_me()).username
+        log("INFO", "Delete old webhook")
+        await bot.delete_webhook()
+
+    def setup_webhook(self, bot: Bot):
+        @self.driver.on_startup
+        async def _():
+            try:
+                await self.__bot_pre_setup(bot)
+                log("INFO", "Set new webhook")
+                await bot.set_webhook(
+                    url=f"{self.adapter_config.telegram_webhook_url}/telegram",
+                    secret_token=bot.secret_token,
+                )
+                self.bot_connect(bot)
+            except Exception as e:
+                log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+
     async def poll(self, bot: Bot):
         try:
-            bot.username = (await bot.get_me()).username
-            log("INFO", "Delete old webhook")
-            await bot.delete_webhook()
+            await self.__bot_pre_setup(bot)
             log("INFO", "Start poll")
             self.bot_connect(bot)
         except Exception as e:
