@@ -1,9 +1,8 @@
 import json
 import asyncio
-import pathlib
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, Tuple, Union, Iterable, Optional, cast
 
-from anyio import open_file
+import anyio
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
@@ -14,14 +13,9 @@ from nonebot.adapters import Adapter as BaseAdapter
 
 from .bot import Bot
 from .event import Event
-from .model import InputMedia
-from .config import BotConfig, AdapterConfig
-from .exception import (
-    ActionFailed,
-    NetworkError,
-    ApiNotAvailable,
-    TelegramAdapterException,
-)
+from .config import AdapterConfig
+from .model import InputFile, InputMedia
+from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
 def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -150,21 +144,41 @@ class Adapter(BaseAdapter):
         data = _escape_none(data)
 
         # 分离文件到 files
-        files = {}
+        files: Dict[str, Tuple[str, bytes]] = {}
+        bytes_upload_count = 0
+
+        async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
+            """处理传过来的文件，如果文件被添加到 files 列表则返回文件名"""
+            nonlocal bytes_upload_count
+            filename = None
+
+            if isinstance(file, tuple):
+                filename = file[0]
+                files[filename] = file
+                return filename
+
+            if isinstance(file, str):
+                if await (path := anyio.Path(file)).exists():
+                    file = await path.read_bytes()
+                    filename = path.name
+                else:
+                    return None
+
+            if not filename:
+                filename = f"upload{bytes_upload_count}"
+                bytes_upload_count += 1
+            files[filename] = (filename, file)
+            return filename
+
+        # 多个文件
         if api == "sendMediaGroup":
-            upload_count = 0
-            for media in data["media"]:
-                media = cast(InputMedia, media)
-                if isinstance(media.media, bytes):
-                    files[f"upload{upload_count}"] = (
-                        f"upload{upload_count}",
-                        media.media,
-                    )
-                    media.media = f"attach://upload{upload_count}"
-                elif (file := pathlib.Path(media.media)).is_file():
-                    async with await open_file(media.media, "rb") as f:
-                        files[file.name] = (file.name, await f.read())
-                    media.media = f"attach://{pathlib.Path(media.media).name}"
+            medias: Iterable[InputMedia] = data["media"]
+            for media in medias:
+                filename = await process_input_file(media.media)
+                if filename:
+                    media.media = f"attach://{filename}"
+
+        # 单个文件
         elif api in (
             "sendPhoto",
             "sendAudio",
@@ -176,18 +190,10 @@ class Adapter(BaseAdapter):
         ):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
-                if (value := data.pop(key, None)) is None:
-                    continue
-                if isinstance(value, bytes):
-                    files[key] = ("upload", value)
-                elif (
-                    isinstance(value, str)
-                    and (file := pathlib.Path(str(value))).is_file()
-                ):
-                    async with await open_file(value, "rb") as f:
-                        files[key] = (file.name, await f.read())
-                else:
-                    data[key] = value
+                value = cast(Optional[Union[str, bytes]], data.pop(key, None))
+                if value:
+                    filename = await process_input_file(value)
+                    data[key] = f"attach://{filename}" if filename else value
 
         # 最后处理 data 以符合 DataTypes
         for key in data:
@@ -201,29 +207,28 @@ class Adapter(BaseAdapter):
                     ),
                 )
 
+        log("DEBUG", f"Calling API <y>{api}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
             data=data if files else None,
             json=data if not files else None,
-            files=files,
+            files=files,  # type: ignore
             proxy=self.adapter_config.proxy,
         )
         try:
             response = await self.request(request)
-            if response.content:
-                if 200 <= response.status_code < 300:
-                    return json.loads(response.content)["result"]
-                elif 400 <= response.status_code < 404:
-                    raise ActionFailed(json.loads(response.content)["description"])
-                elif response.status_code == 404:
-                    raise ApiNotAvailable
-                raise NetworkError(
-                    f"HTTP request received unexpected {response.status_code} {response.content}"
-                )
-            else:
-                raise ValueError("Empty response")
-        except TelegramAdapterException:
-            raise
         except Exception as e:
             raise NetworkError("HTTP request failed") from e
+
+        if not response.content:
+            raise ValueError("Empty response")
+        if 200 <= response.status_code < 300:
+            return json.loads(response.content)["result"]
+        if 400 <= response.status_code < 404:
+            raise ActionFailed(json.loads(response.content)["description"])
+        if response.status_code == 404:
+            raise ApiNotAvailable
+        raise NetworkError(
+            f"HTTP request received unexpected {response.status_code} {response.content}",
+        )
