@@ -187,8 +187,9 @@ class Adapter(BaseAdapter):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
                 value = cast(Optional[Union[str, bytes]], data.pop(key, None))
-                if value and (not await process_input_file(value)):
-                    data[key] = value
+                if value:
+                    filename = await process_input_file(value)
+                    data[key] = f"attach://{filename}" if filename else value
 
         # 最后处理 data 以符合 DataTypes
         for key in data:
