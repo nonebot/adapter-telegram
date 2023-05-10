@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple, Type, Union, Literal, Iterable, Optional
+from typing import Any, Dict, List, Type, Tuple, Union, Literal, Iterable, Optional
 
 from nonebot.typing import overrides
 
