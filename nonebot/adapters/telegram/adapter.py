@@ -1,6 +1,6 @@
 import json
 import asyncio
-from typing import Any, Dict, Iterable, List, Tuple, Union, Optional, cast
+from typing import Any, Dict, List, Tuple, Union, Iterable, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
@@ -13,8 +13,8 @@ from nonebot.adapters import Adapter as BaseAdapter
 
 from .bot import Bot
 from .event import Event
-from .model import InputFile, InputMedia
 from .config import AdapterConfig
+from .model import InputFile, InputMedia
 from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
