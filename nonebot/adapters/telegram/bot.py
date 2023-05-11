@@ -1,7 +1,7 @@
 import inspect
 from uuid import uuid4
 from functools import partial
-from typing import Any, Union, Optional, cast
+from typing import Any, List, Union, Optional, Sequence, cast
 
 from pydantic import parse_obj_as
 from nonebot.typing import overrides
@@ -90,14 +90,35 @@ class Bot(BaseBot, API):
             return parse_obj_as(
                 sign.return_annotation, await super().call_api(api, **kargs)
             )
-        else:
-            return await super().call_api(api, **kargs)
+        return await super().call_api(api, **kargs)
 
     def __getattribute__(self, __name: str) -> Any:
         if not __name.startswith("__") and hasattr(API, __name):
             return partial(self.call_api, __name)
-        else:
-            return object.__getattribute__(self, __name)
+        return object.__getattribute__(self, __name)
+
+    def __build_entities_form_msg(
+        self, message: Sequence[MessageSegment]
+    ) -> Optional[List[MessageEntity]]:
+        return (
+            (
+                [
+                    MessageEntity(
+                        type=entity.type,
+                        offset=sum(map(len, message[:i])),
+                        length=len(entity.data["text"]),
+                        url=entity.data.get("url"),
+                        user=entity.data.get("user"),
+                        language=entity.data.get("language"),
+                    )
+                    for i, entity in enumerate(message)
+                    if entity.is_text() and entity.type != "text"
+                ]
+                or None
+            )
+            if message
+            else None
+        )
 
     # TODO 重构
     @overrides(BaseBot)
@@ -109,6 +130,7 @@ class Bot(BaseBot, API):
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
         allow_sending_without_reply: Optional[bool] = None,
+        media_group_caption_index: int = 0,  # 非 Telegram 原生参数
         **kwargs,
     ) -> Any:
         """
@@ -123,152 +145,114 @@ class Bot(BaseBot, API):
                 "protect_content": protect_content,
                 "reply_to_message_id": reply_to_message_id,
                 "allow_sending_without_reply": allow_sending_without_reply,
-            }
+            },
         )
-        if isinstance(event, EventWithChat):
-            message_thread_id = cast(
-                Optional[int], getattr(event, "message_thread_id", None)
+
+        if not isinstance(event, EventWithChat):
+            raise ApiNotAvailable
+
+        message_thread_id = cast(
+            Optional[int],
+            getattr(event, "message_thread_id", None),
+        )
+
+        # 普通文本
+        if isinstance(message, str):
+            return await self.send_message(
+                chat_id=event.chat.id,
+                message_thread_id=message_thread_id,
+                text=message,
+                **kwargs,
             )
-            if isinstance(message, str):
+
+        # 单个 segment
+        if isinstance(message, MessageSegment):
+            if message.is_text():
                 return await self.send_message(
                     chat_id=event.chat.id,
                     message_thread_id=message_thread_id,
-                    text=message,
+                    text=str(message),
+                    entities=self.__build_entities_form_msg([message]),
                     **kwargs,
                 )
-            elif isinstance(message, MessageSegment):
-                if message.is_text():
-                    return await self.send_message(
-                        chat_id=event.chat.id,
-                        message_thread_id=message_thread_id,
-                        text=str(message),
-                        entities=[
-                            MessageEntity(
-                                type=message.type,
-                                offset=0,
-                                length=len(message.data["text"]),
-                                url=message.data.get("url"),
-                                user=message.data.get("user"),
-                                language=message.data.get("language"),
-                            )
-                        ]
-                        if message.type != "text"
-                        else None,
-                        **kwargs,
-                    )
-                elif isinstance(message, File):
-                    return await self.call_api(
-                        f"send_{message.type}",
-                        chat_id=event.chat.id,
-                        message_thread_id=message_thread_id,
-                        **{message.type: message.data["file"]},
-                        **kwargs,
-                    )
-                else:
-                    return await self.call_api(
-                        f"send_{message.type}",
-                        chat_id=event.chat.id,
-                        message_thread_id=message_thread_id,
-                        **message.data,
-                        **kwargs,
-                    )
-            else:
-                entities = Message(filter(lambda x: isinstance(x, Entity), message))
-                files = Message(
-                    filter(
-                        lambda x: isinstance(x, File)
-                        and not isinstance(message, UnCombinFile),
-                        message,
-                    )
-                )
-                others = Message(
-                    filter(
-                        lambda x: not (isinstance(x, Entity) or isinstance(x, File))
-                        or isinstance(message, UnCombinFile),
-                        message,
-                    )
-                )
-                if others:
-                    if len(others) > 1 or files or entities:
-                        raise ApiNotAvailable
-                elif files:
-                    if len(files) > 1:
-                        return await self.send_media_group(
-                            chat_id=event.chat.id,
-                            message_thread_id=message_thread_id,
-                            media=[
-                                InputMedia(
-                                    type=files[0].type,
-                                    media=files[0].data["file"],
-                                    caption=str(entities),
-                                    caption_entities=[
-                                        MessageEntity(
-                                            type=entity.type,
-                                            offset=sum(map(len, message[:i])),
-                                            length=len(entity.data["text"]),
-                                            url=entity.data.get("url"),
-                                            user=entity.data.get("user"),
-                                            language=entity.data.get("language"),
-                                        )
-                                        for i, entity in enumerate(message)
-                                        if entity.is_text() and entity.type != "text"
-                                    ],
-                                )
-                            ]
-                            + [
-                                InputMedia(
-                                    type=file.type,
-                                    media=file.data["file"],
-                                )
-                                for file in files[1:]
-                            ],  # type:ignore
-                            **kwargs,
-                        )
 
-                    else:
-                        file = files[0]
-                        return await self.call_api(
-                            f"send_{file.type}",
-                            chat_id=event.chat.id,
-                            message_thread_id=message_thread_id,
-                            **{
-                                file.type: file.data.get("file"),
-                                "caption": str(entities) if entities else None,
-                                "caption_entities": [
-                                    MessageEntity(
-                                        type=entity.type,
-                                        offset=sum(map(len, message[:i])),
-                                        length=len(entity.data["text"]),
-                                        url=entity.data.get("url"),
-                                        user=entity.data.get("user"),
-                                        language=entity.data.get("language"),
-                                    )
-                                    for i, entity in enumerate(message)
-                                    if entity.is_text() and entity.type != "text"
-                                ]
-                                if entities
-                                else None,
-                            },
-                            **kwargs,
-                        )
-                else:
-                    return await self.send_message(
-                        chat_id=event.chat.id,
-                        message_thread_id=message_thread_id,
-                        text=str(message),
-                        entities=[
-                            MessageEntity(
-                                type=entity.type,
-                                offset=sum(map(len, message[:i])),
-                                length=len(entity.data["text"]),
-                                url=entity.data.get("url"),
-                                user=entity.data.get("user"),
-                                language=entity.data.get("language"),
-                            )
-                            for i, entity in enumerate(message)
-                            if entity.is_text() and entity.type != "text"
-                        ],
-                        **kwargs,
-                    )
-        else:
+            if isinstance(message, File):
+                return await self.call_api(
+                    f"send_{message.type}",
+                    chat_id=event.chat.id,
+                    message_thread_id=message_thread_id,
+                    **{message.type: message.data["file"]},
+                    **kwargs,
+                )
+
+            return await self.call_api(
+                f"send_{message.type}",
+                chat_id=event.chat.id,
+                message_thread_id=message_thread_id,
+                **message.data,
+                **kwargs,
+            )
+
+        # 处理 Message 的发送
+        # 分离各类型 seg
+        entities = Message(x for x in message if isinstance(x, Entity))
+        files = Message(
+            x
+            for x in message
+            if isinstance(x, File) and not isinstance(message, UnCombinFile)
+        )
+        others = Message(
+            x
+            for x in message
+            if not (isinstance(x, (Entity, File))) or isinstance(message, UnCombinFile)
+        )
+
+        # 如果只能单独发送的消息段和其他消息段在一起，那么抛出错误
+        if others and (len(others) > 1 or files or entities):
             raise ApiNotAvailable
+
+        # 发送纯文本消息
+        if not files:
+            return await self.send_message(
+                chat_id=event.chat.id,
+                message_thread_id=message_thread_id,
+                text=str(message),
+                entities=self.__build_entities_form_msg(message),
+                **kwargs,
+            )
+
+        # 发送带文件的消息
+        if len(files) > 1:
+            # 多个文件
+            medias = [
+                InputMedia(type=file.type, media=file.data["file"]) for file in files
+            ]
+
+            try:
+                media_will_edit = medias[media_group_caption_index]
+            except IndexError:
+                media_will_edit = medias[0]
+
+            media_will_edit.caption = str(entities) if entities else None
+            media_will_edit.caption_entities = self.__build_entities_form_msg(entities)
+
+            return await self.send_media_group(
+                chat_id=event.chat.id,
+                message_thread_id=message_thread_id,
+                media=medias,  # type: ignore
+                **kwargs,
+            )
+
+        # 单个文件
+        file = files[0]
+        return await self.call_api(
+            f"send_{file.type}",
+            chat_id=event.chat.id,
+            message_thread_id=message_thread_id,
+            **{
+                file.type: file.data.get("file"),
+                "caption": str(entities) if entities else None,
+                "caption_entities": self.__build_entities_form_msg(entities),
+            },
+            **kwargs,
+        )

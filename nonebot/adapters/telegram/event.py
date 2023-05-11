@@ -210,7 +210,7 @@ class PrivateMessageEvent(MessageEvent):
 class GroupMessageEvent(MessageEvent):
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
-        if obj.pop("is_forum_message", None):
+        if obj.pop("is_topic_message", None):
             event = ForumTopicMessageEvent.parse_event(obj)
         else:
             obj.pop("message_thread_id", None)
@@ -346,7 +346,7 @@ class GroupEditedMessageEvent(EditedMessageEvent):
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
-        if obj.pop("is_forum_message", None):
+        if obj.pop("is_topic_message", None):
             event = ForumTopicEditedMessageEvent.parse_event(obj)
         else:
             obj.pop("message_thread_id", None)
