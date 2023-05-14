@@ -5,14 +5,12 @@
 """
 
 from typing import Union
+
 from nonebot import on_command
 from nonebot.adapters.telegram import Bot
-from nonebot.adapters.telegram.message import Entity
-from nonebot.adapters.telegram.event import (
-    GroupMessageEvent,
-    PrivateMessageEvent,
-)
 from nonebot.adapters.telegram.model import User
+from nonebot.adapters.telegram.message import Entity
+from nonebot.adapters.telegram.event import GroupMessageEvent, PrivateMessageEvent
 
 # ChannelPostEvent 没有 from 字段
 MessageEventHasUser = Union[PrivateMessageEvent, GroupMessageEvent]

@@ -9,7 +9,6 @@ from nonebot.adapters.telegram.message import File
 from nonebot.adapters.telegram.event import MessageEvent
 from nonebot.adapters.telegram.model import InputMediaPhoto
 
-
 cmd_photo1 = on_command("photo1")
 
 
