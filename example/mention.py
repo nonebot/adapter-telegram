@@ -9,8 +9,10 @@ from nonebot.adapters.telegram import Bot
 from nonebot.adapters.telegram.message import Entity
 from nonebot.adapters.telegram.event import MessageEvent
 
+cmd_mention1 = on_command("mention1")
 
-@on_command("mention1").handle()
+
+@cmd_mention1.handle()
 async def _(bot: Bot, event: MessageEvent):
     user = event.telegram_model.message.from_
     # 获取一个 User 对象，这里从 event 获取用户的 User 对象
@@ -35,7 +37,10 @@ async def _(bot: Bot, event: MessageEvent):
     """
 
 
-@on_command("mention2").handle()
+cmd_mention2 = on_command("mention2")
+
+
+@cmd_mention2.handle()
 async def _(bot: Bot, event: MessageEvent):
     if (user := event.telegram_model.message.from_) is None:
         return

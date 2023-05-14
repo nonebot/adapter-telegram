@@ -31,7 +31,10 @@ async def download_file(bot: Bot, file_id: str):
     await anyio.Path(DATA_PATH / file_path).write_bytes(data)
 
 
-@on_command("download").handle()
+cmd_download = on_command("download")
+
+
+@cmd_download.handle()
 async def _(bot: Bot, event: MessageEvent):
     for seg in event.get_message() + (
         event.reply_to_message.get_message() if event.reply_to_message else []

@@ -16,8 +16,10 @@ from nonebot.adapters.telegram.model import (
     InlineQueryResultArticle,
 )
 
+cmd_inline = on_command("inline")
 
-@on_command("inline").handle()
+
+@cmd_inline.handle()
 async def _(bot: Bot, event: MessageEvent):
     await bot.send(
         event,
@@ -47,7 +49,10 @@ async def _(bot: Bot, event: MessageEvent):
     )
 
 
-@on("inline").handle()
+on_inline = on("inline")
+
+
+@on_inline.handle()
 async def _(bot: Bot, event: InlineQueryEvent):
     await bot.answer_inline_query(
         inline_query_id=event.id,
@@ -63,7 +68,10 @@ async def _(bot: Bot, event: InlineQueryEvent):
     )
 
 
-@on("inline").handle()
+on_inline2 = on("inline")
+
+
+@on_inline2.handle()
 async def _(bot: Bot, event: CallbackQueryEvent):
     if event.message:
         await bot.edit_message_text(
