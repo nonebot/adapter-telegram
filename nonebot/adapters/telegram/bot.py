@@ -121,18 +121,18 @@ class Bot(BaseBot, API):
         )
 
     # TODO 重构
-    @overrides(BaseBot)
-    async def send(
+    async def send_to(
         self,
-        event: Event,
+        chat_id: int,
         message: Union[str, Message, MessageSegment],
+        message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
         allow_sending_without_reply: Optional[bool] = None,
         media_group_caption_index: int = 0,  # 非 Telegram 原生参数
         **kwargs,
-    ) -> Any:
+    ):
         """
         由于 Telegram 对于不同类型的消息有不同的 API，如果需要使用同一方法发送不同类型的消息请使用此方法。
 
@@ -148,18 +148,10 @@ class Bot(BaseBot, API):
             },
         )
 
-        if not isinstance(event, EventWithChat):
-            raise ApiNotAvailable
-
-        message_thread_id = cast(
-            Optional[int],
-            getattr(event, "message_thread_id", None),
-        )
-
         # 普通文本
         if isinstance(message, str):
             return await self.send_message(
-                chat_id=event.chat.id,
+                chat_id=chat_id,
                 message_thread_id=message_thread_id,
                 text=message,
                 **kwargs,
@@ -169,7 +161,7 @@ class Bot(BaseBot, API):
         if isinstance(message, MessageSegment):
             if message.is_text():
                 return await self.send_message(
-                    chat_id=event.chat.id,
+                    chat_id=chat_id,
                     message_thread_id=message_thread_id,
                     text=str(message),
                     entities=self.__build_entities_form_msg([message]),
@@ -179,7 +171,7 @@ class Bot(BaseBot, API):
             if isinstance(message, File):
                 return await self.call_api(
                     f"send_{message.type}",
-                    chat_id=event.chat.id,
+                    chat_id=chat_id,
                     message_thread_id=message_thread_id,
                     **{message.type: message.data["file"]},
                     **kwargs,
@@ -187,7 +179,7 @@ class Bot(BaseBot, API):
 
             return await self.call_api(
                 f"send_{message.type}",
-                chat_id=event.chat.id,
+                chat_id=chat_id,
                 message_thread_id=message_thread_id,
                 **message.data,
                 **kwargs,
@@ -214,7 +206,7 @@ class Bot(BaseBot, API):
         # 发送纯文本消息
         if not files:
             return await self.send_message(
-                chat_id=event.chat.id,
+                chat_id=chat_id,
                 message_thread_id=message_thread_id,
                 text=str(message),
                 entities=self.__build_entities_form_msg(message),
@@ -237,7 +229,7 @@ class Bot(BaseBot, API):
             media_will_edit.caption_entities = self.__build_entities_form_msg(entities)
 
             return await self.send_media_group(
-                chat_id=event.chat.id,
+                chat_id=chat_id,
                 message_thread_id=message_thread_id,
                 media=medias,  # type: ignore
                 **kwargs,
@@ -247,12 +239,34 @@ class Bot(BaseBot, API):
         file = files[0]
         return await self.call_api(
             f"send_{file.type}",
-            chat_id=event.chat.id,
+            chat_id=chat_id,
             message_thread_id=message_thread_id,
             **{
                 file.type: file.data.get("file"),
                 "caption": str(entities) if entities else None,
                 "caption_entities": self.__build_entities_form_msg(entities),
             },
+            **kwargs,
+        )
+
+    @overrides(BaseBot)
+    async def send(
+        self,
+        event: Event,
+        message: Union[str, Message, MessageSegment],
+        **kwargs,
+    ) -> Any:
+        if not isinstance(event, EventWithChat):
+            raise ApiNotAvailable
+
+        message_thread_id = cast(
+            Optional[int],
+            getattr(event, "message_thread_id", None),
+        )
+
+        return await self.send_to(
+            event.chat.id,
+            message,
+            message_thread_id=message_thread_id,
             **kwargs,
         )
