@@ -8,7 +8,6 @@ from typing import Union
 
 from nonebot import on_command
 from nonebot.adapters.telegram import Bot
-from nonebot.adapters.telegram.model import User
 from nonebot.adapters.telegram.message import Entity
 from nonebot.adapters.telegram.event import GroupMessageEvent, PrivateMessageEvent
 
@@ -16,15 +15,7 @@ from nonebot.adapters.telegram.event import GroupMessageEvent, PrivateMessageEve
 MessageEventHasUser = Union[PrivateMessageEvent, GroupMessageEvent]
 
 
-def format_nickname(user: User) -> str:
-    lastname = f" {user.last_name}" if user.last_name else ""
-    return f"{user.first_name}{lastname}"
-
-
-cmd_mention1 = on_command("mention1")
-
-
-@cmd_mention1.handle()
+@on_command("mention").handle()
 async def _(bot: Bot, event: MessageEventHasUser):
     # 获取一个 User 对象，这里从 event 获取用户的 User 对象
     user = event.from_
@@ -45,20 +36,16 @@ async def _(bot: Bot, event: MessageEventHasUser):
 
     else:
         # 当用户没有用户名时，请使用 text_link 或 text_mention 进行 @
-        nick = format_nickname(user)
+        lastname = f" {user.last_name}" if user.last_name else ""
+        nick = f"{user.first_name}{lastname}"
+
+        # text_link
         await bot.send(
             event,
             "Hello, " + Entity.text_link(nick, f"tg://user?id={user.id}") + "!",
         )
+
+        # text_mention
         await bot.send(event, Entity.text_mention(nick, user) + ", How are you?")
-
-
-cmd_mention2 = on_command("mention2")
-
-
-@cmd_mention2.handle()
-async def _(bot: Bot, event: MessageEventHasUser):
-    user = event.from_
-
-    # 与 mention 不同的是，text_mention 的文本可以自定义
-    await bot.send(event, Entity.text_mention("anytext", user))
+        # 与 mention 不同的是，text_mention 的文本可以自定义
+        await bot.send(event, Entity.text_mention("anytext", user))
