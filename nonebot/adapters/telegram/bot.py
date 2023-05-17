@@ -40,10 +40,14 @@ class Bot(BaseBot, API):
             raise ValueError("config is required")
 
         self.adapter = adapter
-        self.self_id = config.token.split(":")[0]
+        self.self_id = self.get_bot_id_by_token(config.token)
         self.username: Optional[str] = None
         self.bot_config = config
         self.secret_token = uuid4().hex
+
+    @staticmethod
+    def get_bot_id_by_token(token: str) -> str:
+        return token.split(":")[0]
 
     def _check_tome(self, event: MessageEvent):
         def process_first_segment(message: Message):
