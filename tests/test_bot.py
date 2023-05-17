@@ -26,7 +26,7 @@ async def test_check_tome(app: App):
     assert isinstance(event, GroupMessageEvent)
 
     async with app.test_api() as ctx:
-        bot = Bot(ctx.create_adapter(base=Adapter), bot_config)
+        bot = Bot(ctx.create_adapter(base=Adapter), config=bot_config)
         bot.username = "test"
         bot._check_tome(event)
         assert event._tome

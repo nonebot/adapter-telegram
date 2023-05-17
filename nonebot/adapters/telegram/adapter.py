@@ -129,7 +129,7 @@ class Adapter(BaseAdapter):
                 )
             )
         for bot_config in self.adapter_config.telegram_bots:
-            bot = Bot(self, bot_config)
+            bot = Bot(self, None, config=bot_config)
             if bot_config.is_webhook:
                 self.setup_webhook(bot)
             else:

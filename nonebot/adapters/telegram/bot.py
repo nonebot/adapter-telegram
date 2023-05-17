@@ -29,7 +29,16 @@ class Bot(BaseBot, API):
     Telegram Bot 适配。继承属性参考 `BaseBot <./#class-basebot>`_ 。
     """
 
-    def __init__(self, adapter: "Adapter", config: BotConfig):
+    def __init__(
+        self,
+        adapter: "Adapter",
+        self_id: Any,  # noqa: ARG002
+        *,
+        config: Optional[BotConfig] = None,
+    ):
+        if not config:
+            raise ValueError("config is required")
+
         self.adapter = adapter
         self.self_id = config.token.split(":")[0]
         self.username: Optional[str] = None
