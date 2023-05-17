@@ -39,8 +39,7 @@ class Bot(BaseBot, API):
         if not config:
             raise ValueError("config is required")
 
-        self.adapter = adapter
-        self.self_id = self_id
+        super().__init__(adapter, self_id)
         self.username: Optional[str] = None
         self.bot_config = config
         self.secret_token = uuid4().hex
