@@ -32,7 +32,7 @@ class Bot(BaseBot, API):
     def __init__(
         self,
         adapter: "Adapter",
-        self_id: Any,  # noqa: ARG002
+        self_id: str,
         *,
         config: Optional[BotConfig] = None,
     ):
@@ -40,7 +40,7 @@ class Bot(BaseBot, API):
             raise ValueError("config is required")
 
         self.adapter = adapter
-        self.self_id = self.get_bot_id_by_token(config.token)
+        self.self_id = self_id
         self.username: Optional[str] = None
         self.bot_config = config
         self.secret_token = uuid4().hex
