@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.12] - 2023-05-21
+
+### 🐛 Bug 修复
+
+- 修复 Bot.__init__ 的参数问题 [@lgc2333](https://github.com/lgc2333) ([#39](https://github.com/nonebot/adapter-telegram/pull/39))
+
+### 📝 文档
+
+- 调整一些调用示例 [@lgc2333](https://github.com/lgc2333) ([#38](https://github.com/nonebot/adapter-telegram/pull/38))
+
 ## [0.1.0-beta.11] - 2023-05-12
 
 ### 🚀 新功能
@@ -169,7 +179,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b11...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b12...HEAD
+[0.1.0-beta.12]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b11...v0.1.0b12
 [0.1.0-beta.11]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b10...v0.1.0b11
 [0.1.0-beta.10]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b9...v0.1.0b10
 [0.1.0-beta.9]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b8...v0.1.09b
