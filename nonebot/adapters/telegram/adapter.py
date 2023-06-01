@@ -69,6 +69,7 @@ class Adapter(BaseAdapter):
                 self.bot_connect(bot)
             except Exception as e:
                 log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+                raise
 
     async def poll(self, bot: Bot):
         try:
@@ -77,6 +78,7 @@ class Adapter(BaseAdapter):
             self.bot_connect(bot)
         except Exception as e:
             log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+            raise
 
         update_offset = None
         while True:
