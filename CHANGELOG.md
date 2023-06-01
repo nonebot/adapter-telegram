@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.13] - 2023-06-01
+
+### 🐛 Bug 修复
+
+- 修复 send_to 的 chat_id 类型注解 [@lgc2333](https://github.com/lgc2333) ([#40](https://github.com/nonebot/adapter-telegram/pull/40))
+- 修复 setup 报错后仍继续运行的问题
+
 ## [0.1.0-beta.12] - 2023-05-21
 
 ### 🐛 Bug 修复
@@ -179,7 +186,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b12...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b13...HEAD
+[0.1.0-beta.13]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b12...v0.1.0b13
 [0.1.0-beta.12]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b11...v0.1.0b12
 [0.1.0-beta.11]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b10...v0.1.0b11
 [0.1.0-beta.10]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b9...v0.1.0b10
