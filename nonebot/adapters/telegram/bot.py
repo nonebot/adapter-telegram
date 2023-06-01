@@ -135,7 +135,7 @@ class Bot(BaseBot, API):
     # TODO 重构
     async def send_to(
         self,
-        chat_id: int,
+        chat_id: Union[int, str],
         message: Union[str, Message, MessageSegment],
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
