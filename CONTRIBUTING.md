@@ -72,4 +72,4 @@ nonemoji commit [-e EMOJI] [-m MESSAGE] [-- ...]
 
 ## 为社区做贡献
 
-如果你开发了一个兼容 Telegram Adapter 的插件，在发布到 [NoneBot 商店](https://v2.nonebot.dev/store)时可以添加 `a:Telegram` 的标签，以便于用户在 OneBot V11 插件的海洋里找到你。
+如果你开发了一个兼容 Telegram Adapter 的插件，在发布到 [NoneBot 商店](https://nonebot.dev/store)时可以添加 `a:Telegram` 的标签，以便于用户在 OneBot V11 插件的海洋里找到你。

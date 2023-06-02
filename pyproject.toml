@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 [project.urls]
-homepage = "https://v2.nonebot.dev/"
+homepage = "https://nonebot.dev/"
 repository = "https://github.com/nonebot/adapter-telegram"
 documentation = "https://github.com/nonebot/adapter-telegram/blob/beta/MANUAL.md"
 changelog = "https://github.com/nonebot/adapter-telegram/blob/beta/CHANGELOG.md"
