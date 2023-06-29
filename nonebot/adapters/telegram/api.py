@@ -152,7 +152,7 @@ class API:
     async def send_photo(
         self,
         chat_id: Union[int, str],
-        photo: Union[InputFile, str],
+        photo: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
@@ -176,7 +176,7 @@ class API:
     async def send_audio(
         self,
         chat_id: Union[int, str],
-        audio: Union[InputFile, str],
+        audio: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
@@ -184,7 +184,7 @@ class API:
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
-        thumbnail: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[str, InputFile]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -203,9 +203,9 @@ class API:
     async def send_document(
         self,
         chat_id: Union[int, str],
-        document: Union[InputFile, str],
+        document: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
-        thumbnail: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
@@ -228,12 +228,12 @@ class API:
     async def send_video(
         self,
         chat_id: Union[int, str],
-        video: Union[InputFile, str],
+        video: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumbnail: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
@@ -257,12 +257,12 @@ class API:
     async def send_animation(
         self,
         chat_id: Union[int, str],
-        animation: Union[InputFile, str],
+        animation: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        thumbnail: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
@@ -285,7 +285,7 @@ class API:
     async def send_voice(
         self,
         chat_id: Union[int, str],
-        voice: Union[InputFile, str],
+        voice: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
@@ -309,11 +309,11 @@ class API:
     async def send_video_note(
         self,
         chat_id: Union[int, str],
-        video_note: Union[InputFile, str],
+        video_note: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         duration: Optional[int] = None,
         length: Optional[int] = None,
-        thumbnail: Optional[Union[InputFile, str]] = None,
+        thumbnail: Optional[Union[str, InputFile]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,
@@ -883,7 +883,7 @@ class API:
     async def send_sticker(
         self,
         chat_id: Union[int, str],
-        sticker: Union[InputFile, str],
+        sticker: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
@@ -961,7 +961,7 @@ class API:
         ...
 
     async def set_sticker_set_thumbnail(
-        self, name: str, user_id: int, thumbnail: Optional[Union[InputFile, str]] = None
+        self, name: str, user_id: int, thumbnail: Optional[Union[str, InputFile]] = None
     ) -> Literal[True]:
         ...
 
