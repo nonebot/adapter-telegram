@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.14] - 2023-06-30
+
+### 🐛 Bug 修复
+
+- 修复 无法使用 url 发送文件的问题 [@Ailitonia](https://github.com/Ailitonia) ([#45](https://github.com/nonebot/adapter-telegram/pull/45))
+
 ## [0.1.0-beta.13] - 2023-06-01
 
 ### 🐛 Bug 修复
@@ -186,7 +192,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b13...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b14...HEAD
+[0.1.0-beta.14]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b13...v0.1.0b14
 [0.1.0-beta.13]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b12...v0.1.0b13
 [0.1.0-beta.12]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b11...v0.1.0b12
 [0.1.0-beta.11]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b10...v0.1.0b11
