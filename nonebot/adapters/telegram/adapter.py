@@ -183,7 +183,12 @@ class Adapter(BaseAdapter):
                 filename = await process_input_file(media.media)
                 if filename:
                     media.media = f"attach://{filename}"
-
+        # 对修改消息媒体消息的处理
+        elif api == "editMessageMedia":
+            media:Iterable[InputMedia] = data["media"]
+            filename = await process_input_file(media.media)
+            if filename:
+                media.media = f"attach://{filename}"
         # 单个文件
         elif api in (
             "sendPhoto",
