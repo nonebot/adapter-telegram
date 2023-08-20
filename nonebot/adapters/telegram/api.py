@@ -718,6 +718,11 @@ class API:
     ) -> Literal[True]:
         ...
 
+    async def unpin_all_general_forum_topic_messages(
+        self, chat_id: Union[int, str]
+    ) -> Literal[True]:
+        ...
+
     async def answer_callback_query(
         self,
         callback_query_id: str,
