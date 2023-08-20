@@ -1,9 +1,8 @@
 import json
 import asyncio
-import pathlib
-from typing import Any, Dict, List, cast
+from typing import Any, Dict, List, Tuple, Union, Iterable, Optional, cast
 
-from anyio import open_file
+import anyio
 from pydantic.main import BaseModel
 from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
@@ -14,14 +13,9 @@ from nonebot.adapters import Adapter as BaseAdapter
 
 from .bot import Bot
 from .event import Event
-from .model import InputMedia
-from .config import BotConfig, AdapterConfig
-from .exception import (
-    ActionFailed,
-    NetworkError,
-    ApiNotAvailable,
-    TelegramAdapterException,
-)
+from .config import AdapterConfig
+from .model import InputFile, InputMedia
+from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
 def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -44,13 +38,29 @@ class Adapter(BaseAdapter):
     def get_name(cls) -> str:
         return "Telegram"
 
+    async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
+        try:
+            event = Event.parse_event(update)
+        except Exception as e:
+            log("ERROR", f"Error when parsing event {update}", e)
+            return
+
+        log(
+            "DEBUG",
+            escape_tag(str(event.dict(exclude_none=True, exclude={"telegram_model"}))),
+        )
+        await bot.handle_event(event)
+
+    async def __bot_pre_setup(self, bot: Bot):
+        bot.username = (await bot.get_me()).username
+        log("INFO", "Delete old webhook")
+        await bot.delete_webhook()
+
     def setup_webhook(self, bot: Bot):
         @self.driver.on_startup
         async def _():
             try:
-                bot.username = (await bot.get_me()).username
-                log("INFO", "Delete old webhook")
-                await bot.delete_webhook()
+                await self.__bot_pre_setup(bot)
                 log("INFO", "Set new webhook")
                 await bot.set_webhook(
                     url=f"{self.adapter_config.telegram_webhook_url}/telegram",
@@ -59,43 +69,33 @@ class Adapter(BaseAdapter):
                 self.bot_connect(bot)
             except Exception as e:
                 log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+                raise
 
     async def poll(self, bot: Bot):
         try:
-            bot.username = (await bot.get_me()).username
-            log("INFO", "Delete old webhook")
-            await bot.delete_webhook()
+            await self.__bot_pre_setup(bot)
             log("INFO", "Start poll")
             self.bot_connect(bot)
-
-            update_offset = None
-            while True:
-                try:
-                    updates = await bot.get_updates(offset=update_offset, timeout=30)
-                    if update_offset is not None:
-                        for update in updates:
-                            update_offset = update.update_id + 1
-                            event = Event.parse_event(
-                                update.dict(by_alias=True, exclude_none=True)
-                            )
-                            log(
-                                "DEBUG",
-                                escape_tag(
-                                    str(
-                                        event.dict(
-                                            exclude_none=True,
-                                            exclude={"telegram_model"},
-                                        )
-                                    )
-                                ),
-                            )
-                            await bot.handle_event(event)
-                    elif updates:
-                        update_offset = updates[0].update_id
-                except Exception as e:
-                    log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
         except Exception as e:
             log("ERROR", f"Setup for bot {bot.self_id} failed", e)
+            raise
+
+        update_offset = None
+        while True:
+            try:
+                updates = await bot.get_updates(offset=update_offset, timeout=30)
+                if update_offset is not None:
+                    for update in updates:
+                        update_offset = update.update_id + 1
+                        asyncio.create_task(
+                            self.__handle_update(
+                                bot, update.dict(by_alias=True, exclude_none=True)
+                            )
+                        )
+                elif updates:
+                    update_offset = updates[0].update_id
+            except Exception as e:
+                log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
 
     def setup_polling(self, bot: Bot):
         @self.driver.on_startup
@@ -116,21 +116,26 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    asyncio.create_task(bot.handle_event(Event.parse_event(update)))
+                    asyncio.create_task(self.__handle_update(bot, update))
                 return Response(204)
         return Response(401)
 
     def setup(self) -> None:
-        self.setup_http_server(
-            HTTPServerSetup(
-                URL("/telegram"),
-                "POST",
-                self.get_name(),
-                self.handle_http,
+        if list(filter(lambda b: b.is_webhook, self.adapter_config.telegram_bots)):
+            self.setup_http_server(
+                HTTPServerSetup(
+                    URL("/telegram"),
+                    "POST",
+                    self.get_name(),
+                    self.handle_http,
+                )
             )
-        )
         for bot_config in self.adapter_config.telegram_bots:
-            bot = Bot(self, bot_config)
+            bot = Bot(
+                self,
+                Bot.get_bot_id_by_token(bot_config.token),
+                config=bot_config,
+            )
             if bot_config.is_webhook:
                 self.setup_webhook(bot)
             else:
@@ -145,21 +150,46 @@ class Adapter(BaseAdapter):
         data = _escape_none(data)
 
         # 分离文件到 files
-        files = {}
+        files: Dict[str, Tuple[str, bytes]] = {}
+        bytes_upload_count = 0
+
+        async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
+            """处理传过来的文件，如果文件被添加到 files 列表则返回文件名"""
+            nonlocal bytes_upload_count
+            filename = None
+
+            if isinstance(file, tuple):
+                filename = file[0]
+                files[filename] = file
+                return filename
+
+            if isinstance(file, str):
+                if await (path := anyio.Path(file)).exists():
+                    file = await path.read_bytes()
+                    filename = path.name
+                else:
+                    return None
+
+            if not filename:
+                filename = f"upload{bytes_upload_count}"
+                bytes_upload_count += 1
+            files[filename] = (filename, file)
+            return filename
+
+        # 多个文件
         if api == "sendMediaGroup":
-            upload_count = 0
-            for media in data["media"]:
-                media = cast(InputMedia, media)
-                if isinstance(media.media, bytes):
-                    files[f"upload{upload_count}"] = (
-                        f"upload{upload_count}",
-                        media.media,
-                    )
-                    media.media = f"attach://upload{upload_count}"
-                elif (file := pathlib.Path(media.media)).is_file():
-                    async with await open_file(media.media, "rb") as f:
-                        files[file.name] = (file.name, await f.read())
-                    media.media = f"attach://{pathlib.Path(media.media).name}"
+            medias: Iterable[InputMedia] = data["media"]
+            for media in medias:
+                filename = await process_input_file(media.media)
+                if filename:
+                    media.media = f"attach://{filename}"
+        # 对修改消息媒体消息的处理
+        elif api == "editMessageMedia":
+            media: Iterable[InputMedia] = data["media"]
+            filename = await process_input_file(media.media)
+            if filename:
+                media.media = f"attach://{filename}"
+        # 单个文件
         elif api in (
             "sendPhoto",
             "sendAudio",
@@ -171,18 +201,10 @@ class Adapter(BaseAdapter):
         ):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
-                if (value := data.pop(key, None)) is None:
-                    continue
-                if isinstance(value, bytes):
-                    files[key] = ("upload", value)
-                elif (
-                    isinstance(value, str)
-                    and (file := pathlib.Path(str(value))).is_file()
-                ):
-                    async with await open_file(value, "rb") as f:
-                        files[key] = (file.name, await f.read())
-                else:
-                    data[key] = value
+                value = cast(Optional[Union[str, bytes]], data.pop(key, None))
+                if value:
+                    filename = await process_input_file(value)
+                    data[key] = f"attach://{filename}" if filename else value
 
         # 最后处理 data 以符合 DataTypes
         for key in data:
@@ -196,29 +218,28 @@ class Adapter(BaseAdapter):
                     ),
                 )
 
+        log("DEBUG", f"Calling API <y>{api}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
             data=data if files else None,
             json=data if not files else None,
-            files=files,
+            files=files,  # type: ignore
             proxy=self.adapter_config.proxy,
         )
         try:
             response = await self.request(request)
-            if response.content:
-                if 200 <= response.status_code < 300:
-                    return json.loads(response.content)["result"]
-                elif 400 <= response.status_code < 404:
-                    raise ActionFailed(json.loads(response.content)["description"])
-                elif response.status_code == 404:
-                    raise ApiNotAvailable
-                raise NetworkError(
-                    f"HTTP request received unexpected {response.status_code} {response.content}"
-                )
-            else:
-                raise ValueError("Empty response")
-        except TelegramAdapterException:
-            raise
         except Exception as e:
             raise NetworkError("HTTP request failed") from e
+
+        if not response.content:
+            raise ValueError("Empty response")
+        if 200 <= response.status_code < 300:
+            return json.loads(response.content)["result"]
+        if 400 <= response.status_code < 404:
+            raise ActionFailed(json.loads(response.content)["description"])
+        if response.status_code == 404:
+            raise ApiNotAvailable
+        raise NetworkError(
+            f"HTTP request received unexpected {response.status_code} {response.content}",
+        )

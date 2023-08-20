@@ -1,4 +1,4 @@
-from typing import List, Union, Literal, Optional
+from typing import List, Tuple, Union, Literal, Optional
 
 from pydantic import Field, BaseModel
 
@@ -781,12 +781,12 @@ class ResponseParameters(BaseModel):
     retry_after: Optional[int] = None
 
 
-InputFile = bytes
+InputFile = Union[bytes, Tuple[str, bytes]]
 
 
 class InputMedia(BaseModel):
     type: str
-    media: str
+    media: Union[str, InputFile]
     caption: Optional[str] = None
     parse_mode: Optional[str] = None
     caption_entities: Optional[List[MessageEntity]] = None
@@ -799,7 +799,7 @@ class InputMediaPhoto(InputMedia):
 
 class InputMediaVideo(InputMedia):
     type: Literal["video"] = "video"
-    thumbnail: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[str, InputFile]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -809,7 +809,7 @@ class InputMediaVideo(InputMedia):
 
 class InputMediaAnimation(InputMedia):
     type: Literal["animation"] = "animation"
-    thumbnail: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[str, InputFile]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -818,7 +818,7 @@ class InputMediaAnimation(InputMedia):
 
 class InputMediaAudio(InputMedia):
     type: Literal["audio"] = "audio"
-    thumbnail: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[str, InputFile]] = None
     duration: Optional[int] = None
     performer: Optional[str] = None
     title: Optional[str] = None
@@ -826,7 +826,7 @@ class InputMediaAudio(InputMedia):
 
 class InputMediaDocument(InputMedia):
     type: Literal["document"] = "document"
-    thumbnail: Optional[Union[InputFile, str]] = None
+    thumbnail: Optional[Union[str, InputFile]] = None
     disable_content_type_detection: Optional[bool] = None
 
 
@@ -866,7 +866,7 @@ class StickerSet(BaseModel):
 
 
 class InputSticker(BaseModel):
-    sticker: Union[InputFile, str]
+    sticker: Union[str, InputFile]
     emoji_list: List[str]
     mask_position: Optional[MaskPosition] = None
     keywords: Optional[List[str]] = None

@@ -43,7 +43,10 @@ async def _(bot: Bot, event: MessageEvent):
 async def _(bot: Bot, event: MessageEvent):
     await bot.send(
         event,
-        File.photo("./docs/logo.png") + File.photo("./docs/logo.png"),
+        File.photo("./docs/logo.png")
+        + File.photo(
+            "https://raw.githubusercontent.com/nonebot/adapter-telegram/beta/docs/logo.png"
+        ),
     )
 
 
@@ -62,6 +65,8 @@ async def _(bot: Bot, event: MessageEvent):
         chat_id=event.chat.id,
         media=[
             InputMediaPhoto(media="./docs/logo.png"),
-            InputMediaPhoto(media="./docs/logo.png"),
+            InputMediaPhoto(
+                media="https://raw.githubusercontent.com/nonebot/adapter-telegram/beta/docs/logo.png"
+            ),
         ],
     )
