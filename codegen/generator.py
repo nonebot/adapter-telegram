@@ -89,15 +89,10 @@ def sort_models2(schemas: Dict[str, Type]) -> Dict[str, Object]:
     return models
 
 
-def gen_model(models: List[Object]):
-    print(
-        """from typing import List, Union, Literal, Optional
-
-from pydantic import Field, BaseModel"""
-    )
-    print("\n")
+def gen_model(models: List[Object]) -> str:
+    output = ""
     for model in update_models(obj_schemas).values():
-        print(f"class {model.to_annotation()}(BaseModel):")
+        output += f"class {model.to_annotation()}(BaseModel):\n"
         for name in model.properties:
             text = f"    {name}: {model.property_annotation(name)}"
             if name not in model.required:
@@ -106,48 +101,15 @@ from pydantic import Field, BaseModel"""
                 text = f'    {name}_: {model.property_annotation(name)} = Field(alias="{name}")'
                 if name not in model.required:
                     text = f'    {name}_: {model.property_annotation(name)} = Field(default=None, alias="{name}")'
-            print(text)
+            output += text + "\n"
         if not model.properties:
-            print("    pass")
-        print("\n")
+            output += "    pass\n"
+        output += "\n"
+    return output
 
 
-def gen_api(methods: List[Method]):
-    print(
-        """from typing import Any, List, Union, Optional
-
-from nonebot.adapters import Bot as BaseBot
-from nonebot.adapters import Adapter as Adapter
-
-from .event import Event
-from .config import BotConfig
-from .message import Message, MessageSegment
-from .model import (
-    InputFile,
-    BotCommand,
-    ForceReply,
-    InputMedia,
-    MenuButton,
-    LabeledPrice,
-    MaskPosition,
-    MessageEntity,
-    ShippingOption,
-    BotCommandScope,
-    ChatPermissions,
-    InputMediaAudio,
-    InputMediaPhoto,
-    InputMediaVideo,
-    InlineQueryResult,
-    InputMediaDocument,
-    ReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
-    InlineKeyboardMarkup,
-    PassportElementError,
-    ChatAdministratorRights,
-)
-
-class API:"""
-    )
+def gen_api(methods: List[Method]) -> str:
+    output = "class API:\n"
     for method in methods:
         text = ""
         text += f"    async def {method.name}(\n"
@@ -157,5 +119,5 @@ class API:"""
         for name, type in method.params.items():
             if name not in method.required:
                 text += f"        {name}: Optional[{type.to_annotation()}] = None,\n"
-        print(text.removesuffix(",\n"))
-        print("): ...")
+        output += text.removesuffix(",\n") + "): ... \n"
+    return output
