@@ -88,6 +88,7 @@ class Chat(BaseModel):
     """
     active_usernames: Optional[List[str]] = None
     emoji_status_custom_emoji_id: Optional[str] = None
+    emoji_status_expiration_date: Optional[int] = None
     bio: Optional[str] = None
     """
     :说明: 聊天 ?，仅在使用 get_chat 方法时返回
@@ -191,6 +192,7 @@ class Message(BaseModel):
     document: Optional["Document"] = None
     photo: Optional[List["PhotoSize"]] = None
     sticker: Optional["Sticker"] = None
+    story: Optional["Story"] = None
     video: Optional["Video"] = None
     video_note: Optional["VideoNote"] = None
     voice: Optional["Voice"] = None
@@ -292,6 +294,10 @@ class Document(BaseModel):
     file_size: Optional[int] = None
 
 
+class Story(BaseModel):
+    pass
+
+
 class Video(BaseModel):
     file_id: str
     file_unique_id: str
@@ -341,7 +347,8 @@ class PollOption(BaseModel):
 
 class PollAnswer(BaseModel):
     poll_id: str
-    user: User
+    voter_chat: Optional[Chat] = None
+    user: Optional[User] = None
     option_ids: List[int]
 
 
