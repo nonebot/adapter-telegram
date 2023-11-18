@@ -78,7 +78,7 @@ Telegram Bot 的 webhook 必须使用 https 协议，所以你需要公网 IP、
 要令 Telegram 适配器启用此模式，需要将域名填入 `env` 文件：
 
 ```dotenv
-telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI", "is_webhook": True}]
+telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI", "is_webhook": true}]
 telegram_webhook_url = "https://yourdomain.com"
 ```
 
