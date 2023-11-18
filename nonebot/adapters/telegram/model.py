@@ -440,7 +440,9 @@ class ChatShared(BaseModel):
 
 
 class WriteAccessAllowed(BaseModel):
+    from_request: Optional[bool] = None
     web_app_name: Optional[str] = None
+    from_attachment_menu: Optional[bool] = None
 
 
 class VideoChatScheduled(BaseModel):
@@ -599,6 +601,9 @@ class ChatAdministratorRights(BaseModel):
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_post_stories: Optional[bool] = None
+    can_edit_stories: Optional[bool] = None
+    can_delete_stories: Optional[bool] = None
     can_manage_topics: Optional[bool] = None
 
 
@@ -627,6 +632,9 @@ class ChatMemberAdministrator(ChatMember):
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
+    can_post_stories: Optional[bool] = None
+    can_edit_stories: Optional[bool] = None
+    can_delete_stories: Optional[bool] = None
     can_manage_topics: Optional[bool] = None
     custom_title: Optional[str] = None
 
