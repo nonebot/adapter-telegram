@@ -22,20 +22,24 @@ from .model import (
     InputSticker,
     LabeledPrice,
     MaskPosition,
+    ReactionType,
     GameHighScore,
     MessageEntity,
     BotDescription,
     ChatInviteLink,
     ShippingOption,
+    UserChatBoosts,
     BotCommandScope,
     ChatPermissions,
     InputMediaAudio,
     InputMediaPhoto,
     InputMediaVideo,
+    ReplyParameters,
     InlineQueryResult,
     SentWebAppMessage,
     UserProfilePhotos,
     InputMediaDocument,
+    LinkPreviewOptions,
     BotShortDescription,
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
@@ -96,13 +100,12 @@ class API:
         chat_id: Union[int, str],
         text: str,
         message_thread_id: Optional[int] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         entities: Optional[List[MessageEntity]] = None,
-        disable_web_page_preview: Optional[bool] = None,
+        link_preview_options: Optional[LinkPreviewOptions] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -125,6 +128,17 @@ class API:
     ) -> Message:
         ...
 
+    async def forward_messages(
+        self,
+        chat_id: Union[int, str],
+        from_chat_id: Union[int, str],
+        message_ids: List[int],
+        message_thread_id: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+    ) -> List[MessageId]:
+        ...
+
     async def copy_message(
         self,
         chat_id: Union[int, str],
@@ -132,12 +146,11 @@ class API:
         message_id: int,
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV3", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -149,19 +162,30 @@ class API:
     ) -> MessageId:
         ...
 
+    async def copy_messages(
+        self,
+        chat_id: Union[int, str],
+        from_chat_id: Union[int, str],
+        message_ids: List[int],
+        message_thread_id: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        remove_caption: Optional[bool] = None,
+    ) -> List[MessageId]:
+        ...
+
     async def send_photo(
         self,
         chat_id: Union[int, str],
         photo: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -179,7 +203,7 @@ class API:
         audio: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         duration: Optional[int] = None,
         performer: Optional[str] = None,
@@ -187,8 +211,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -207,13 +230,12 @@ class API:
         message_thread_id: Optional[int] = None,
         thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -235,14 +257,13 @@ class API:
         height: Optional[int] = None,
         thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -264,13 +285,12 @@ class API:
         height: Optional[int] = None,
         thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -288,13 +308,12 @@ class API:
         voice: Union[str, InputFile],
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -316,8 +335,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -338,8 +356,7 @@ class API:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
     ) -> List[Message]:
         ...
 
@@ -355,8 +372,7 @@ class API:
         proximity_alert_radius: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -382,8 +398,7 @@ class API:
         google_place_type: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -405,8 +420,7 @@ class API:
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -425,19 +439,20 @@ class API:
         options: List[str],
         message_thread_id: Optional[int] = None,
         is_anonymous: Optional[bool] = None,
-        type: Optional[str] = None,
+        type: Optional[Literal["quiz", "regular"]] = None,
         allows_multiple_answers: Optional[bool] = None,
         correct_option_id: Optional[int] = None,
         explanation: Optional[str] = None,
-        explanation_parse_mode: Optional[str] = None,
+        explanation_parse_mode: Optional[
+            Literal["MarkdownV2", "Markdown", "HTML"]
+        ] = None,
         explanation_entities: Optional[List[MessageEntity]] = None,
         open_period: Optional[int] = None,
         close_date: Optional[int] = None,
         is_closed: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -453,11 +468,10 @@ class API:
         self,
         chat_id: Union[int, str],
         message_thread_id: Optional[int] = None,
-        emoji: Optional[str] = None,
+        emoji: Optional[Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -472,8 +486,29 @@ class API:
     async def send_chat_action(
         self,
         chat_id: Union[int, str],
-        action: str,
+        action: Literal[
+            "typing",
+            "upload_photo",
+            "record_video",
+            "upload_video",
+            "record_voice",
+            "upload_voice",
+            "upload_document",
+            "choose_sticker",
+            "find_location",
+            "record_video_note",
+            "upload_video_note",
+        ],
         message_thread_id: Optional[int] = None,
+    ) -> Literal[True]:
+        ...
+
+    async def set_message_reaction(
+        self,
+        chat_id: Union[int, str],
+        message_id: int,
+        reaction: Optional[List[ReactionType]] = None,
+        is_big: Optional[bool] = None,
     ) -> Literal[True]:
         ...
 
@@ -736,6 +771,11 @@ class API:
     ) -> Literal[True]:
         ...
 
+    async def get_user_chat_boosts(
+        self, chat_id: Union[int, str], user_id: int
+    ) -> UserChatBoosts:
+        ...
+
     async def set_my_commands(
         self,
         commands: List[BotCommand],
@@ -814,9 +854,9 @@ class API:
         chat_id: Optional[Union[int, str]] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         entities: Optional[List[MessageEntity]] = None,
-        disable_web_page_preview: Optional[bool] = None,
+        link_preview_options: Optional[LinkPreviewOptions] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Union[Message, Literal[True]]:
         ...
@@ -827,7 +867,7 @@ class API:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[str] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Union[Message, Literal[True]]:
@@ -888,6 +928,11 @@ class API:
     ) -> Literal[True]:
         ...
 
+    async def delete_messages(
+        self, chat_id: Union[int, str], message_ids: List[int]
+    ) -> Literal[True]:
+        ...
+
     async def send_sticker(
         self,
         chat_id: Union[int, str],
@@ -896,8 +941,7 @@ class API:
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
                 InlineKeyboardMarkup,
@@ -918,7 +962,10 @@ class API:
         ...
 
     async def upload_sticker_file(
-        self, user_id: int, sticker: InputFile, sticker_format: str
+        self,
+        user_id: int,
+        sticker: InputFile,
+        sticker_format: Literal["static", "animated", "video"],
     ) -> File:
         ...
 
@@ -928,7 +975,7 @@ class API:
         name: str,
         title: str,
         stickers: List[InputSticker],
-        sticker_format: str,
+        sticker_format: Literal["static", "animated", "video"],
         sticker_type: Optional[str] = None,
         needs_repainting: Optional[bool] = None,
     ) -> Literal[True]:
@@ -1024,8 +1071,7 @@ class API:
         is_flexible: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Message:
         ...
@@ -1081,8 +1127,7 @@ class API:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
-        allow_sending_without_reply: Optional[bool] = None,
+        reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Message:
         ...
