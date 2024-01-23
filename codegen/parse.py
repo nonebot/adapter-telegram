@@ -5,8 +5,6 @@ from codegen.utils import pascal_to_snake
 
 from .model import Type, Array, Method, Object, Union_, TypeEnum, obj_schemas
 
-# Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo
-
 
 class Parser(object):
     def __init__(self, source: str) -> None:
@@ -26,6 +24,17 @@ class Parser(object):
                     while not (
                         element.is_("h4") or element.is_("h3") or element.is_("hr")
                     ):
+                        if element.is_("blockquote"):
+                            element = element.next()
+                            continue
+
+                        items = []
+                        for item in element("ul li").items():
+                            items.append(Object(name=item.text()))
+                        if items:
+                            object.type = TypeEnum.union
+                            object.items = items
+
                         for item in element("tbody tr").items():
                             property = item("td").eq(0).text()
                             type = item("td").eq(1).text()
@@ -43,7 +52,7 @@ class Parser(object):
                                         type = Object(
                                             name=type.replace("Array of ", "")
                                         )
-                                type = Array(items=type)
+                                type = Array(item=type)
                             if isinstance(type, str):
                                 if " or " in type:
                                     type = type.split(" or ")
@@ -78,7 +87,6 @@ class Parser(object):
                             type = item("td").eq(1).text()
                             if item("td").eq(2).text() == "Yes":
                                 method.required.append(param)
-
                             for _ in range(type.count("Array of ")):
                                 if not isinstance(type, Array):
                                     try:
@@ -90,7 +98,7 @@ class Parser(object):
                                         type = Object(
                                             name=type.replace("Array of ", "")
                                         )
-                                type = Array(items=type)
+                                type = Array(item=type)
                             if isinstance(type, str):
                                 if " or " in type:
                                     type = type.split(" or ")

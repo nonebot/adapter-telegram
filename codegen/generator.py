@@ -1,97 +1,53 @@
 from keyword import kwlist
 from typing import Dict, List
 
-from .model import Type, Array, Method, Object, Union_, obj_schemas
+from .model import Array, Method, Object, Union_, TypeEnum, obj_schemas
 
 
-def update_models(schemas: Dict[str, Object]) -> Dict[str, Object]:
-    models = {}
+def gen_requires(schemas: Dict[str, Object]):
+    requires = {}
     for name, model in schemas.items():
-        properties = {}
-        for key, property in model.properties.items():
+        requires[name] = []
+
+        for item in model.items:
+            requires[name].append(item.name)
+
+        for _, property in model.properties.items():
             if isinstance(property, Object):
-                property = schemas[property.name]
+                requires[name].append(property.name)
             elif isinstance(property, Array):
-                tmp = 0
                 while isinstance(property, Array):
-                    property = property.items
-                    tmp += 1
+                    property = property.item
                 if isinstance(property, Object):
-                    property = schemas[property.name]
-                for _ in range(tmp):
-                    property = Array(items=property)
-            properties[key] = property
-        model.properties = properties
-        models[name] = model
-    return models
+                    requires[name].append(property.name)
+            elif isinstance(property, Union_):
+                for item in property.items:
+                    if isinstance(item, Object):
+                        requires[name].append(item.name)
+    return requires
 
 
-def sort_models(schemas: Dict[str, Type]) -> Dict[str, Object]:
-    models: Dict[str, Object] = {}
-
-    for model in schemas.values():
-        while isinstance(model, Array):
-            model = model.items
-
-        if isinstance(model, Union_):
-            model = model.items
-
-        if not isinstance(model, Object):
+def sort_models(models: List[Object], requires: Dict[str, List[str]]) -> List[Object]:
+    new_models = []
+    for model in models:
+        if model.name not in requires:
             continue
-
-        if model.name in models:
-            continue
-
-        models.update(
-            sort_models(
-                {
-                    k: v
-                    for k, v in model.properties.items()
-                    if k in model.required
-                    and not (isinstance(v, Object) and v.name == model.name)
-                }
-            )
-        )
-
-        models[model.name] = model
-
-    return models
-
-
-def sort_models2(schemas: Dict[str, Type]) -> Dict[str, Object]:
-    models: Dict[str, Object] = {}
-
-    for model in schemas.values():
-        while isinstance(model, Array):
-            model = model.items
-
-        if isinstance(model, Union_):
-            model = model.items
-
-        if not isinstance(model, Object):
-            continue
-
-        if model.name in models:
-            continue
-
-        models.update(
-            sort_models(
-                {
-                    k: v
-                    for k, v in model.properties.items()
-                    if not (isinstance(v, Object) and v.name == model.name)
-                }
-            )
-        )
-
-        models[model.name] = model
-
-    return models
+        _ = sort_models(
+            [obj_schemas[model_name] for model_name in requires.pop(model.name)],
+            requires,
+        ) + [model]
+        new_models.extend(_)
+    return new_models
 
 
 def gen_model(models: List[Object]) -> str:
     output = ""
-    for model in update_models(obj_schemas).values():
+    for model in sort_models(models, gen_requires(obj_schemas)):
+        if model.type == TypeEnum.union:
+            output += (
+                f"{model.name} = {Union_(items=model.items).to_annotation()}\n\n\n"
+            )
+            continue
         output += f"class {model.to_annotation()}(BaseModel):\n"
         for name in model.properties:
             text = f"    {name}: {model.property_annotation(name)}"
@@ -104,7 +60,7 @@ def gen_model(models: List[Object]) -> str:
             output += text + "\n"
         if not model.properties:
             output += "    pass\n"
-        output += "\n"
+        output += "\n\n"
     return output
 
 
@@ -119,5 +75,5 @@ def gen_api(methods: List[Method]) -> str:
         for name, type in method.params.items():
             if name not in method.required:
                 text += f"        {name}: Optional[{type.to_annotation()}] = None,\n"
-        output += text.removesuffix(",\n") + "): ... \n"
+        output += text.removesuffix(",\n") + "): ... \n"  # type: ignore
     return output

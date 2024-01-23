@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, List, Union, Literal, Annotated
+from typing import Any, Dict, List, Union, Literal, Annotated  # type: ignore
 
 from pydantic import Field, BaseModel
 
@@ -30,10 +30,10 @@ class Integer(BaseModel):
 
 class Array(BaseModel):
     type: Literal[TypeEnum.array] = TypeEnum.array
-    items: Union["Type", "Object", "Array"]
+    item: Union["Type", "Object", "Array"]
 
     def to_annotation(self):
-        return f"List[{self.items.to_annotation()}]"
+        return f"List[{self.item.to_annotation()}]"
 
 
 class String(BaseModel):
@@ -74,7 +74,8 @@ class Union_(BaseModel):
 
 class Object(BaseModel):
     name: str
-    type: Literal[TypeEnum.object] = TypeEnum.object
+    type: TypeEnum = TypeEnum.object
+    items: List[Union["Type", "Object"]] = Field(default_factory=list)
     properties: Dict[str, "Type"] = Field(default_factory=dict)
     required: List[str] = Field(default_factory=list)
 
