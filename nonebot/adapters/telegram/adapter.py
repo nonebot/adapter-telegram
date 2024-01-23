@@ -57,7 +57,7 @@ class Adapter(BaseAdapter):
         await bot.delete_webhook()
 
     def setup_webhook(self, bot: Bot):
-        @self.driver.on_startup
+        @self.on_ready
         async def _():
             try:
                 await self.__bot_pre_setup(bot)
@@ -98,7 +98,7 @@ class Adapter(BaseAdapter):
                 log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
 
     def setup_polling(self, bot: Bot):
-        @self.driver.on_startup
+        @self.on_ready
         async def _():
             self.tasks.append(asyncio.create_task(self.poll(bot)))
 
