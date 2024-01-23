@@ -106,6 +106,16 @@ class MessageSegment(BaseMessageSegment):
         raise NotImplementedError
 
 
+class Reply(MessageSegment):
+    @overrides(BaseMessageSegment)
+    def is_text(self) -> bool:
+        return False
+
+    @staticmethod
+    def reply(message_id: int, chat_id: Optional[Union[int, str]] = None, **kargs):
+        return Reply("reply", {"message_id": message_id, "chat_id": chat_id, **kargs})
+
+
 class Entity(MessageSegment):
     @overrides(BaseMessageSegment)
     def is_text(self) -> bool:
@@ -164,6 +174,10 @@ class Entity(MessageSegment):
 
     @staticmethod
     def spoiler(text: str):
+        return Entity("spoiler", {"text": text})
+
+    @staticmethod
+    def blockquote(text: str):
         return Entity("spoiler", {"text": text})
 
     @staticmethod
@@ -293,6 +307,8 @@ class Message(BaseMessage[MessageSegment]):
                     nb_entity.data["url"] = entity["url"]
                 if "user" in entity:
                     nb_entity.data["user"] = User(**entity["user"])
+                if "custom_emoji_id" in entity:
+                    nb_entity.data["custom_emoji_id"] = entity["custom_emoji_id"]
                 msg.append(nb_entity)
                 offset = entity["offset"] + entity["length"]
             if offset < len(obj[key]):
