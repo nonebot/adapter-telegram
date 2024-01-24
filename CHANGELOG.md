@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.15] - 2024-01-24
+
+### 🐛 Bug 修复
+
+- 修复 edit_message_media缺少对media的处理的问题 [@canxin121](https://github.com/canxin121) ([#50](https://github.com/nonebot/adapter-telegram/pull/50))
+- 使用 on_ready 替代 on_startup
+
+### 🚀 新功能
+
+- 适配 Telegram Bot API 6.8
+- 适配 Telegram Bot API 6.9
+- 适配 Telegram Bot API 7.0
+- 使用新的 Reply.reply 消息段回复消息
+
 ## [0.1.0-beta.14] - 2023-06-30
 
 ### 🐛 Bug 修复
@@ -192,7 +206,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 适配 NoneBot2 2.0.0b1
 - 支持多个机器人同时在线
 
-[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b14...HEAD
+[Unreleased]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b15...HEAD
+[0.1.0-beta.15]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b14...v0.1.0b15
 [0.1.0-beta.14]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b13...v0.1.0b14
 [0.1.0-beta.13]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b12...v0.1.0b13
 [0.1.0-beta.12]: https://github.com/nonebot/adapter-telegram/compare/v0.1.0b11...v0.1.0b12
