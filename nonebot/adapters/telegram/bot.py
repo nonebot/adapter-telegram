@@ -238,13 +238,14 @@ class Bot(BaseBot, API):
             # 多个文件
             medias = [
                 parse_obj_as(
-                    InputMedia, 
+                    InputMedia,
                     {
                         "type": file.type,
                         "media": file.data.pop("file"),
                         **file.get("data", {}),
-                        }
-                    ) for file in files
+                    },
+                )
+                for file in files
             ]
 
             try:

@@ -35,11 +35,14 @@ async def test_check_tome(app: App):
         bot._check_tome(event)
         assert event._tome
 
+
 @pytest.mark.asyncio
 async def test_send_to(app: App):
     from nonebot.adapters.telegram.bot import Bot
+    from nonebot.adapters.telegram.model import Chat
     from nonebot.adapters.telegram.message import File, Message
-    from nonebot.adapters.telegram.model import InputMediaPhoto, InputMediaAudio, Chat, Message as ReturnMessage
+    from nonebot.adapters.telegram.model import Message as ReturnMessage
+    from nonebot.adapters.telegram.model import InputMediaAudio, InputMediaPhoto
 
     Chat.update_forward_refs()
 
@@ -81,15 +84,16 @@ async def test_send_to(app: App):
             },
             [
                 ReturnMessage(
-                    message_id=1,
-                    date=111,
-                    chat=Chat(id=1, type="group")
+                    message_id=1, date=111, chat=Chat(id=1, type="group")
                 ).dict(),
                 ReturnMessage(
-                    message_id=2,
-                    date=222,
-                    chat=Chat(id=2, type="group")
+                    message_id=2, date=222, chat=Chat(id=2, type="group")
                 ).dict(),
-            ]
+            ],
         )
-        await bot.send_to(chat_id=1234567890, message=Message([File.photo("test.jpg", has_spoiler=True), File.audio("test.ogg")]))
+        await bot.send_to(
+            chat_id=1234567890,
+            message=Message(
+                [File.photo("test.jpg", has_spoiler=True), File.audio("test.ogg")]
+            ),
+        )
