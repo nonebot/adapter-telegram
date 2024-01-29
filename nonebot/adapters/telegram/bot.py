@@ -237,7 +237,14 @@ class Bot(BaseBot, API):
         if len(files) > 1:
             # 多个文件
             medias = [
-                InputMedia(type=file.type, media=file.data["file"]) for file in files
+                parse_obj_as(
+                    InputMedia, 
+                    {
+                        "type": file.type,
+                        "media": file.data.pop("file"),
+                        **file.get("data", {}),
+                        }
+                    ) for file in files
             ]
 
             try:
