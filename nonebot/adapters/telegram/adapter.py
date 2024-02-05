@@ -212,9 +212,11 @@ class Adapter(BaseAdapter):
                 data[key] = json.dumps(
                     data[key],
                     default=(
-                        lambda o: o.dict(exclude_none=True)
-                        if isinstance(o, BaseModel)
-                        else pydantic_encoder(o)
+                        lambda o: (
+                            o.dict(exclude_none=True)
+                            if isinstance(o, BaseModel)
+                            else pydantic_encoder(o)
+                        )
                     ),
                 )
 
