@@ -64,7 +64,9 @@ class MessageSegment(BaseMessageSegment):
         return MessageSegment("poll", {"question": question, "options": options})
 
     @staticmethod
-    def dice(emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲") -> "MessageSegment":
+    def dice(
+        emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲"
+    ) -> "MessageSegment":
         return MessageSegment("dice", {"question": emoji})
 
     @staticmethod
