@@ -279,7 +279,7 @@ class Message(BaseMessage[MessageSegment]):
         yield Entity.text(msg)
 
     @classmethod
-    def parse_obj(cls, obj: Dict[str, Any]) -> "Message":
+    def model_validate(cls, obj: Dict[str, Any]) -> "Message":
         msg = []
         if "text" in obj or "caption" in obj:
             key, entities_key = (

@@ -7,7 +7,7 @@ from nonebot.adapters.telegram.event import Event, PrivateMessageEvent
 
 
 @pytest.mark.asyncio
-async def test_message_parse_obj():
+async def test_message_model_validate():
     with (Path(__file__).parent / "updates.json").open("r", encoding="utf8") as f:
         test_updates = json.load(f)
 
