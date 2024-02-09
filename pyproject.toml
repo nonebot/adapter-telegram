@@ -59,7 +59,7 @@ all = false
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
-addopts = "--cov nonebot.adapters.telegram --cov-report term-missing"
+addopts = "--cov nonebot/adapters/telegram --cov-report term-missing"
 
 [tool.pyright]
 reportShadowedImports = false
