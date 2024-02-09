@@ -25,12 +25,12 @@ class ChatPhoto(BaseModel):
 
 
 class ReactionTypeEmoji(BaseModel):
-    type: Literal["emoji"]
+    type: Literal["emoji"] = "emoji"
     emoji: str
 
 
 class ReactionTypeCustomEmoji(BaseModel):
-    type: Literal["custom_emoji"]
+    type: Literal["custom_emoji"] = "custom_emoji"
     custom_emoji_id: str
 
 
@@ -107,26 +107,26 @@ class Chat(BaseModel):
 
 
 class MessageOriginUser(BaseModel):
-    type: Literal["user"]
+    type: Literal["user"] = "user"
     date: int
     sender_user: User
 
 
 class MessageOriginHiddenUser(BaseModel):
-    type: Literal["hidden_user"]
+    type: Literal["hidden_user"] = "hidden_user"
     date: int
     sender_user_name: str
 
 
 class MessageOriginChat(BaseModel):
-    type: Literal["chat"]
+    type: Literal["chat"] = "chat"
     date: int
     sender_chat: Chat
     author_signature: Optional[str] = None
 
 
 class MessageOriginChannel(BaseModel):
-    type: Literal["channel"]
+    type: Literal["channel"] = "channel"
     date: int
     chat: Chat
     message_id: int
@@ -757,14 +757,14 @@ class PollAnswer(BaseModel):
 
 
 class ChatMemberOwner(BaseModel):
-    status: Literal["creator"]
+    status: Literal["creator"] = "creator"
     user: User
     is_anonymous: bool
     custom_title: Optional[str] = None
 
 
 class ChatMemberAdministrator(BaseModel):
-    status: Literal["administrator"]
+    status: Literal["administrator"] = "administrator"
     user: User
     can_be_edited: bool
     is_anonymous: bool
@@ -786,12 +786,12 @@ class ChatMemberAdministrator(BaseModel):
 
 
 class ChatMemberMember(BaseModel):
-    status: Literal["member"]
+    status: Literal["member"] = "member"
     user: User
 
 
 class ChatMemberRestricted(BaseModel):
-    status: Literal["restricted"]
+    status: Literal["restricted"] = "restricted"
     user: User
     is_member: bool
     can_send_messages: bool
@@ -812,12 +812,12 @@ class ChatMemberRestricted(BaseModel):
 
 
 class ChatMemberLeft(BaseModel):
-    status: Literal["left"]
+    status: Literal["left"] = "left"
     user: User
 
 
 class ChatMemberBanned(BaseModel):
-    status: Literal["kicked"]
+    status: Literal["kicked"] = "kicked"
     user: User
     until_date: int
 
@@ -864,17 +864,17 @@ class ChatJoinRequest(BaseModel):
 
 
 class ChatBoostSourcePremium(BaseModel):
-    source: Literal["premium"]
+    source: Literal["premium"] = "premium"
     user: User
 
 
 class ChatBoostSourceGiftCode(BaseModel):
-    source: Literal["gift_code"]
+    source: Literal["gift_code"] = "gift_code"
     user: User
 
 
 class ChatBoostSourceGiveaway(BaseModel):
-    source: Literal["giveaway"]
+    source: Literal["giveaway"] = "giveaway"
     giveaway_message_id: int
     user: Optional[User] = None
     is_unclaimed: Optional[Literal[True]] = None
@@ -1040,33 +1040,33 @@ class BotCommand(BaseModel):
 
 
 class BotCommandScopeDefault(BaseModel):
-    type: Literal["default"]
+    type: Literal["default"] = "default"
 
 
 class BotCommandScopeAllPrivateChats(BaseModel):
-    type: Literal["all_private_chats"]
+    type: Literal["all_private_chats"] = "all_private_chats"
 
 
 class BotCommandScopeAllGroupChats(BaseModel):
-    type: Literal["all_group_chats"]
+    type: Literal["all_group_chats"] = "all_group_chats"
 
 
 class BotCommandScopeAllChatAdministrators(BaseModel):
-    type: Literal["all_chat_administrators"]
+    type: Literal["all_chat_administrators"] = "all_chat_administrators"
 
 
 class BotCommandScopeChat(BaseModel):
-    type: Literal["chat"]
+    type: Literal["chat"] = "chat"
     chat_id: Union[int, str]
 
 
 class BotCommandScopeChatAdministrators(BaseModel):
-    type: Literal["chat_administrators"]
+    type: Literal["chat_administrators"] = "chat_administrators"
     chat_id: Union[int, str]
 
 
 class BotCommandScopeChatMember(BaseModel):
-    type: Literal["chat_member"]
+    type: Literal["chat_member"] = "chat_member"
     chat_id: Union[int, str]
     user_id: int
 
@@ -1095,17 +1095,17 @@ class BotShortDescription(BaseModel):
 
 
 class MenuButtonCommands(BaseModel):
-    type: Literal["commands"]
+    type: Literal["commands"] = "commands"
 
 
 class MenuButtonWebApp(BaseModel):
-    type: Literal["web_app"]
+    type: Literal["web_app"] = "web_app"
     text: str
     web_app: WebAppInfo
 
 
 class MenuButtonDefault(BaseModel):
-    type: Literal["default"]
+    type: Literal["default"] = "default"
 
 
 MenuButton = Union[MenuButtonCommands, MenuButtonWebApp, MenuButtonDefault]
@@ -1124,7 +1124,7 @@ InputFile = Union[bytes, Tuple[str, bytes]]
 
 
 class InputMediaAnimation(BaseModel):
-    type: Literal["animation"]
+    type: Literal["animation"] = "animation"
     media: str
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
@@ -1137,7 +1137,7 @@ class InputMediaAnimation(BaseModel):
 
 
 class InputMediaDocument(BaseModel):
-    type: Literal["document"]
+    type: Literal["document"] = "document"
     media: str
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
@@ -1147,7 +1147,7 @@ class InputMediaDocument(BaseModel):
 
 
 class InputMediaAudio(BaseModel):
-    type: Literal["audio"]
+    type: Literal["audio"] = "audio"
     media: str
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
@@ -1159,7 +1159,7 @@ class InputMediaAudio(BaseModel):
 
 
 class InputMediaPhoto(BaseModel):
-    type: Literal["photo"]
+    type: Literal["photo"] = "photo"
     media: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
@@ -1168,7 +1168,7 @@ class InputMediaPhoto(BaseModel):
 
 
 class InputMediaVideo(BaseModel):
-    type: Literal["video"]
+    type: Literal["video"] = "video"
     media: str
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
@@ -1285,7 +1285,7 @@ InputMessageContent = Union[
 
 
 class InlineQueryResultCachedAudio(BaseModel):
-    type: Literal["audio"]
+    type: Literal["audio"] = "audio"
     id: str
     audio_file_id: str
     caption: Optional[str] = None
@@ -1296,7 +1296,7 @@ class InlineQueryResultCachedAudio(BaseModel):
 
 
 class InlineQueryResultCachedDocument(BaseModel):
-    type: Literal["document"]
+    type: Literal["document"] = "document"
     id: str
     title: str
     document_file_id: str
@@ -1309,7 +1309,7 @@ class InlineQueryResultCachedDocument(BaseModel):
 
 
 class InlineQueryResultCachedGif(BaseModel):
-    type: Literal["gif"]
+    type: Literal["gif"] = "gif"
     id: str
     gif_file_id: str
     title: Optional[str] = None
@@ -1321,7 +1321,7 @@ class InlineQueryResultCachedGif(BaseModel):
 
 
 class InlineQueryResultCachedMpeg4Gif(BaseModel):
-    type: Literal["mpeg4_gif"]
+    type: Literal["mpeg4_gif"] = "mpeg4_gif"
     id: str
     mpeg4_file_id: str
     title: Optional[str] = None
@@ -1333,7 +1333,7 @@ class InlineQueryResultCachedMpeg4Gif(BaseModel):
 
 
 class InlineQueryResultCachedPhoto(BaseModel):
-    type: Literal["photo"]
+    type: Literal["photo"] = "photo"
     id: str
     photo_file_id: str
     title: Optional[str] = None
@@ -1346,7 +1346,7 @@ class InlineQueryResultCachedPhoto(BaseModel):
 
 
 class InlineQueryResultCachedSticker(BaseModel):
-    type: Literal["sticker"]
+    type: Literal["sticker"] = "sticker"
     id: str
     sticker_file_id: str
     reply_markup: Optional[InlineKeyboardMarkup] = None
@@ -1354,7 +1354,7 @@ class InlineQueryResultCachedSticker(BaseModel):
 
 
 class InlineQueryResultCachedVideo(BaseModel):
-    type: Literal["video"]
+    type: Literal["video"] = "video"
     id: str
     video_file_id: str
     title: str
@@ -1367,7 +1367,7 @@ class InlineQueryResultCachedVideo(BaseModel):
 
 
 class InlineQueryResultCachedVoice(BaseModel):
-    type: Literal["voice"]
+    type: Literal["voice"] = "voice"
     id: str
     voice_file_id: str
     title: str
@@ -1379,7 +1379,7 @@ class InlineQueryResultCachedVoice(BaseModel):
 
 
 class InlineQueryResultArticle(BaseModel):
-    type: Literal["article"]
+    type: Literal["article"] = "article"
     id: str
     title: str
     input_message_content: InputMessageContent
@@ -1393,7 +1393,7 @@ class InlineQueryResultArticle(BaseModel):
 
 
 class InlineQueryResultAudio(BaseModel):
-    type: Literal["audio"]
+    type: Literal["audio"] = "audio"
     id: str
     audio_url: str
     title: str
@@ -1407,7 +1407,7 @@ class InlineQueryResultAudio(BaseModel):
 
 
 class InlineQueryResultContact(BaseModel):
-    type: Literal["contact"]
+    type: Literal["contact"] = "contact"
     id: str
     phone_number: str
     first_name: str
@@ -1421,14 +1421,14 @@ class InlineQueryResultContact(BaseModel):
 
 
 class InlineQueryResultGame(BaseModel):
-    type: Literal["game"]
+    type: Literal["game"] = "game"
     id: str
     game_short_name: str
     reply_markup: Optional[InlineKeyboardMarkup] = None
 
 
 class InlineQueryResultDocument(BaseModel):
-    type: Literal["document"]
+    type: Literal["document"] = "document"
     id: str
     title: str
     caption: Optional[str] = None
@@ -1445,7 +1445,7 @@ class InlineQueryResultDocument(BaseModel):
 
 
 class InlineQueryResultGif(BaseModel):
-    type: Literal["gif"]
+    type: Literal["gif"] = "gif"
     id: str
     gif_url: str
     gif_width: Optional[int] = None
@@ -1462,7 +1462,7 @@ class InlineQueryResultGif(BaseModel):
 
 
 class InlineQueryResultLocation(BaseModel):
-    type: Literal["location"]
+    type: Literal["location"] = "location"
     id: str
     latitude: float
     longitude: float
@@ -1479,7 +1479,7 @@ class InlineQueryResultLocation(BaseModel):
 
 
 class InlineQueryResultMpeg4Gif(BaseModel):
-    type: Literal["mpeg4_gif"]
+    type: Literal["mpeg4_gif"] = "mpeg4_gif"
     id: str
     mpeg4_url: str
     mpeg4_width: Optional[int] = None
@@ -1496,7 +1496,7 @@ class InlineQueryResultMpeg4Gif(BaseModel):
 
 
 class InlineQueryResultPhoto(BaseModel):
-    type: Literal["photo"]
+    type: Literal["photo"] = "photo"
     id: str
     photo_url: str
     thumbnail_url: str
@@ -1512,7 +1512,7 @@ class InlineQueryResultPhoto(BaseModel):
 
 
 class InlineQueryResultVenue(BaseModel):
-    type: Literal["venue"]
+    type: Literal["venue"] = "venue"
     id: str
     latitude: float
     longitude: float
@@ -1530,7 +1530,7 @@ class InlineQueryResultVenue(BaseModel):
 
 
 class InlineQueryResultVideo(BaseModel):
-    type: Literal["video"]
+    type: Literal["video"] = "video"
     id: str
     video_url: str
     mime_type: str
@@ -1548,7 +1548,7 @@ class InlineQueryResultVideo(BaseModel):
 
 
 class InlineQueryResultVoice(BaseModel):
-    type: Literal["voice"]
+    type: Literal["voice"] = "voice"
     id: str
     voice_url: str
     title: str
@@ -1595,7 +1595,7 @@ class ShippingOption(BaseModel):
 
 
 class PassportElementErrorDataField(BaseModel):
-    source: Literal["data"]
+    source: Literal["data"] = "data"
     type: str
     field_name: str
     data_hash: str
@@ -1603,56 +1603,56 @@ class PassportElementErrorDataField(BaseModel):
 
 
 class PassportElementErrorFrontSide(BaseModel):
-    source: Literal["front_side"]
+    source: Literal["front_side"] = "front_side"
     type: str
     file_hash: str
     message: str
 
 
 class PassportElementErrorReverseSide(BaseModel):
-    source: Literal["reverse_side"]
+    source: Literal["reverse_side"] = "reverse_side"
     type: str
     file_hash: str
     message: str
 
 
 class PassportElementErrorSelfie(BaseModel):
-    source: Literal["selfie"]
+    source: Literal["selfie"] = "selfie"
     type: str
     file_hash: str
     message: str
 
 
 class PassportElementErrorFile(BaseModel):
-    source: Literal["file"]
+    source: Literal["file"] = "file"
     type: str
     file_hash: str
     message: str
 
 
 class PassportElementErrorFiles(BaseModel):
-    source: Literal["files"]
+    source: Literal["files"] = "files"
     type: str
     file_hashes: List[str]
     message: str
 
 
 class PassportElementErrorTranslationFile(BaseModel):
-    source: Literal["translation_file"]
+    source: Literal["translation_file"] = "translation_file"
     type: str
     file_hash: str
     message: str
 
 
 class PassportElementErrorTranslationFiles(BaseModel):
-    source: Literal["translation_files"]
+    source: Literal["translation_files"] = "translation_files"
     type: str
     file_hashes: List[str]
     message: str
 
 
 class PassportElementErrorUnspecified(BaseModel):
-    source: Literal["unspecified"]
+    source: Literal["unspecified"] = "unspecified"
     type: str
     element_hash: str
     message: str

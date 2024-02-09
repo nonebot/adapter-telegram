@@ -13,7 +13,7 @@ from nonebot.adapters import Bot as BaseBot
 from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
-from .model import InputMedia, MessageEntity
+from .model import InputMedia, MessageEntity, ReplyParameters
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 from .event import (
     Event,
@@ -140,7 +140,7 @@ class Bot(BaseBot, API):
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-        reply_to_message_id: Optional[int] = None,
+        reply_to_message_id: Optional[int] = None,  # Deprecated
         allow_sending_without_reply: Optional[bool] = None,
         media_group_caption_index: int = 0,  # 非 Telegram 原生参数
         **kwargs,
@@ -199,6 +199,13 @@ class Bot(BaseBot, API):
 
         # 处理 Message 的发送
         # 分离各类型 seg
+        reply_parameters = None
+        if (reply_count := message.count("reply")) > 1:
+            raise ApiNotAvailable
+        elif reply_count:
+            reply_parameters = ReplyParameters(**message["reply", 0].data)
+            message = message.exclude("reply")
+
         entities = Message(x for x in message if isinstance(x, Entity))
         files = Message(
             x
@@ -222,6 +229,7 @@ class Bot(BaseBot, API):
                 message_thread_id=message_thread_id,
                 text=str(message),
                 entities=self.__build_entities_form_msg(message),
+                reply_parameters=reply_parameters,
                 **kwargs,
             )
 
@@ -229,7 +237,15 @@ class Bot(BaseBot, API):
         if len(files) > 1:
             # 多个文件
             medias = [
-                InputMedia(type=file.type, media=file.data["file"]) for file in files
+                parse_obj_as(
+                    InputMedia,
+                    {
+                        "type": file.type,
+                        "media": file.data.pop("file"),
+                        **file.get("data", {}),
+                    },
+                )
+                for file in files
             ]
 
             try:
@@ -244,6 +260,7 @@ class Bot(BaseBot, API):
                 chat_id=chat_id,
                 message_thread_id=message_thread_id,
                 media=medias,  # type: ignore
+                reply_parameters=reply_parameters,
                 **kwargs,
             )
 
@@ -258,6 +275,7 @@ class Bot(BaseBot, API):
                 "caption": str(entities) if entities else None,
                 "caption_entities": self.__build_entities_form_msg(entities),
             },
+            reply_parameters=reply_parameters,
             **kwargs,
         )
 
