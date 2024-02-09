@@ -3,7 +3,7 @@ from uuid import uuid4
 from functools import partial
 from typing import Any, List, Union, Optional, Sequence, cast
 
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from nonebot.typing import overrides
 from nonebot.message import handle_event
 
@@ -99,8 +99,8 @@ class Bot(BaseBot, API):
                         kargs[param.name] = args_.pop(0)
                     except IndexError:
                         kargs[param.name] = None
-            return parse_obj_as(
-                sign.return_annotation, await super().call_api(api, **kargs)
+            return TypeAdapter(sign.return_annotation).validate_python(
+                await super().call_api(api, **kargs)
             )
         return await super().call_api(api, **kargs)
 
@@ -237,8 +237,7 @@ class Bot(BaseBot, API):
         if len(files) > 1:
             # 多个文件
             medias = [
-                parse_obj_as(
-                    InputMedia,
+                TypeAdapter(InputMedia).validate_python(
                     {
                         "type": file.type,
                         "media": file.data.pop("file"),

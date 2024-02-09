@@ -29,7 +29,7 @@ class Adapter(BaseAdapter):
     @overrides(BaseAdapter)
     def __init__(self, driver: Driver, **kwargs: Any):
         super().__init__(driver, **kwargs)
-        self.adapter_config = AdapterConfig(**self.config.dict())
+        self.adapter_config = AdapterConfig(**self.config.model_dump())
         self.tasks: List[asyncio.Task] = []
         self.setup()
 
@@ -47,7 +47,9 @@ class Adapter(BaseAdapter):
 
         log(
             "DEBUG",
-            escape_tag(str(event.dict(exclude_none=True, exclude={"telegram_model"}))),
+            escape_tag(
+                str(event.model_dump(exclude_none=True, exclude={"telegram_model"}))
+            ),
         )
         await bot.handle_event(event)
 
@@ -89,7 +91,7 @@ class Adapter(BaseAdapter):
                         update_offset = update.update_id + 1
                         asyncio.create_task(
                             self.__handle_update(
-                                bot, update.dict(by_alias=True, exclude_none=True)
+                                bot, update.model_dump(by_alias=True, exclude_none=True)
                             )
                         )
                 elif updates:
@@ -213,7 +215,7 @@ class Adapter(BaseAdapter):
                     data[key],
                     default=(
                         lambda o: (
-                            o.dict(exclude_none=True)
+                            o.model_dump(exclude_none=True)
                             if isinstance(o, BaseModel)
                             else pydantic_encoder(o)
                         )
