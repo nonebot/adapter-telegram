@@ -673,6 +673,8 @@ class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
 
 
 class CallbackQueryEvent(InlineEvent, CallbackQuery):
+    chat: Chat = Field(default=None)
+
     @overrides(Event)
     def get_event_name(self) -> str:
         return "inline.callback_query"

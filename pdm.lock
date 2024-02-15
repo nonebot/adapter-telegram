@@ -5,7 +5,7 @@
 groups = ["default", "pre-commit", "nonebot", "tests"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:09bf469c92b4525718c8ff6f6b5aa26650b2bc0041cd4381ed827d0e51f9db50"
+content_hash = "sha256:dd148f1fe2704d3d96f961b9f19e1d05aa0a934dae7f6d1ef53fb1ab9b31e365"
 
 [[package]]
 name = "annotated-types"
@@ -22,17 +22,18 @@ files = [
 
 [[package]]
 name = "anyio"
-version = "3.7.1"
-requires_python = ">=3.7"
+version = "4.2.0"
+requires_python = ">=3.8"
 summary = "High level compatibility layer for multiple asynchronous event loop implementations"
 dependencies = [
-    "exceptiongroup; python_version < \"3.11\"",
+    "exceptiongroup>=1.0.2; python_version < \"3.11\"",
     "idna>=2.8",
     "sniffio>=1.1",
+    "typing-extensions>=4.1; python_version < \"3.11\"",
 ]
 files = [
-    {file = "anyio-3.7.1-py3-none-any.whl", hash = "sha256:91dee416e570e92c64041bd18b900d1d6fa78dff7048769ce5ac5ddad004fbb5"},
-    {file = "anyio-3.7.1.tar.gz", hash = "sha256:44a3c9aba0f5defa43261a8b3efb97891f2bd7d804e0e1f56419befa1adfc780"},
+    {file = "anyio-4.2.0-py3-none-any.whl", hash = "sha256:745843b39e829e108e518c489b31dc757de7d2131d53fac32bd8df268227bfee"},
+    {file = "anyio-4.2.0.tar.gz", hash = "sha256:e1875bb4b4e2de1669f4bc7869b6d3f54231cdced71605e6e64c9be77e3be50f"},
 ]
 
 [[package]]
@@ -642,7 +643,7 @@ name = "nonebot2"
 version = "2.2.0"
 requires_python = ">=3.8,<4.0"
 git = "https://github.com/nonebot/nonebot2.git"
-revision = "35cee22cf67b2538fc7cb86c8804ef8eb8eb2bbc"
+revision = "5ab418a3cfa1f2b1ac9b1a244f3e7136b93c6394"
 summary = "An asynchronous python bot framework."
 dependencies = [
     "loguru<1.0.0,>=0.6.0",

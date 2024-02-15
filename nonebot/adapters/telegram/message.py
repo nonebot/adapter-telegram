@@ -67,7 +67,7 @@ class MessageSegment(BaseMessageSegment):
     def dice(
         emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲"
     ) -> "MessageSegment":
-        return MessageSegment("dice", {"question": emoji})
+        return MessageSegment("dice", {"emoji": emoji})
 
     @staticmethod
     def chat_action(
@@ -109,10 +109,6 @@ class MessageSegment(BaseMessageSegment):
 
 
 class Reply(MessageSegment):
-    @overrides(BaseMessageSegment)
-    def is_text(self) -> bool:
-        return False
-
     @staticmethod
     def reply(message_id: int, chat_id: Optional[Union[int, str]] = None, **kargs):
         return Reply("reply", {"message_id": message_id, "chat_id": chat_id, **kargs})
