@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from pydantic import Field, BaseModel
+from nonebot.compat import PYDANTIC_V2, ConfigDict
 
 
 class BotConfig(BaseModel):
@@ -18,9 +19,15 @@ class BotConfig(BaseModel):
     api_server: str = "https://api.telegram.org/"
     is_webhook: bool = False
 
-    class Config:
-        extra = "ignore"
-        populate_by_name = True
+    if PYDANTIC_V2:
+        model_config: ConfigDict = ConfigDict(
+            extra = "ignore",
+            populate_by_name = True,
+        )
+    else:
+        class Config:
+            extra = "ignore"
+            allow_population_by_field_name = True
 
 
 class AdapterConfig(BaseModel):
@@ -38,6 +45,12 @@ class AdapterConfig(BaseModel):
     telegram_bots: List["BotConfig"] = []
     telegram_webhook_url: Optional[str] = None
 
-    class Config:
-        extra = "ignore"
-        allow_population_by_field_name = True
+    if PYDANTIC_V2:
+        model_config: ConfigDict = ConfigDict(
+            extra = "ignore",
+            populate_by_name = True,
+        )
+    else:
+        class Config:
+            extra = "ignore"
+            allow_population_by_field_name = True
