@@ -17,36 +17,6 @@ from nonebot.adapters.telegram.model import (
 )
 
 
-@on_command("inline").handle()
-async def _(bot: Bot, event: MessageEvent):
-    await bot.send(
-        event,
-        "Hello InlineKeyboard !",
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text="Nonebot Adapter Telegram",
-                        url="https://github.com/nonebot/adapter-telegram",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Telegram Bot API",
-                        url="https://core.telegram.org/bots/api",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        text="Say hello to me",
-                        callback_data="hello",
-                    )
-                ],
-            ]
-        ),
-    )
-
-
 @on("inline").handle()
 async def _(bot: Bot, event: InlineQueryEvent):
     await bot.answer_inline_query(
@@ -57,6 +27,28 @@ async def _(bot: Bot, event: InlineQueryEvent):
                 title="Hello",
                 input_message_content=InputTextMessageContent(
                     message_text="Hello InlineQuery !"
+                ),
+                reply_markup=InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(
+                                text="Nonebot Adapter Telegram",
+                                url="https://github.com/nonebot/adapter-telegram",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="Telegram Bot API",
+                                url="https://core.telegram.org/bots/api",
+                            )
+                        ],
+                        [
+                            InlineKeyboardButton(
+                                text="Say hello to me",
+                                callback_data="hello",
+                            )
+                        ],
+                    ]
                 ),
             ),
         ],

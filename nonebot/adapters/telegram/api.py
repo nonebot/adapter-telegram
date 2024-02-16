@@ -57,8 +57,7 @@ class API:
         limit: Optional[int] = None,
         timeout: Optional[int] = None,
         allowed_updates: Optional[List[str]] = None,
-    ) -> List[Update]:
-        ...
+    ) -> List[Update]: ...
 
     async def set_webhook(
         self,
@@ -69,16 +68,13 @@ class API:
         allowed_updates: Optional[List[str]] = None,
         drop_pending_updates: Optional[bool] = None,
         secret_token: Optional[str] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def delete_webhook(
         self, drop_pending_updates: Optional[bool] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def get_webhook_info(self) -> WebhookInfo:
-        ...
+    async def get_webhook_info(self) -> WebhookInfo: ...
 
     async def get_me(self) -> User:
         """
@@ -89,11 +85,9 @@ class API:
         """
         ...
 
-    async def log_out(self) -> Literal[True]:
-        ...
+    async def log_out(self) -> Literal[True]: ...
 
-    async def close(self) -> Literal[True]:
-        ...
+    async def close(self) -> Literal[True]: ...
 
     async def send_message(
         self,
@@ -114,8 +108,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def forward_message(
         self,
@@ -125,8 +118,7 @@ class API:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def forward_messages(
         self,
@@ -136,8 +128,7 @@ class API:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-    ) -> List[MessageId]:
-        ...
+    ) -> List[MessageId]: ...
 
     async def copy_message(
         self,
@@ -159,8 +150,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> MessageId:
-        ...
+    ) -> MessageId: ...
 
     async def copy_messages(
         self,
@@ -171,8 +161,7 @@ class API:
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         remove_caption: Optional[bool] = None,
-    ) -> List[MessageId]:
-        ...
+    ) -> List[MessageId]: ...
 
     async def send_photo(
         self,
@@ -194,8 +183,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_audio(
         self,
@@ -220,8 +208,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_document(
         self,
@@ -244,8 +231,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_video(
         self,
@@ -272,8 +258,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_animation(
         self,
@@ -299,8 +284,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_voice(
         self,
@@ -322,8 +306,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_video_note(
         self,
@@ -344,8 +327,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_media_group(
         self,
@@ -357,8 +339,7 @@ class API:
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
-    ) -> List[Message]:
-        ...
+    ) -> List[Message]: ...
 
     async def send_location(
         self,
@@ -381,8 +362,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_venue(
         self,
@@ -407,8 +387,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_contact(
         self,
@@ -429,8 +408,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_poll(
         self,
@@ -461,8 +439,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_dice(
         self,
@@ -480,8 +457,7 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def send_chat_action(
         self,
@@ -500,8 +476,7 @@ class API:
             "upload_video_note",
         ],
         message_thread_id: Optional[int] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_message_reaction(
         self,
@@ -509,16 +484,13 @@ class API:
         message_id: int,
         reaction: Optional[List[ReactionType]] = None,
         is_big: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def get_user_profile_photos(
         self, user_id: int, offset: Optional[int] = None, limit: Optional[int] = None
-    ) -> UserProfilePhotos:
-        ...
+    ) -> UserProfilePhotos: ...
 
-    async def get_file(self, file_id: str) -> File:
-        ...
+    async def get_file(self, file_id: str) -> File: ...
 
     async def ban_chat_member(
         self,
@@ -526,16 +498,14 @@ class API:
         user_id: int,
         until_date: Optional[int] = None,
         revoke_messages: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def unban_chat_member(
         self,
         chat_id: Union[int, str],
         user_id: int,
         only_if_banned: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def restrict_chat_member(
         self,
@@ -544,8 +514,7 @@ class API:
         permissions: ChatPermissions,
         use_independent_chat_permissions: Optional[bool] = None,
         until_date: Optional[int] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def promote_chat_member(
         self,
@@ -566,34 +535,28 @@ class API:
         can_edit_stories: Optional[bool] = None,
         can_delete_stories: Optional[bool] = None,
         can_manage_topics: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_chat_administrator_custom_title(
         self, chat_id: Union[int, str], user_id: int, custom_title: str
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def ban_chat_sender_chat(
         self, chat_id: Union[int, str], sender_chat_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def unban_chat_sender_chat(
         self, chat_id: Union[int, str], sender_chat_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_chat_permissions(
         self,
         chat_id: Union[int, str],
         permissions: ChatPermissions,
         use_independent_chat_permissions: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def export_chat_invite_link(self, chat_id: Union[int, str]) -> str:
-        ...
+    async def export_chat_invite_link(self, chat_id: Union[int, str]) -> str: ...
 
     async def create_chat_invite_link(
         self,
@@ -602,8 +565,7 @@ class API:
         expire_date: Optional[int] = None,
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None,
-    ) -> ChatInviteLink:
-        ...
+    ) -> ChatInviteLink: ...
 
     async def edit_chat_invite_link(
         self,
@@ -613,87 +575,72 @@ class API:
         expire_date: Optional[int] = None,
         member_limit: Optional[int] = None,
         creates_join_request: Optional[bool] = None,
-    ) -> ChatInviteLink:
-        ...
+    ) -> ChatInviteLink: ...
 
     async def revoke_chat_invite_link(
         self, chat_id: Union[int, str], invite_link: str
-    ) -> ChatInviteLink:
-        ...
+    ) -> ChatInviteLink: ...
 
     async def approve_chat_join_request(
         self, chat_id: Union[int, str], user_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def decline_chat_join_request(
         self, chat_id: Union[int, str], user_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_chat_photo(
         self, chat_id: Union[int, str], photo: InputFile
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def delete_chat_photo(self, chat_id: Union[int, str]) -> Literal[True]:
-        ...
+    async def delete_chat_photo(self, chat_id: Union[int, str]) -> Literal[True]: ...
 
     async def set_chat_title(
         self, chat_id: Union[int, str], title: str
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_chat_description(
         self, chat_id: Union[int, str], description: Optional[str] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def pin_chat_message(
         self,
         chat_id: Union[int, str],
         message_id: int,
         disable_notification: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def unpin_chat_message(
         self, chat_id: Union[int, str], message_id: Optional[int] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def unpin_all_chat_messages(self, chat_id: Union[int, str]) -> Literal[True]:
-        ...
+    async def unpin_all_chat_messages(
+        self, chat_id: Union[int, str]
+    ) -> Literal[True]: ...
 
-    async def leave_chat(self, chat_id: Union[int, str]) -> Literal[True]:
-        ...
+    async def leave_chat(self, chat_id: Union[int, str]) -> Literal[True]: ...
 
-    async def get_chat(self, chat_id: Union[int, str]) -> Chat:
-        ...
+    async def get_chat(self, chat_id: Union[int, str]) -> Chat: ...
 
     async def get_chat_administrators(
         self, chat_id: Union[int, str]
-    ) -> List[ChatMember]:
-        ...
+    ) -> List[ChatMember]: ...
 
-    async def get_chat_member_count(self, chat_id: Union[int, str]) -> int:
-        ...
+    async def get_chat_member_count(self, chat_id: Union[int, str]) -> int: ...
 
     async def get_chat_member(
         self, chat_id: Union[int, str], user_id: int
-    ) -> ChatMember:
-        ...
+    ) -> ChatMember: ...
 
     async def set_chat_sticker_set(
         self, chat_id: Union[int, str], sticker_set_name: str
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def delete_chat_sticker_set(self, chat_id: Union[int, str]) -> Literal[True]:
-        ...
+    async def delete_chat_sticker_set(
+        self, chat_id: Union[int, str]
+    ) -> Literal[True]: ...
 
-    async def get_forum_topic_icon_stickers(self) -> List[Sticker]:
-        ...
+    async def get_forum_topic_icon_stickers(self) -> List[Sticker]: ...
 
     async def create_forum_topic(
         self,
@@ -701,8 +648,7 @@ class API:
         name: str,
         icon_color: Optional[int] = None,
         icon_custom_emoji_id: Optional[str] = None,
-    ) -> ForumTopic:
-        ...
+    ) -> ForumTopic: ...
 
     async def edit_forum_topic(
         self,
@@ -710,56 +656,47 @@ class API:
         message_thread_id: int,
         name: Optional[str] = None,
         icon_custom_emoji_id: Optional[str] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def close_forum_topic(
         self, chat_id: Union[int, str], message_thread_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def reopen_forum_topic(
         self, chat_id: Union[int, str], message_thread_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def delete_forum_topic(
         self, chat_id: Union[int, str], message_thread_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def unpin_all_forum_topic_messages(
         self, chat_id: Union[int, str], message_thread_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def edit_general_forum_topic(
         self, chat_id: Union[int, str], name: str
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def close_general_forum_topic(
         self, chat_id: Union[int, str]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def reopen_general_forum_topic(
         self, chat_id: Union[int, str]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def hide_general_forum_topic(self, chat_id: Union[int, str]) -> Literal[True]:
-        ...
+    async def hide_general_forum_topic(
+        self, chat_id: Union[int, str]
+    ) -> Literal[True]: ...
 
     async def unhide_general_forum_topic(
         self, chat_id: Union[int, str]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def unpin_all_general_forum_topic_messages(
         self, chat_id: Union[int, str]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def answer_callback_query(
         self,
@@ -768,85 +705,72 @@ class API:
         show_alert: Optional[bool] = None,
         url: Optional[str] = None,
         cache_time: Optional[int] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def get_user_chat_boosts(
         self, chat_id: Union[int, str], user_id: int
-    ) -> UserChatBoosts:
-        ...
+    ) -> UserChatBoosts: ...
 
     async def set_my_commands(
         self,
         commands: List[BotCommand],
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def delete_my_commands(
         self,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def get_my_commands(
         self,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None,
-    ) -> List[BotCommand]:
-        ...
+    ) -> List[BotCommand]: ...
 
     async def set_my_name(
         self, name: Optional[str] = None, language_code: Optional[str] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def get_my_name(self, language_code: Optional[str] = None) -> BotName:
-        ...
+    async def get_my_name(self, language_code: Optional[str] = None) -> BotName: ...
 
     async def set_my_description(
         self, description: Optional[str] = None, language_code: Optional[str] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def get_my_description(
         self, language_code: Optional[str] = None
-    ) -> BotDescription:
-        ...
+    ) -> BotDescription: ...
 
     async def set_my_short_description(
         self,
         short_description: Optional[str] = None,
         language_code: Optional[str] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def get_my_short_description(
         self, language_code: Optional[str] = None
-    ) -> BotShortDescription:
-        ...
+    ) -> BotShortDescription: ...
 
     async def set_chat_menu_button(
         self, chat_id: Optional[int] = None, menu_button: Optional[MenuButton] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def get_chat_menu_button(self, chat_id: Optional[int] = None) -> MenuButton:
-        ...
+    async def get_chat_menu_button(
+        self, chat_id: Optional[int] = None
+    ) -> MenuButton: ...
 
     async def set_my_default_administrator_rights(
         self,
         rights: Optional[ChatAdministratorRights] = None,
         for_channels: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def get_my_default_administrator_rights(
         self, for_channels: Optional[bool] = None
-    ) -> ChatAdministratorRights:
-        ...
+    ) -> ChatAdministratorRights: ...
 
     async def edit_message_text(
         self,
@@ -858,8 +782,7 @@ class API:
         entities: Optional[List[MessageEntity]] = None,
         link_preview_options: Optional[LinkPreviewOptions] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def edit_message_caption(
         self,
@@ -870,8 +793,7 @@ class API:
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[List[MessageEntity]] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def edit_message_media(
         self,
@@ -880,8 +802,7 @@ class API:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def edit_message_live_location(
         self,
@@ -894,8 +815,7 @@ class API:
         heading: Optional[int] = None,
         proximity_alert_radius: Optional[int] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def stop_message_live_location(
         self,
@@ -903,8 +823,7 @@ class API:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def edit_message_reply_markup(
         self,
@@ -912,26 +831,22 @@ class API:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def stop_poll(
         self,
         chat_id: Union[int, str],
         message_id: int,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Poll:
-        ...
+    ) -> Poll: ...
 
     async def delete_message(
         self, chat_id: Union[int, str], message_id: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def delete_messages(
         self, chat_id: Union[int, str], message_ids: List[int]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def send_sticker(
         self,
@@ -950,24 +865,20 @@ class API:
                 ForceReply,
             ]
         ] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
-    async def get_sticker_set(self, name: str) -> StickerSet:
-        ...
+    async def get_sticker_set(self, name: str) -> StickerSet: ...
 
     async def get_custom_emoji_stickers(
         self, custom_emoji_ids: List[str]
-    ) -> List[Sticker]:
-        ...
+    ) -> List[Sticker]: ...
 
     async def upload_sticker_file(
         self,
         user_id: int,
         sticker: InputFile,
         sticker_format: Literal["static", "animated", "video"],
-    ) -> File:
-        ...
+    ) -> File: ...
 
     async def create_new_sticker_set(
         self,
@@ -978,55 +889,44 @@ class API:
         sticker_format: Literal["static", "animated", "video"],
         sticker_type: Optional[str] = None,
         needs_repainting: Optional[bool] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def add_sticker_to_set(
         self,
         user_id: int,
         name: str,
         sticker: InputSticker,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_sticker_position_in_set(
         self, sticker: str, position: int
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def delete_sticker_from_set(self, sticker: str) -> Literal[True]:
-        ...
+    async def delete_sticker_from_set(self, sticker: str) -> Literal[True]: ...
 
     async def set_sticker_emoji_list(
         self, sticker: str, emoji_list: List[str]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_sticker_keywords(
         self, sticker: str, keywords: Optional[List[str]] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_sticker_mask_position(
         self, sticker: str, mask_position: Optional[MaskPosition] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def set_sticker_set_title(self, name: str, title: str) -> Literal[True]:
-        ...
+    async def set_sticker_set_title(self, name: str, title: str) -> Literal[True]: ...
 
     async def set_sticker_set_thumbnail(
         self, name: str, user_id: int, thumbnail: Optional[Union[str, InputFile]] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_custom_emoji_sticker_set_thumbnail(
         self, name: str, custom_emoji_id: Optional[str] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
-    async def delete_sticker_set(self, name: str) -> Literal[True]:
-        ...
+    async def delete_sticker_set(self, name: str) -> Literal[True]: ...
 
     async def answer_inline_query(
         self,
@@ -1036,13 +936,11 @@ class API:
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
         button: Optional[InlineQueryResultsButton] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def answer_web_app_query(
         self, web_app_query_id: str, result: InlineQueryResult
-    ) -> SentWebAppMessage:
-        ...
+    ) -> SentWebAppMessage: ...
 
     async def send_invoice(
         self,
@@ -1073,8 +971,7 @@ class API:
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def create_invoice_link(
         self,
@@ -1098,8 +995,7 @@ class API:
         send_phone_number_to_provider: Optional[bool] = None,
         send_email_to_provider: Optional[bool] = None,
         is_flexible: Optional[bool] = None,
-    ) -> str:
-        ...
+    ) -> str: ...
 
     async def answer_shipping_query(
         self,
@@ -1107,18 +1003,15 @@ class API:
         ok: bool,
         shipping_options: Optional[List[ShippingOption]] = None,
         error_message: Optional[str] = None,
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def answer_pre_checkout_query(
         self, pre_checkout_query_id: str, ok: bool, error_message: Optional[str] = None
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def set_passport_data_errors(
         self, user_id: int, errors: List[PassportElementError]
-    ) -> Literal[True]:
-        ...
+    ) -> Literal[True]: ...
 
     async def send_game(
         self,
@@ -1129,8 +1022,7 @@ class API:
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
-    ) -> Message:
-        ...
+    ) -> Message: ...
 
     async def set_game_score(
         self,
@@ -1141,8 +1033,7 @@ class API:
         chat_id: Optional[int] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
-    ) -> Union[Message, Literal[True]]:
-        ...
+    ) -> Union[Message, Literal[True]]: ...
 
     async def get_game_high_scores(
         self,
@@ -1150,5 +1041,4 @@ class API:
         chat_id: Optional[int] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
-    ) -> List[GameHighScore]:
-        ...
+    ) -> List[GameHighScore]: ...

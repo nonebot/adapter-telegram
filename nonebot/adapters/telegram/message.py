@@ -64,8 +64,10 @@ class MessageSegment(BaseMessageSegment):
         return MessageSegment("poll", {"question": question, "options": options})
 
     @staticmethod
-    def dice(emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲") -> "MessageSegment":
-        return MessageSegment("dice", {"question": emoji})
+    def dice(
+        emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲"
+    ) -> "MessageSegment":
+        return MessageSegment("dice", {"emoji": emoji})
 
     @staticmethod
     def chat_action(
@@ -107,10 +109,6 @@ class MessageSegment(BaseMessageSegment):
 
 
 class Reply(MessageSegment):
-    @overrides(BaseMessageSegment)
-    def is_text(self) -> bool:
-        return False
-
     @staticmethod
     def reply(message_id: int, chat_id: Optional[Union[int, str]] = None, **kargs):
         return Reply("reply", {"message_id": message_id, "chat_id": chat_id, **kargs})
@@ -279,7 +277,7 @@ class Message(BaseMessage[MessageSegment]):
         yield Entity.text(msg)
 
     @classmethod
-    def parse_obj(cls, obj: Dict[str, Any]) -> "Message":
+    def model_validate(cls, obj: Dict[str, Any]) -> "Message":
         msg = []
         if "text" in obj or "caption" in obj:
             key, entities_key = (

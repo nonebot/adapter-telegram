@@ -3,7 +3,7 @@ from uuid import uuid4
 from functools import partial
 from typing import Any, List, Union, Optional, Sequence, cast
 
-from pydantic import parse_obj_as
+from pydantic import TypeAdapter
 from nonebot.typing import overrides
 from nonebot.message import handle_event
 
@@ -99,8 +99,8 @@ class Bot(BaseBot, API):
                         kargs[param.name] = args_.pop(0)
                     except IndexError:
                         kargs[param.name] = None
-            return parse_obj_as(
-                sign.return_annotation, await super().call_api(api, **kargs)
+            return TypeAdapter(sign.return_annotation).validate_python(
+                await super().call_api(api, **kargs)
             )
         return await super().call_api(api, **kargs)
 
@@ -116,7 +116,7 @@ class Bot(BaseBot, API):
             (
                 [
                     MessageEntity(
-                        type=entity.type,
+                        type=entity.type,  # type: ignore
                         offset=sum(map(len, message[:i])),
                         length=len(entity.data["text"]),
                         url=entity.data.get("url"),
@@ -171,7 +171,7 @@ class Bot(BaseBot, API):
 
         # 单个 segment
         if isinstance(message, MessageSegment):
-            if message.is_text():
+            if isinstance(message, Entity):
                 return await self.send_message(
                     chat_id=chat_id,
                     message_thread_id=message_thread_id,
@@ -206,21 +206,31 @@ class Bot(BaseBot, API):
             reply_parameters = ReplyParameters(**message["reply", 0].data)
             message = message.exclude("reply")
 
-        entities = Message(x for x in message if isinstance(x, Entity))
-        files = Message(
+        entities = [x for x in message if isinstance(x, Entity)]
+        files = [
             x
             for x in message
-            if isinstance(x, File) and not isinstance(message, UnCombinFile)
-        )
-        others = Message(
+            if isinstance(x, File) and not isinstance(x, UnCombinFile)
+        ]
+        others = [
             x
             for x in message
-            if not (isinstance(x, (Entity, File))) or isinstance(message, UnCombinFile)
-        )
+            if not (isinstance(x, (Entity, File))) or isinstance(x, UnCombinFile)
+        ]
 
-        # 如果只能单独发送的消息段和其他消息段在一起，那么抛出错误
-        if others and (len(others) > 1 or files or entities):
-            raise ApiNotAvailable
+        if others:
+            # 如果只能单独发送的消息段和其他消息段在一起，那么抛出错误
+            if len(others) > 1 or files or entities:
+                raise ApiNotAvailable
+            other = others[0]
+            return await self.call_api(
+                f"send_{other.type}",
+                chat_id=chat_id,
+                message_thread_id=message_thread_id,
+                **other.data,
+                reply_parameters=reply_parameters,
+                **kwargs,
+            )
 
         # 发送纯文本消息
         if not files:
@@ -237,8 +247,7 @@ class Bot(BaseBot, API):
         if len(files) > 1:
             # 多个文件
             medias = [
-                parse_obj_as(
-                    InputMedia,
+                TypeAdapter(InputMedia).validate_python(
                     {
                         "type": file.type,
                         "media": file.data.pop("file"),

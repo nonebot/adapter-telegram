@@ -85,10 +85,10 @@ async def test_send_to(app: App):
             [
                 ReturnMessage(
                     message_id=1, date=111, chat=Chat(id=1, type="group")
-                ).dict(),
+                ).model_dump(),
                 ReturnMessage(
                     message_id=2, date=222, chat=Chat(id=2, type="group")
-                ).dict(),
+                ).model_dump(),
             ],
         )
         await bot.send_to(

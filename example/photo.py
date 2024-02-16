@@ -1,6 +1,5 @@
 """发送图片的示例，其他上传文件的操作同理"""
 
-
 from anyio import open_file
 
 from nonebot import on_command

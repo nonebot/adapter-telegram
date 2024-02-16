@@ -61,7 +61,7 @@ class Event(BaseEvent):
         }
 
         event = event_map[post_type].parse_event(obj[post_type])
-        setattr(event, "telegram_model", Update.parse_obj(obj))
+        setattr(event, "telegram_model", Update.model_validate(obj))
         return event
 
     @classmethod
@@ -72,7 +72,7 @@ class Event(BaseEvent):
                     return subclass.parse_event(obj)
                 except:
                     pass
-        return cls.parse_obj(obj)
+        return cls.model_validate(obj)
 
     @classmethod
     def parse_event(cls, obj: dict) -> "Event":
@@ -92,7 +92,11 @@ class Event(BaseEvent):
     @overrides(BaseEvent)
     def get_event_description(self) -> str:
         return escape_tag(
-            str(self.dict(by_alias=True, exclude_none=True, exclude={"telegram_model"}))
+            str(
+                self.model_dump(
+                    by_alias=True, exclude_none=True, exclude={"telegram_model"}
+                )
+            )
         )
 
     @overrides(BaseEvent)
@@ -126,16 +130,16 @@ class MessageEvent(Event):
     message_id: int
     date: int
     chat: Chat
-    forward_from: Optional[User]
-    forward_from_chat: Optional[Chat]
-    forward_from_message_id: Optional[int]
-    forward_signature: Optional[str]
-    forward_sender_name: Optional[str]
-    forward_date: Optional[int]
-    via_bot: Optional[User]
-    has_protected_content: Optional[Literal[True]]
-    media_group_id: Optional[str]
-    author_signature: Optional[str]
+    forward_from: Optional[User] = None
+    forward_from_chat: Optional[Chat] = None
+    forward_from_message_id: Optional[int] = None
+    forward_signature: Optional[str] = None
+    forward_sender_name: Optional[str] = None
+    forward_date: Optional[int] = None
+    via_bot: Optional[User] = None
+    has_protected_content: Optional[Literal[True]] = None
+    media_group_id: Optional[str] = None
+    author_signature: Optional[str] = None
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
     original_message: Message = Message()
@@ -143,7 +147,7 @@ class MessageEvent(Event):
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
-        message = Message.parse_obj(obj)
+        message = Message.model_validate(obj)
         if not message:
             return NoticeEvent.parse_event(obj)
         else:
@@ -214,11 +218,11 @@ class GroupMessageEvent(MessageEvent):
             event = ForumTopicMessageEvent.parse_event(obj)
         else:
             obj.pop("message_thread_id", None)
-            event = cls.parse_obj(obj)
+            event = cls.model_validate(obj)
         return event
 
     from_: User = Field(alias="from")
-    sender_chat: Optional[Chat]
+    sender_chat: Optional[Chat] = None
 
     @overrides(MessageEvent)
     def get_event_name(self) -> str:
@@ -254,7 +258,7 @@ class ForumTopicMessageEvent(GroupMessageEvent):
 
 
 class ChannelPostEvent(MessageEvent):
-    sender_chat: Optional[Chat]
+    sender_chat: Optional[Chat] = None
 
     @overrides(MessageEvent)
     def get_event_name(self) -> str:
@@ -269,10 +273,10 @@ class EditedMessageEvent(Event):
     message_id: int
     date: int
     chat: Chat
-    via_bot: Optional[User]
+    via_bot: Optional[User] = None
     edit_date: int
-    media_group_id: Optional[str]
-    author_signature: Optional[str]
+    media_group_id: Optional[str] = None
+    author_signature: Optional[str] = None
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
 
@@ -287,7 +291,7 @@ class EditedMessageEvent(Event):
             "channel": EditedChannelPostEvent,
         }
         event = event_map[message_type].parse_event(obj)
-        setattr(event, "message", Message.parse_obj(obj))
+        setattr(event, "message", Message.model_validate(obj))
         if reply_to_message:
             setattr(
                 event, "reply_to_message", MessageEvent.parse_event(reply_to_message)
@@ -317,7 +321,7 @@ class EditedMessageEvent(Event):
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(alias="from")
-    sender_chat: Optional[Chat]
+    sender_chat: Optional[Chat] = None
 
     @overrides(EditedMessageEvent)
     def get_event_name(self) -> str:
@@ -342,7 +346,7 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 
 class GroupEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(default=None, alias="from")
-    sender_chat: Optional[Chat]
+    sender_chat: Optional[Chat] = None
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
@@ -350,7 +354,7 @@ class GroupEditedMessageEvent(EditedMessageEvent):
             event = ForumTopicEditedMessageEvent.parse_event(obj)
         else:
             obj.pop("message_thread_id", None)
-            event = cls.parse_obj(obj)
+            event = cls.model_validate(obj)
         return event
 
     @overrides(EditedMessageEvent)
@@ -387,7 +391,7 @@ class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
 
 
 class EditedChannelPostEvent(EditedMessageEvent):
-    sender_chat: Optional[Chat]
+    sender_chat: Optional[Chat] = None
 
     @overrides(EditedMessageEvent)
     def get_event_name(self) -> str:
@@ -440,7 +444,7 @@ class NoticeEvent(Event):
 class PinnedMessageEvent(NoticeEvent):
     message_id: int
     from_: Optional[User] = Field(alias="from")
-    sender_chat: Optional[Chat]
+    sender_chat: Optional[Chat] = None
     chat: Chat
     date: int
     pinned_message: MessageEvent = Field(default=None)
@@ -448,7 +452,7 @@ class PinnedMessageEvent(NoticeEvent):
     @classmethod
     def __parse_event(cls, obj: dict):
         pinned_message = obj.pop("pinned_message")
-        event = cls.parse_obj(obj)
+        event = cls.model_validate(obj)
         setattr(event, "pinned_message", MessageEvent.parse_event(pinned_message))
         return event
 
@@ -669,6 +673,8 @@ class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
 
 
 class CallbackQueryEvent(InlineEvent, CallbackQuery):
+    chat: Chat = Field(default=None)
+
     @overrides(Event)
     def get_event_name(self) -> str:
         return "inline.callback_query"
