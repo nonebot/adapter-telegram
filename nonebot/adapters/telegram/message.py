@@ -1,6 +1,5 @@
+from typing_extensions import override
 from typing import Any, Dict, List, Type, Tuple, Union, Literal, Iterable, Optional
-
-from nonebot.typing import overrides
 
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
@@ -14,11 +13,11 @@ class MessageSegment(BaseMessageSegment):
     """
 
     @classmethod
-    @overrides(BaseMessageSegment)
+    @override
     def get_message_class(cls) -> Type["Message"]:
         return Message
 
-    @overrides(BaseMessageSegment)
+    @override
     def __str__(self) -> str:
         if self.is_text():
             return self.data.get("text", "")
@@ -36,7 +35,7 @@ class MessageSegment(BaseMessageSegment):
         )
         return f"[{self.type}{':' if params else ''}{params}]"
 
-    @overrides(BaseMessageSegment)
+    @override
     def is_text(self) -> bool:
         return False
 
@@ -113,9 +112,13 @@ class Reply(MessageSegment):
     def reply(message_id: int, chat_id: Optional[Union[int, str]] = None, **kargs):
         return Reply("reply", {"message_id": message_id, "chat_id": chat_id, **kargs})
 
+    @staticmethod
+    def markup():
+        pass
+
 
 class Entity(MessageSegment):
-    @overrides(BaseMessageSegment)
+    @override
     def is_text(self) -> bool:
         return True
 
@@ -259,6 +262,9 @@ class UnCombinFile(File):
         file: Union[str, bytes, Tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
+        """
+        不支持 URL
+        """
         return File("video_note", {"file": file, "thumbnail": thumbnail})
 
 
@@ -267,12 +273,12 @@ class Message(BaseMessage[MessageSegment]):
         return "".join(repr(seg) for seg in self)
 
     @classmethod
-    @overrides(BaseMessage)
+    @override
     def get_segment_class(cls) -> Type["MessageSegment"]:
         return MessageSegment
 
     @staticmethod
-    @overrides(BaseMessage)
+    @override
     def _construct(msg: str) -> Iterable[MessageSegment]:
         yield Entity.text(msg)
 

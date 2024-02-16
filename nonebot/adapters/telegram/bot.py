@@ -1,10 +1,10 @@
 import inspect
 from uuid import uuid4
 from functools import partial
+from typing_extensions import override
 from typing import Any, List, Union, Optional, Sequence, cast
 
 from pydantic import TypeAdapter
-from nonebot.typing import overrides
 from nonebot.message import handle_event
 
 from nonebot.adapters import Adapter
@@ -288,7 +288,7 @@ class Bot(BaseBot, API):
             **kwargs,
         )
 
-    @overrides(BaseBot)
+    @override
     async def send(
         self,
         event: Event,

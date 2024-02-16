@@ -1,10 +1,10 @@
 import json
 import asyncio
+from typing_extensions import override
 from typing import Any, Dict, List, Tuple, Union, Iterable, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
-from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
 from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
@@ -26,7 +26,7 @@ log = logger_wrapper("Telegram")
 
 
 class Adapter(BaseAdapter):
-    @overrides(BaseAdapter)
+    @override
     def __init__(self, driver: Driver, **kwargs: Any):
         super().__init__(driver, **kwargs)
         self.adapter_config = AdapterConfig(**self.config.model_dump())
@@ -34,7 +34,7 @@ class Adapter(BaseAdapter):
         self.setup()
 
     @classmethod
-    @overrides(BaseAdapter)
+    @override
     def get_name(cls) -> str:
         return "Telegram"
 
@@ -143,7 +143,7 @@ class Adapter(BaseAdapter):
             else:
                 self.setup_polling(bot)
 
-    @overrides(BaseAdapter)
+    @override
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:
         # 将方法名称改为驼峰式
         api = api.split("_", maxsplit=1)[0] + "".join(
