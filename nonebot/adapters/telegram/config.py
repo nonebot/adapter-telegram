@@ -20,7 +20,7 @@ class BotConfig(BaseModel):
 
     class Config:
         extra = "ignore"
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class AdapterConfig(BaseModel):
