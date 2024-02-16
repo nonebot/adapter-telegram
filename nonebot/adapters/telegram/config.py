@@ -21,10 +21,11 @@ class BotConfig(BaseModel):
 
     if PYDANTIC_V2:
         model_config: ConfigDict = ConfigDict(
-            extra = "ignore",
-            populate_by_name = True,
+            extra="ignore",
+            populate_by_name=True,
         )
     else:
+
         class Config:
             extra = "ignore"
             allow_population_by_field_name = True
@@ -47,10 +48,11 @@ class AdapterConfig(BaseModel):
 
     if PYDANTIC_V2:
         model_config: ConfigDict = ConfigDict(
-            extra = "ignore",
-            populate_by_name = True,
+            extra="ignore",
+            populate_by_name=True,
         )
     else:
+
         class Config:
             extra = "ignore"
             allow_population_by_field_name = True
