@@ -95,6 +95,7 @@ class Chat(BaseModel):
     pinned_message: Optional["Message"] = None
     permissions: Optional[ChatPermissions] = None
     slow_mode_delay: Optional[int] = None
+    unrestrict_boost_count: Optional[int] = None
     message_auto_delete_time: Optional[int] = None
     has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
     has_hidden_members: Optional[Literal[True]] = None
@@ -102,6 +103,7 @@ class Chat(BaseModel):
     has_visible_history: Optional[Literal[True]] = None
     sticker_set_name: Optional[str] = None
     can_set_sticker_set: Optional[Literal[True]] = None
+    custom_emoji_sticker_set_name: Optional[str] = None
     linked_chat_id: Optional[int] = None
     location: Optional[ChatLocation] = None
 
@@ -220,7 +222,8 @@ class Sticker(BaseModel):
 
 
 class Story(BaseModel):
-    pass
+    chat: Chat
+    id: int
 
 
 class Video(BaseModel):
@@ -506,6 +509,10 @@ class ProximityAlertTriggered(BaseModel):
     distance: int
 
 
+class ChatBoostAdded(BaseModel):
+    boost_count: int
+
+
 class ForumTopicCreated(BaseModel):
     name: str
     icon_color: int
@@ -609,6 +616,7 @@ class Message(BaseModel):
     message_thread_id: Optional[int] = None
     from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat] = None
+    sender_boost_count: Optional[int] = None
     date: int
     chat: Chat
     forward_origin: Optional[MessageOrigin] = None
@@ -617,6 +625,7 @@ class Message(BaseModel):
     reply_to_message: Optional["Message"] = None
     external_reply: Optional[ExternalReplyInfo] = None
     quote: Optional[TextQuote] = None
+    reply_to_story: Optional[Story] = None
     via_bot: Optional[User] = None
     edit_date: Optional[int] = None
     has_protected_content: Optional[Literal[True]] = None
@@ -663,6 +672,7 @@ class Message(BaseModel):
     write_access_allowed: Optional[WriteAccessAllowed] = None
     passport_data: Optional[PassportData] = None
     proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
+    boost_added: Optional[ChatBoostAdded] = None
     forum_topic_created: Optional[ForumTopicCreated] = None
     forum_topic_edited: Optional[ForumTopicEdited] = None
     forum_topic_closed: Optional[ForumTopicClosed] = None
@@ -775,12 +785,12 @@ class ChatMemberAdministrator(BaseModel):
     can_promote_members: bool
     can_change_info: bool
     can_invite_users: bool
+    can_post_stories: bool
+    can_edit_stories: bool
+    can_delete_stories: bool
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
-    can_post_stories: Optional[bool] = None
-    can_edit_stories: Optional[bool] = None
-    can_delete_stories: Optional[bool] = None
     can_manage_topics: Optional[bool] = None
     custom_title: Optional[str] = None
 
@@ -973,12 +983,12 @@ class ChatAdministratorRights(BaseModel):
     can_promote_members: bool
     can_change_info: bool
     can_invite_users: bool
+    can_post_stories: bool
+    can_edit_stories: bool
+    can_delete_stories: bool
     can_post_messages: Optional[bool] = None
     can_edit_messages: Optional[bool] = None
     can_pin_messages: Optional[bool] = None
-    can_post_stories: Optional[bool] = None
-    can_edit_stories: Optional[bool] = None
-    can_delete_stories: Optional[bool] = None
     can_manage_topics: Optional[bool] = None
 
 
