@@ -2,7 +2,7 @@ import inspect
 from uuid import uuid4
 from functools import partial
 from typing_extensions import override
-from typing import Any, List, Union, Optional, Sequence, cast
+from typing import Any, Union, Optional, cast
 
 from pydantic import TypeAdapter
 from nonebot.message import handle_event
@@ -13,7 +13,7 @@ from nonebot.adapters import Bot as BaseBot
 from .api import API
 from .config import BotConfig
 from .exception import ApiNotAvailable
-from .model import InputMedia, MessageEntity, ReplyParameters
+from .model import InputMedia, ReplyParameters
 from .message import File, Entity, Message, UnCombinFile, MessageSegment
 from .event import (
     Event,
@@ -109,29 +109,6 @@ class Bot(BaseBot, API):
             return partial(self.call_api, __name)
         return object.__getattribute__(self, __name)
 
-    def __build_entities_form_msg(
-        self, message: Sequence[MessageSegment]
-    ) -> Optional[List[MessageEntity]]:
-        return (
-            (
-                [
-                    MessageEntity(
-                        type=entity.type,  # type: ignore
-                        offset=sum(map(len, message[:i])),
-                        length=len(entity.data["text"]),
-                        url=entity.data.get("url"),
-                        user=entity.data.get("user"),
-                        language=entity.data.get("language"),
-                    )
-                    for i, entity in enumerate(message)
-                    if entity.is_text() and entity.type != "text"
-                ]
-                or None
-            )
-            if message
-            else None
-        )
-
     # TODO 重构
     async def send_to(
         self,
@@ -141,7 +118,7 @@ class Bot(BaseBot, API):
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_to_message_id: Optional[int] = None,  # Deprecated
-        allow_sending_without_reply: Optional[bool] = None,
+        allow_sending_without_reply: Optional[bool] = None,  # Deprecated
         media_group_caption_index: int = 0,  # 非 Telegram 原生参数
         **kwargs,
     ):
@@ -176,7 +153,7 @@ class Bot(BaseBot, API):
                     chat_id=chat_id,
                     message_thread_id=message_thread_id,
                     text=str(message),
-                    entities=self.__build_entities_form_msg([message]),
+                    entities=Entity.build_telegram_entities([message]),
                     **kwargs,
                 )
 
@@ -206,17 +183,17 @@ class Bot(BaseBot, API):
             reply_parameters = ReplyParameters(**message["reply", 0].data)
             message = message.exclude("reply")
 
-        entities = [x for x in message if isinstance(x, Entity)]
-        files = [
+        entities = Message(x for x in message if isinstance(x, Entity))
+        files = Message(
             x
             for x in message
             if isinstance(x, File) and not isinstance(x, UnCombinFile)
-        ]
-        others = [
+        )
+        others = Message(
             x
             for x in message
             if not (isinstance(x, (Entity, File))) or isinstance(x, UnCombinFile)
-        ]
+        )
 
         if others:
             # 如果只能单独发送的消息段和其他消息段在一起，那么抛出错误
@@ -238,13 +215,16 @@ class Bot(BaseBot, API):
                 chat_id=chat_id,
                 message_thread_id=message_thread_id,
                 text=str(message),
-                entities=self.__build_entities_form_msg(message),
+                entities=Entity.build_telegram_entities(entities),
                 reply_parameters=reply_parameters,
                 **kwargs,
             )
 
         # 发送带文件的消息
         if len(files) > 1:
+            # animation 和 voice 不能组合发送
+            if any(file.type in ("voice", "animation") for file in files):
+                raise ApiNotAvailable
             # 多个文件
             medias = [
                 TypeAdapter(InputMedia).validate_python(
@@ -263,7 +243,7 @@ class Bot(BaseBot, API):
                 media_will_edit = medias[0]
 
             media_will_edit.caption = str(entities) if entities else None
-            media_will_edit.caption_entities = self.__build_entities_form_msg(entities)
+            media_will_edit.caption_entities = Entity.build_telegram_entities(entities)
 
             return await self.send_media_group(
                 chat_id=chat_id,
@@ -282,7 +262,7 @@ class Bot(BaseBot, API):
             **{
                 file.type: file.data.get("file"),
                 "caption": str(entities) if entities else None,
-                "caption_entities": self.__build_entities_form_msg(entities),
+                "caption_entities": Entity.build_telegram_entities(entities),
             },
             reply_parameters=reply_parameters,
             **kwargs,
@@ -293,10 +273,19 @@ class Bot(BaseBot, API):
         self,
         event: Event,
         message: Union[str, Message, MessageSegment],
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
         **kwargs,
     ) -> Any:
         if not isinstance(event, EventWithChat):
             raise ApiNotAvailable
+
+        kwargs.update(
+            {
+                "disable_notification": disable_notification,
+                "protect_content": protect_content,
+            },
+        )
 
         message_thread_id = cast(
             Optional[int],

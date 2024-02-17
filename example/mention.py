@@ -1,7 +1,5 @@
 """
 @某个用户的示例
-
-本示例所涉及的 Entity 在将在下个版本重构
 """
 
 from typing import Union

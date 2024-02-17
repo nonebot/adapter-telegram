@@ -200,6 +200,7 @@ class Adapter(BaseAdapter):
             "sendAnimation",
             "sendVoice",
             "sendVideoNote",
+            "sendSticker",
         ):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
