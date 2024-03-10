@@ -153,7 +153,7 @@ class Bot(BaseBot, API):
                     chat_id=chat_id,
                     message_thread_id=message_thread_id,
                     text=str(message),
-                    entities=Entity.build_telegram_entities([message]),
+                    entities=Entity.build_telegram_entities(Message(message)),
                     **kwargs,
                 )
 

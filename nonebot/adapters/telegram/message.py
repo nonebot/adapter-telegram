@@ -294,7 +294,7 @@ class Entity(MessageSegment):
         return nb_entites
 
     @staticmethod
-    def build_telegram_entities(entities: List["Entity"]) -> List[MessageEntity]:
+    def build_telegram_entities(entities: "Message") -> List[MessageEntity]:
         return (
             (
                 [
