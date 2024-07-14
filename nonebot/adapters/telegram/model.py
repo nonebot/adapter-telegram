@@ -15,57 +15,7 @@ class User(BaseModel):
     can_join_groups: Optional[bool] = None
     can_read_all_group_messages: Optional[bool] = None
     supports_inline_queries: Optional[bool] = None
-
-
-class ChatPhoto(BaseModel):
-    small_file_id: str
-    small_file_unique_id: str
-    big_file_id: str
-    big_file_unique_id: str
-
-
-class ReactionTypeEmoji(BaseModel):
-    type: Literal["emoji"] = "emoji"
-    emoji: str
-
-
-class ReactionTypeCustomEmoji(BaseModel):
-    type: Literal["custom_emoji"] = "custom_emoji"
-    custom_emoji_id: str
-
-
-ReactionType = Union[ReactionTypeEmoji, ReactionTypeCustomEmoji]
-
-
-class ChatPermissions(BaseModel):
-    can_send_messages: Optional[bool] = None
-    can_send_audios: Optional[bool] = None
-    can_send_documents: Optional[bool] = None
-    can_send_photos: Optional[bool] = None
-    can_send_videos: Optional[bool] = None
-    can_send_video_notes: Optional[bool] = None
-    can_send_voice_notes: Optional[bool] = None
-    can_send_polls: Optional[bool] = None
-    can_send_other_messages: Optional[bool] = None
-    can_add_web_page_previews: Optional[bool] = None
-    can_change_info: Optional[bool] = None
-    can_invite_users: Optional[bool] = None
-    can_pin_messages: Optional[bool] = None
-    can_manage_topics: Optional[bool] = None
-
-
-class Location(BaseModel):
-    longitude: float
-    latitude: float
-    horizontal_accuracy: Optional[float] = None
-    live_period: Optional[int] = None
-    heading: Optional[int] = None
-    proximity_alert_radius: Optional[int] = None
-
-
-class ChatLocation(BaseModel):
-    location: Location
-    address: str
+    can_connect_to_business: Optional[bool] = None
 
 
 class Chat(BaseModel):
@@ -76,36 +26,6 @@ class Chat(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     is_forum: Optional[Literal[True]] = None
-    photo: Optional[ChatPhoto] = None
-    active_usernames: Optional[list[str]] = None
-    available_reactions: Optional[list[ReactionType]] = None
-    accent_color_id: Optional[int] = None
-    background_custom_emoji_id: Optional[str] = None
-    profile_accent_color_id: Optional[int] = None
-    profile_background_custom_emoji_id: Optional[str] = None
-    emoji_status_custom_emoji_id: Optional[str] = None
-    emoji_status_expiration_date: Optional[int] = None
-    bio: Optional[str] = None
-    has_private_forwards: Optional[Literal[True]] = None
-    has_restricted_voice_and_video_messages: Optional[Literal[True]] = None
-    join_to_send_messages: Optional[Literal[True]] = None
-    join_by_request: Optional[Literal[True]] = None
-    description: Optional[str] = None
-    invite_link: Optional[str] = None
-    pinned_message: Optional["Message"] = None
-    permissions: Optional[ChatPermissions] = None
-    slow_mode_delay: Optional[int] = None
-    unrestrict_boost_count: Optional[int] = None
-    message_auto_delete_time: Optional[int] = None
-    has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
-    has_hidden_members: Optional[Literal[True]] = None
-    has_protected_content: Optional[Literal[True]] = None
-    has_visible_history: Optional[Literal[True]] = None
-    sticker_set_name: Optional[str] = None
-    can_set_sticker_set: Optional[Literal[True]] = None
-    custom_emoji_sticker_set_name: Optional[str] = None
-    linked_chat_id: Optional[int] = None
-    location: Optional[ChatLocation] = None
 
 
 class MessageOriginUser(BaseModel):
@@ -189,6 +109,43 @@ class Document(BaseModel):
     file_size: Optional[int] = None
 
 
+class PaidMediaPreview(BaseModel):
+    type: Literal["preview"] = "preview"
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+
+
+class PaidMediaPhoto(BaseModel):
+    type: Literal["photo"] = "photo"
+    photo: list[PhotoSize]
+
+
+class Video(BaseModel):
+    file_id: str
+    file_unique_id: str
+    width: int
+    height: int
+    duration: int
+    thumbnail: Optional[PhotoSize] = None
+    file_name: Optional[str] = None
+    mime_type: Optional[str] = None
+    file_size: Optional[int] = None
+
+
+class PaidMediaVideo(BaseModel):
+    type: Literal["video"] = "video"
+    video: Video
+
+
+PaidMedia = Union[PaidMediaPreview, PaidMediaPhoto, PaidMediaVideo]
+
+
+class PaidMediaInfo(BaseModel):
+    star_count: int
+    paid_media: list[PaidMedia]
+
+
 class File(BaseModel):
     file_id: str
     file_unique_id: str
@@ -224,18 +181,6 @@ class Sticker(BaseModel):
 class Story(BaseModel):
     chat: Chat
     id: int
-
-
-class Video(BaseModel):
-    file_id: str
-    file_unique_id: str
-    width: int
-    height: int
-    duration: int
-    thumbnail: Optional[PhotoSize] = None
-    file_name: Optional[str] = None
-    mime_type: Optional[str] = None
-    file_size: Optional[int] = None
 
 
 class VideoNote(BaseModel):
@@ -282,6 +227,7 @@ class MessageEntity(BaseModel):
         "underline",
         "strikethrough",
         "spoiler",
+        "expandable_blockquote",
         "blockquote",
         "code",
         "pre",
@@ -339,14 +285,25 @@ class Invoice(BaseModel):
     total_amount: int
 
 
+class Location(BaseModel):
+    latitude: float
+    longitude: float
+    horizontal_accuracy: Optional[float] = None
+    live_period: Optional[int] = None
+    heading: Optional[int] = None
+    proximity_alert_radius: Optional[int] = None
+
+
 class PollOption(BaseModel):
     text: str
+    text_entities: Optional[list[MessageEntity]] = None
     voter_count: int
 
 
 class Poll(BaseModel):
     id: str
     question: str
+    question_entities: Optional[list[MessageEntity]] = None
     options: list[PollOption]
     total_voter_count: int
     is_closed: bool
@@ -378,6 +335,7 @@ class ExternalReplyInfo(BaseModel):
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
+    paid_media: Optional[PaidMediaInfo] = None
     photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     story: Optional[Story] = None
@@ -442,14 +400,33 @@ class SuccessfulPayment(BaseModel):
     provider_payment_charge_id: str
 
 
+class RefundedPayment(BaseModel):
+    currency: str
+    total_amount: int
+    invoice_payload: str
+    telegram_payment_charge_id: str
+    provider_payment_charge_id: Optional[str] = None
+
+
+class SharedUser(BaseModel):
+    user_id: int
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    photo: Optional[list[PhotoSize]] = None
+
+
 class UsersShared(BaseModel):
     request_id: int
-    user_ids: list[int]
+    users: list[SharedUser]
 
 
 class ChatShared(BaseModel):
     request_id: int
     chat_id: int
+    title: Optional[str] = None
+    username: Optional[str] = None
+    photo: Optional[list[PhotoSize]] = None
 
 
 class WriteAccessAllowed(BaseModel):
@@ -511,6 +488,68 @@ class ProximityAlertTriggered(BaseModel):
 
 class ChatBoostAdded(BaseModel):
     boost_count: int
+
+
+class BackgroundFillSolid(BaseModel):
+    type: Literal["solid"] = "solid"
+    color: int
+
+
+class BackgroundFillGradient(BaseModel):
+    type: Literal["gradient"] = "gradient"
+    top_color: int
+    bottom_color: int
+    rotation_angle: int
+
+
+class BackgroundFillFreeformGradient(BaseModel):
+    type: Literal["freeform_gradient"] = "freeform_gradient"
+    colors: list[int]
+
+
+BackgroundFill = Union[
+    BackgroundFillSolid, BackgroundFillGradient, BackgroundFillFreeformGradient
+]
+
+
+class BackgroundTypeFill(BaseModel):
+    type: Literal["fill"] = "fill"
+    fill: BackgroundFill
+    dark_theme_dimming: int
+
+
+class BackgroundTypeWallpaper(BaseModel):
+    type: Literal["wallpaper"] = "wallpaper"
+    document: Document
+    dark_theme_dimming: int
+    is_blurred: Optional[Literal[True]] = None
+    is_moving: Optional[Literal[True]] = None
+
+
+class BackgroundTypePattern(BaseModel):
+    type: Literal["pattern"] = "pattern"
+    document: Document
+    fill: BackgroundFill
+    intensity: int
+    is_inverted: Optional[Literal[True]] = None
+    is_moving: Optional[Literal[True]] = None
+
+
+class BackgroundTypeChatTheme(BaseModel):
+    type: Literal["chat_theme"] = "chat_theme"
+    theme_name: str
+
+
+BackgroundType = Union[
+    BackgroundTypeFill,
+    BackgroundTypeWallpaper,
+    BackgroundTypePattern,
+    BackgroundTypeChatTheme,
+]
+
+
+class ChatBackground(BaseModel):
+    type: BackgroundType
 
 
 class ForumTopicCreated(BaseModel):
@@ -617,7 +656,9 @@ class Message(BaseModel):
     from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat] = None
     sender_boost_count: Optional[int] = None
+    sender_business_bot: Optional[User] = None
     date: int
+    business_connection_id: Optional[str] = None
     chat: Chat
     forward_origin: Optional[MessageOrigin] = None
     is_topic_message: Optional[Literal[True]] = None
@@ -629,14 +670,17 @@ class Message(BaseModel):
     via_bot: Optional[User] = None
     edit_date: Optional[int] = None
     has_protected_content: Optional[Literal[True]] = None
+    is_from_offline: Optional[Literal[True]] = None
     media_group_id: Optional[str] = None
     author_signature: Optional[str] = None
     text: Optional[str] = None
     entities: Optional[list[MessageEntity]] = None
     link_preview_options: Optional[LinkPreviewOptions] = None
+    effect_id: Optional[str] = None
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
+    paid_media: Optional[PaidMediaInfo] = None
     photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     story: Optional[Story] = None
@@ -645,6 +689,7 @@ class Message(BaseModel):
     voice: Optional[Voice] = None
     caption: Optional[str] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[Literal[True]] = None
     has_media_spoiler: Optional[Literal[True]] = None
     contact: Optional[Contact] = None
     dice: Optional[Dice] = None
@@ -666,6 +711,7 @@ class Message(BaseModel):
     pinned_message: Optional[MaybeInaccessibleMessage] = None
     invoice: Optional[Invoice] = None
     successful_payment: Optional[SuccessfulPayment] = None
+    refunded_payment: Optional[RefundedPayment] = None
     users_shared: Optional[UsersShared] = None
     chat_shared: Optional[ChatShared] = None
     connected_website: Optional[str] = None
@@ -673,6 +719,7 @@ class Message(BaseModel):
     passport_data: Optional[PassportData] = None
     proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
     boost_added: Optional[ChatBoostAdded] = None
+    chat_background_set: Optional[ChatBackground] = None
     forum_topic_created: Optional[ForumTopicCreated] = None
     forum_topic_edited: Optional[ForumTopicEdited] = None
     forum_topic_closed: Optional[ForumTopicClosed] = None
@@ -689,6 +736,34 @@ class Message(BaseModel):
     video_chat_participants_invited: Optional[VideoChatParticipantsInvited] = None
     web_app_data: Optional[WebAppData] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
+
+
+class BusinessConnection(BaseModel):
+    id: str
+    user: User
+    user_chat_id: int
+    date: int
+    can_reply: bool
+    is_enabled: bool
+
+
+class BusinessMessagesDeleted(BaseModel):
+    business_connection_id: str
+    chat: Chat
+    message_ids: list[int]
+
+
+class ReactionTypeEmoji(BaseModel):
+    type: Literal["emoji"] = "emoji"
+    emoji: str
+
+
+class ReactionTypeCustomEmoji(BaseModel):
+    type: Literal["custom_emoji"] = "custom_emoji"
+    custom_emoji_id: str
+
+
+ReactionType = Union[ReactionTypeEmoji, ReactionTypeCustomEmoji]
 
 
 class MessageReactionUpdated(BaseModel):
@@ -861,6 +936,7 @@ class ChatMemberUpdated(BaseModel):
     old_chat_member: ChatMember
     new_chat_member: ChatMember
     invite_link: Optional[ChatInviteLink] = None
+    via_join_request: Optional[bool] = None
     via_chat_folder_invite_link: Optional[bool] = None
 
 
@@ -920,6 +996,10 @@ class Update(BaseModel):
     edited_message: Optional[Message] = None
     channel_post: Optional[Message] = None
     edited_channel_post: Optional[Message] = None
+    business_connection: Optional[BusinessConnection] = None
+    business_message: Optional[Message] = None
+    edited_business_message: Optional[Message] = None
+    deleted_business_messages: Optional[BusinessMessagesDeleted] = None
     message_reaction: Optional[MessageReactionUpdated] = None
     message_reaction_count: Optional[MessageReactionCountUpdated] = None
     inline_query: Optional[InlineQuery] = None
@@ -948,6 +1028,109 @@ class WebhookInfo(BaseModel):
     allowed_updates: Optional[list[str]] = None
 
 
+class ChatPhoto(BaseModel):
+    small_file_id: str
+    small_file_unique_id: str
+    big_file_id: str
+    big_file_unique_id: str
+
+
+class Birthdate(BaseModel):
+    day: int
+    month: int
+    year: Optional[int] = None
+
+
+class BusinessIntro(BaseModel):
+    title: Optional[str] = None
+    message: Optional[str] = None
+    sticker: Optional[Sticker] = None
+
+
+class BusinessLocation(BaseModel):
+    address: str
+    location: Optional[Location] = None
+
+
+class BusinessOpeningHoursInterval(BaseModel):
+    opening_minute: int
+    closing_minute: int
+
+
+class BusinessOpeningHours(BaseModel):
+    time_zone_name: str
+    opening_hours: list[BusinessOpeningHoursInterval]
+
+
+class ChatPermissions(BaseModel):
+    can_send_messages: Optional[bool] = None
+    can_send_audios: Optional[bool] = None
+    can_send_documents: Optional[bool] = None
+    can_send_photos: Optional[bool] = None
+    can_send_videos: Optional[bool] = None
+    can_send_video_notes: Optional[bool] = None
+    can_send_voice_notes: Optional[bool] = None
+    can_send_polls: Optional[bool] = None
+    can_send_other_messages: Optional[bool] = None
+    can_add_web_page_previews: Optional[bool] = None
+    can_change_info: Optional[bool] = None
+    can_invite_users: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
+
+
+class ChatLocation(BaseModel):
+    location: Location
+    address: str
+
+
+class ChatFullInfo(BaseModel):
+    id: int
+    type: Literal["private", "group", "supergroup", "channel"]
+    title: Optional[str] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    is_forum: Optional[Literal[True]] = None
+    accent_color_id: int
+    max_reaction_count: int
+    photo: Optional[ChatPhoto] = None
+    active_usernames: Optional[list[str]] = None
+    birthdate: Optional[Birthdate] = None
+    business_intro: Optional[BusinessIntro] = None
+    business_location: Optional[BusinessLocation] = None
+    business_opening_hours: Optional[BusinessOpeningHours] = None
+    personal_chat: Optional[Chat] = None
+    available_reactions: Optional[list[ReactionType]] = None
+    background_custom_emoji_id: Optional[str] = None
+    profile_accent_color_id: Optional[int] = None
+    profile_background_custom_emoji_id: Optional[str] = None
+    emoji_status_custom_emoji_id: Optional[str] = None
+    emoji_status_expiration_date: Optional[int] = None
+    bio: Optional[str] = None
+    has_private_forwards: Optional[Literal[True]] = None
+    has_restricted_voice_and_video_messages: Optional[Literal[True]] = None
+    join_to_send_messages: Optional[Literal[True]] = None
+    join_by_request: Optional[Literal[True]] = None
+    description: Optional[str] = None
+    invite_link: Optional[str] = None
+    pinned_message: Optional["Message"] = None
+    permissions: Optional[ChatPermissions] = None
+    can_send_paid_media: Optional[Literal[True]] = None
+    slow_mode_delay: Optional[int] = None
+    unrestrict_boost_count: Optional[int] = None
+    message_auto_delete_time: Optional[int] = None
+    has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
+    has_hidden_members: Optional[Literal[True]] = None
+    has_protected_content: Optional[Literal[True]] = None
+    has_visible_history: Optional[Literal[True]] = None
+    sticker_set_name: Optional[str] = None
+    can_set_sticker_set: Optional[Literal[True]] = None
+    custom_emoji_sticker_set_name: Optional[str] = None
+    linked_chat_id: Optional[int] = None
+    location: Optional[ChatLocation] = None
+
+
 class MessageId(BaseModel):
     message_id: int
 
@@ -962,6 +1145,12 @@ class ReplyParameters(BaseModel):
     quote_position: Optional[int] = None
 
 
+class InputPollOption(BaseModel):
+    text: str
+    text_parse_mode: Optional[str] = None
+    text_entities: Optional[list[MessageEntity]] = None
+
+
 class UserProfilePhotos(BaseModel):
     total_count: int
     photos: list[list[PhotoSize]]
@@ -972,6 +1161,9 @@ class KeyboardButtonRequestUsers(BaseModel):
     user_is_bot: Optional[bool] = None
     user_is_premium: Optional[bool] = None
     max_quantity: Optional[int] = None
+    request_name: Optional[bool] = None
+    request_username: Optional[bool] = None
+    request_photo: Optional[bool] = None
 
 
 class ChatAdministratorRights(BaseModel):
@@ -1001,6 +1193,9 @@ class KeyboardButtonRequestChat(BaseModel):
     user_administrator_rights: Optional[ChatAdministratorRights] = None
     bot_administrator_rights: Optional[ChatAdministratorRights] = None
     bot_is_member: Optional[bool] = None
+    request_title: Optional[bool] = None
+    request_username: Optional[bool] = None
+    request_photo: Optional[bool] = None
 
 
 class KeyboardButtonPollType(BaseModel):
@@ -1174,6 +1369,7 @@ class InputMediaPhoto(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     has_spoiler: Optional[bool] = None
 
 
@@ -1184,6 +1380,7 @@ class InputMediaVideo(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -1200,18 +1397,35 @@ InputMedia = Union[
 ]
 
 
+class InputPaidMediaPhoto(BaseModel):
+    type: Literal["photo"] = "photo"
+    media: str
+
+
+class InputPaidMediaVideo(BaseModel):
+    type: Literal["video"] = "video"
+    media: str
+    thumbnail: Optional[Union[InputFile, str]] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+    supports_streaming: Optional[bool] = None
+
+
+InputPaidMedia = Union[InputPaidMediaPhoto, InputPaidMediaVideo]
+
+
 class StickerSet(BaseModel):
     name: str
     title: str
-    sticker_type: str
-    is_animated: bool
-    is_video: bool
+    sticker_type: Literal["regular", "mask", "custom_emoji"]
     stickers: list[Sticker]
     thumbnail: Optional[PhotoSize] = None
 
 
 class InputSticker(BaseModel):
     sticker: Union[InputFile, str]
+    format: Literal["static", "animated", "video"]
     emoji_list: list[str]
     mask_position: Optional[MaskPosition] = None
     keywords: Optional[list[str]] = None
@@ -1266,7 +1480,7 @@ class InputInvoiceMessageContent(BaseModel):
     title: str
     description: str
     payload: str
-    provider_token: str
+    provider_token: Optional[str] = None
     currency: str
     prices: list[LabeledPrice]
     max_tip_amount: Optional[int] = None
@@ -1326,6 +1540,7 @@ class InlineQueryResultCachedGif(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1338,6 +1553,7 @@ class InlineQueryResultCachedMpeg4Gif(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1351,6 +1567,7 @@ class InlineQueryResultCachedPhoto(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1372,6 +1589,7 @@ class InlineQueryResultCachedVideo(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1467,6 +1685,7 @@ class InlineQueryResultGif(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1501,6 +1720,7 @@ class InlineQueryResultMpeg4Gif(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1517,6 +1737,7 @@ class InlineQueryResultPhoto(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1549,6 +1770,7 @@ class InlineQueryResultVideo(BaseModel):
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
     video_width: Optional[int] = None
     video_height: Optional[int] = None
     video_duration: Optional[int] = None
@@ -1602,6 +1824,66 @@ class ShippingOption(BaseModel):
     id: str
     title: str
     prices: list[LabeledPrice]
+
+
+class RevenueWithdrawalStatePending(BaseModel):
+    type: str
+
+
+class RevenueWithdrawalStateSucceeded(BaseModel):
+    type: str
+    date: int
+    url: str
+
+
+class RevenueWithdrawalStateFailed(BaseModel):
+    type: str
+
+
+RevenueWithdrawalState = Union[
+    RevenueWithdrawalStatePending,
+    RevenueWithdrawalStateSucceeded,
+    RevenueWithdrawalStateFailed,
+]
+
+
+class TransactionPartnerUser(BaseModel):
+    type: str
+    user: User
+    invoice_payload: Optional[str] = None
+
+
+class TransactionPartnerFragment(BaseModel):
+    type: str
+    withdrawal_state: Optional[RevenueWithdrawalState] = None
+
+
+class TransactionPartnerTelegramAds(BaseModel):
+    type: str
+
+
+class TransactionPartnerOther(BaseModel):
+    type: str
+
+
+TransactionPartner = Union[
+    TransactionPartnerUser,
+    TransactionPartnerFragment,
+    TransactionPartnerTelegramAds,
+    TransactionPartnerOther,
+]
+
+
+class StarTransaction(BaseModel):
+    id: str
+    amount: int
+    date: int
+    source: Optional[TransactionPartner] = None
+    receiver: Optional[TransactionPartner] = None
+
+
+class StarTransactions(BaseModel):
+    transactions: list[StarTransaction]
 
 
 class PassportElementErrorDataField(BaseModel):
