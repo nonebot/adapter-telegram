@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Literal, Optional
+from typing import Literal, Optional
 from typing_extensions import Protocol, override, runtime_checkable
 
 from pydantic import Field
@@ -115,7 +115,7 @@ class Event(BaseEvent):
         return False
 
     def get_message_description(self) -> str:
-        msg_string: List[str] = []
+        msg_string: list[str] = []
         for seg in self.get_message():
             text = escape_tag(repr(seg))
             if seg.type == "text":
@@ -358,7 +358,7 @@ class GroupEditedMessageEvent(EditedMessageEvent):
 
     @override
     def get_event_name(self) -> str:
-        return f"edited_message.group"
+        return "edited_message.group"
 
     @override
     def get_user_id(self) -> str:
@@ -473,7 +473,7 @@ class NewChatMemberEvent(NoticeEvent):
     from_: Optional[User] = Field(default=None, alias="from")
     chat: Chat
     date: int
-    new_chat_members: List[User]
+    new_chat_members: list[User]
 
     @override
     def get_event_name(self) -> str:
@@ -525,7 +525,7 @@ class NewChatPhotoEvent(NoticeEvent):
     date: int
     from_: Optional[User] = Field(default=None, alias="from")
     chat: Chat
-    new_chat_photo: List[PhotoSize]
+    new_chat_photo: list[PhotoSize]
 
     @override
     def get_event_name(self) -> str:

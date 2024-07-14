@@ -1,7 +1,7 @@
 import json
 import asyncio
 from typing_extensions import override
-from typing import Any, Dict, List, Tuple, Union, Iterable, Optional, cast
+from typing import Any, Union, Iterable, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
@@ -18,7 +18,7 @@ from .model import InputFile, InputMedia
 from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
-def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
+def _escape_none(data: dict[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in data.items() if v is not None}
 
 
@@ -30,7 +30,7 @@ class Adapter(BaseAdapter):
     def __init__(self, driver: Driver, **kwargs: Any):
         super().__init__(driver, **kwargs)
         self.adapter_config = AdapterConfig(**self.config.model_dump())
-        self.tasks: List[asyncio.Task] = []
+        self.tasks: list[asyncio.Task] = []
         self.setup()
 
     @classmethod
@@ -38,7 +38,7 @@ class Adapter(BaseAdapter):
     def get_name(cls) -> str:
         return "Telegram"
 
-    async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
+    async def __handle_update(self, bot: Bot, update: dict[str, Any]):
         try:
             event = Event.parse_event(update)
         except Exception as e:
@@ -152,7 +152,7 @@ class Adapter(BaseAdapter):
         data = _escape_none(data)
 
         # 分离文件到 files
-        files: Dict[str, Tuple[str, bytes]] = {}
+        files: dict[str, tuple[str, bytes]] = {}
         bytes_upload_count = 0
 
         async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
@@ -224,6 +224,7 @@ class Adapter(BaseAdapter):
                 )
 
         log("DEBUG", f"Calling API <y>{api}</y>")
+        log("DEBUG", f"Calling API <y>{data}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",

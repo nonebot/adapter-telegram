@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union, Literal, Optional
+from typing import Union, Literal, Optional
 
 from pydantic import Field, BaseModel
 
@@ -77,8 +77,8 @@ class Chat(BaseModel):
     last_name: Optional[str] = None
     is_forum: Optional[Literal[True]] = None
     photo: Optional[ChatPhoto] = None
-    active_usernames: Optional[List[str]] = None
-    available_reactions: Optional[List[ReactionType]] = None
+    active_usernames: Optional[list[str]] = None
+    available_reactions: Optional[list[ReactionType]] = None
     accent_color_id: Optional[int] = None
     background_custom_emoji_id: Optional[str] = None
     profile_accent_color_id: Optional[int] = None
@@ -300,20 +300,20 @@ class MessageEntity(BaseModel):
 class Game(BaseModel):
     title: str
     description: str
-    photo: List[PhotoSize]
+    photo: list[PhotoSize]
     text: Optional[str] = None
-    text_entities: Optional[List[MessageEntity]] = None
+    text_entities: Optional[list[MessageEntity]] = None
     animation: Optional[Animation] = None
 
 
 class Giveaway(BaseModel):
-    chats: List[Chat]
+    chats: list[Chat]
     winners_selection_date: int
     winner_count: int
     only_new_members: Optional[Literal[True]] = None
     has_public_winners: Optional[Literal[True]] = None
     prize_description: Optional[str] = None
-    country_codes: Optional[List[str]] = None
+    country_codes: Optional[list[str]] = None
     premium_subscription_month_count: Optional[int] = None
 
 
@@ -322,7 +322,7 @@ class GiveawayWinners(BaseModel):
     giveaway_message_id: int
     winners_selection_date: int
     winner_count: int
-    winners: List[User]
+    winners: list[User]
     additional_chat_count: Optional[int] = None
     premium_subscription_month_count: Optional[int] = None
     unclaimed_prize_count: Optional[int] = None
@@ -347,7 +347,7 @@ class PollOption(BaseModel):
 class Poll(BaseModel):
     id: str
     question: str
-    options: List[PollOption]
+    options: list[PollOption]
     total_voter_count: int
     is_closed: bool
     is_anonymous: bool
@@ -355,7 +355,7 @@ class Poll(BaseModel):
     allows_multiple_answers: bool
     correct_option_id: Optional[int] = None
     explanation: Optional[str] = None
-    explanation_entities: Optional[List[MessageEntity]] = None
+    explanation_entities: Optional[list[MessageEntity]] = None
     open_period: Optional[int] = None
     close_date: Optional[int] = None
 
@@ -378,7 +378,7 @@ class ExternalReplyInfo(BaseModel):
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
-    photo: Optional[List[PhotoSize]] = None
+    photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     story: Optional[Story] = None
     video: Optional[Video] = None
@@ -398,7 +398,7 @@ class ExternalReplyInfo(BaseModel):
 
 class TextQuote(BaseModel):
     text: str
-    entities: Optional[List[MessageEntity]] = None
+    entities: Optional[list[MessageEntity]] = None
     position: int
     is_manual: Optional[Literal[True]] = None
 
@@ -444,7 +444,7 @@ class SuccessfulPayment(BaseModel):
 
 class UsersShared(BaseModel):
     request_id: int
-    user_ids: List[int]
+    user_ids: list[int]
 
 
 class ChatShared(BaseModel):
@@ -484,11 +484,11 @@ class EncryptedPassportElement(BaseModel):
     data: Optional[str] = None
     phone_number: Optional[str] = None
     email: Optional[str] = None
-    files: Optional[List[PassportFile]] = None
+    files: Optional[list[PassportFile]] = None
     front_side: Optional[PassportFile] = None
     reverse_side: Optional[PassportFile] = None
     selfie: Optional[PassportFile] = None
-    translation: Optional[List[PassportFile]] = None
+    translation: Optional[list[PassportFile]] = None
     hash: str
 
 
@@ -499,7 +499,7 @@ class EncryptedCredentials(BaseModel):
 
 
 class PassportData(BaseModel):
-    data: List[EncryptedPassportElement]
+    data: list[EncryptedPassportElement]
     credentials: EncryptedCredentials
 
 
@@ -563,7 +563,7 @@ class VideoChatEnded(BaseModel):
 
 
 class VideoChatParticipantsInvited(BaseModel):
-    users: List[User]
+    users: list[User]
 
 
 class WebAppData(BaseModel):
@@ -608,7 +608,7 @@ class InlineKeyboardButton(BaseModel):
 
 
 class InlineKeyboardMarkup(BaseModel):
-    inline_keyboard: List[List[InlineKeyboardButton]]
+    inline_keyboard: list[list[InlineKeyboardButton]]
 
 
 class Message(BaseModel):
@@ -632,19 +632,19 @@ class Message(BaseModel):
     media_group_id: Optional[str] = None
     author_signature: Optional[str] = None
     text: Optional[str] = None
-    entities: Optional[List[MessageEntity]] = None
+    entities: Optional[list[MessageEntity]] = None
     link_preview_options: Optional[LinkPreviewOptions] = None
     animation: Optional[Animation] = None
     audio: Optional[Audio] = None
     document: Optional[Document] = None
-    photo: Optional[List[PhotoSize]] = None
+    photo: Optional[list[PhotoSize]] = None
     sticker: Optional[Sticker] = None
     story: Optional[Story] = None
     video: Optional[Video] = None
     video_note: Optional[VideoNote] = None
     voice: Optional[Voice] = None
     caption: Optional[str] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     has_media_spoiler: Optional[Literal[True]] = None
     contact: Optional[Contact] = None
     dice: Optional[Dice] = None
@@ -652,10 +652,10 @@ class Message(BaseModel):
     poll: Optional[Poll] = None
     venue: Optional[Venue] = None
     location: Optional[Location] = None
-    new_chat_members: Optional[List[User]] = None
+    new_chat_members: Optional[list[User]] = None
     left_chat_member: Optional[User] = None
     new_chat_title: Optional[str] = None
-    new_chat_photo: Optional[List[PhotoSize]] = None
+    new_chat_photo: Optional[list[PhotoSize]] = None
     delete_chat_photo: Optional[Literal[True]] = None
     group_chat_created: Optional[Literal[True]] = None
     supergroup_chat_created: Optional[Literal[True]] = None
@@ -697,8 +697,8 @@ class MessageReactionUpdated(BaseModel):
     user: Optional[User] = None
     actor_chat: Optional[Chat] = None
     date: int
-    old_reaction: List[ReactionType]
-    new_reaction: List[ReactionType]
+    old_reaction: list[ReactionType]
+    new_reaction: list[ReactionType]
 
 
 class ReactionCount(BaseModel):
@@ -710,7 +710,7 @@ class MessageReactionCountUpdated(BaseModel):
     chat: Chat
     message_id: int
     date: int
-    reactions: List[ReactionCount]
+    reactions: list[ReactionCount]
 
 
 class InlineQuery(BaseModel):
@@ -763,7 +763,7 @@ class PollAnswer(BaseModel):
     poll_id: str
     voter_chat: Optional[Chat] = None
     user: Optional[User] = None
-    option_ids: List[int]
+    option_ids: list[int]
 
 
 class ChatMemberOwner(BaseModel):
@@ -945,7 +945,7 @@ class WebhookInfo(BaseModel):
     last_error_message: Optional[str] = None
     last_synchronization_error_date: Optional[int] = None
     max_connections: Optional[int] = None
-    allowed_updates: Optional[List[str]] = None
+    allowed_updates: Optional[list[str]] = None
 
 
 class MessageId(BaseModel):
@@ -958,13 +958,13 @@ class ReplyParameters(BaseModel):
     allow_sending_without_reply: Optional[bool] = None
     quote: Optional[str] = None
     quote_parse_mode: Optional[Literal["MarkdownV2", "HTML"]] = None
-    quote_entities: Optional[List[MessageEntity]] = None
+    quote_entities: Optional[list[MessageEntity]] = None
     quote_position: Optional[int] = None
 
 
 class UserProfilePhotos(BaseModel):
     total_count: int
-    photos: List[List[PhotoSize]]
+    photos: list[list[PhotoSize]]
 
 
 class KeyboardButtonRequestUsers(BaseModel):
@@ -1018,7 +1018,7 @@ class KeyboardButton(BaseModel):
 
 
 class ReplyKeyboardMarkup(BaseModel):
-    keyboard: List[List[KeyboardButton]]
+    keyboard: list[list[KeyboardButton]]
     is_persistent: Optional[bool] = None
     resize_keyboard: Optional[bool] = None
     one_time_keyboard: Optional[bool] = None
@@ -1122,7 +1122,7 @@ MenuButton = Union[MenuButtonCommands, MenuButtonWebApp, MenuButtonDefault]
 
 
 class UserChatBoosts(BaseModel):
-    boosts: List[ChatBoost]
+    boosts: list[ChatBoost]
 
 
 class ResponseParameters(BaseModel):
@@ -1130,7 +1130,7 @@ class ResponseParameters(BaseModel):
     retry_after: Optional[int] = None
 
 
-InputFile = Union[bytes, Tuple[str, bytes]]
+InputFile = Union[bytes, tuple[str, bytes]]
 
 
 class InputMediaAnimation(BaseModel):
@@ -1139,7 +1139,7 @@ class InputMediaAnimation(BaseModel):
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -1152,7 +1152,7 @@ class InputMediaDocument(BaseModel):
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     disable_content_type_detection: Optional[bool] = None
 
 
@@ -1162,7 +1162,7 @@ class InputMediaAudio(BaseModel):
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     duration: Optional[int] = None
     performer: Optional[str] = None
     title: Optional[str] = None
@@ -1173,7 +1173,7 @@ class InputMediaPhoto(BaseModel):
     media: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     has_spoiler: Optional[bool] = None
 
 
@@ -1183,7 +1183,7 @@ class InputMediaVideo(BaseModel):
     thumbnail: Optional[Union[InputFile, str]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -1206,15 +1206,15 @@ class StickerSet(BaseModel):
     sticker_type: str
     is_animated: bool
     is_video: bool
-    stickers: List[Sticker]
+    stickers: list[Sticker]
     thumbnail: Optional[PhotoSize] = None
 
 
 class InputSticker(BaseModel):
     sticker: Union[InputFile, str]
-    emoji_list: List[str]
+    emoji_list: list[str]
     mask_position: Optional[MaskPosition] = None
-    keywords: Optional[List[str]] = None
+    keywords: Optional[list[str]] = None
 
 
 class InlineQueryResultsButton(BaseModel):
@@ -1226,7 +1226,7 @@ class InlineQueryResultsButton(BaseModel):
 class InputTextMessageContent(BaseModel):
     message_text: str
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    entities: Optional[List[MessageEntity]] = None
+    entities: Optional[list[MessageEntity]] = None
     link_preview_options: Optional[LinkPreviewOptions] = None
 
 
@@ -1268,9 +1268,9 @@ class InputInvoiceMessageContent(BaseModel):
     payload: str
     provider_token: str
     currency: str
-    prices: List[LabeledPrice]
+    prices: list[LabeledPrice]
     max_tip_amount: Optional[int] = None
-    suggested_tip_amounts: Optional[List[int]] = None
+    suggested_tip_amounts: Optional[list[int]] = None
     provider_data: Optional[str] = None
     photo_url: Optional[str] = None
     photo_size: Optional[int] = None
@@ -1300,7 +1300,7 @@ class InlineQueryResultCachedAudio(BaseModel):
     audio_file_id: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1313,7 +1313,7 @@ class InlineQueryResultCachedDocument(BaseModel):
     description: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1325,7 +1325,7 @@ class InlineQueryResultCachedGif(BaseModel):
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1337,7 +1337,7 @@ class InlineQueryResultCachedMpeg4Gif(BaseModel):
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1350,7 +1350,7 @@ class InlineQueryResultCachedPhoto(BaseModel):
     description: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1371,7 +1371,7 @@ class InlineQueryResultCachedVideo(BaseModel):
     description: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1383,7 +1383,7 @@ class InlineQueryResultCachedVoice(BaseModel):
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1409,7 +1409,7 @@ class InlineQueryResultAudio(BaseModel):
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     performer: Optional[str] = None
     audio_duration: Optional[int] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
@@ -1443,7 +1443,7 @@ class InlineQueryResultDocument(BaseModel):
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     document_url: str
     mime_type: str
     description: Optional[str] = None
@@ -1466,7 +1466,7 @@ class InlineQueryResultGif(BaseModel):
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1500,7 +1500,7 @@ class InlineQueryResultMpeg4Gif(BaseModel):
     title: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1516,7 +1516,7 @@ class InlineQueryResultPhoto(BaseModel):
     description: Optional[str] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
 
@@ -1548,7 +1548,7 @@ class InlineQueryResultVideo(BaseModel):
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     video_width: Optional[int] = None
     video_height: Optional[int] = None
     video_duration: Optional[int] = None
@@ -1564,7 +1564,7 @@ class InlineQueryResultVoice(BaseModel):
     title: str
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
-    caption_entities: Optional[List[MessageEntity]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     voice_duration: Optional[int] = None
     reply_markup: Optional[InlineKeyboardMarkup] = None
     input_message_content: Optional[InputMessageContent] = None
@@ -1601,7 +1601,7 @@ class SentWebAppMessage(BaseModel):
 class ShippingOption(BaseModel):
     id: str
     title: str
-    prices: List[LabeledPrice]
+    prices: list[LabeledPrice]
 
 
 class PassportElementErrorDataField(BaseModel):
@@ -1643,7 +1643,7 @@ class PassportElementErrorFile(BaseModel):
 class PassportElementErrorFiles(BaseModel):
     source: Literal["files"] = "files"
     type: str
-    file_hashes: List[str]
+    file_hashes: list[str]
     message: str
 
 
@@ -1657,7 +1657,7 @@ class PassportElementErrorTranslationFile(BaseModel):
 class PassportElementErrorTranslationFiles(BaseModel):
     source: Literal["translation_files"] = "translation_files"
     type: str
-    file_hashes: List[str]
+    file_hashes: list[str]
     message: str
 
 

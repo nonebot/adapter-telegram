@@ -1,4 +1,4 @@
-from typing import List, Union, Literal, Optional
+from typing import Union, Literal, Optional
 
 from .model import (
     Chat,
@@ -56,8 +56,8 @@ class API:
         offset: Optional[int] = None,
         limit: Optional[int] = None,
         timeout: Optional[int] = None,
-        allowed_updates: Optional[List[str]] = None,
-    ) -> List[Update]: ...
+        allowed_updates: Optional[list[str]] = None,
+    ) -> list[Update]: ...
 
     async def set_webhook(
         self,
@@ -65,7 +65,7 @@ class API:
         certificate: Optional[InputFile] = None,
         ip_address: Optional[str] = None,
         max_connections: Optional[int] = None,
-        allowed_updates: Optional[List[str]] = None,
+        allowed_updates: Optional[list[str]] = None,
         drop_pending_updates: Optional[bool] = None,
         secret_token: Optional[str] = None,
     ) -> Literal[True]: ...
@@ -95,7 +95,7 @@ class API:
         text: str,
         message_thread_id: Optional[int] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        entities: Optional[List[MessageEntity]] = None,
+        entities: Optional[list[MessageEntity]] = None,
         link_preview_options: Optional[LinkPreviewOptions] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -124,11 +124,11 @@ class API:
         self,
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
-        message_ids: List[int],
+        message_ids: list[int],
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
-    ) -> List[MessageId]: ...
+    ) -> list[MessageId]: ...
 
     async def copy_message(
         self,
@@ -138,7 +138,7 @@ class API:
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV3", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
@@ -156,12 +156,12 @@ class API:
         self,
         chat_id: Union[int, str],
         from_chat_id: Union[int, str],
-        message_ids: List[int],
+        message_ids: list[int],
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         remove_caption: Optional[bool] = None,
-    ) -> List[MessageId]: ...
+    ) -> list[MessageId]: ...
 
     async def send_photo(
         self,
@@ -170,7 +170,7 @@ class API:
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -192,7 +192,7 @@ class API:
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         duration: Optional[int] = None,
         performer: Optional[str] = None,
         title: Optional[str] = None,
@@ -218,7 +218,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -244,7 +244,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         has_spoiler: Optional[bool] = None,
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
@@ -271,7 +271,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -293,7 +293,7 @@ class API:
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
@@ -332,14 +332,14 @@ class API:
     async def send_media_group(
         self,
         chat_id: Union[int, str],
-        media: List[
+        media: list[
             Union[InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo]
         ],
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
-    ) -> List[Message]: ...
+    ) -> list[Message]: ...
 
     async def send_location(
         self,
@@ -414,7 +414,7 @@ class API:
         self,
         chat_id: Union[int, str],
         question: str,
-        options: List[str],
+        options: list[str],
         message_thread_id: Optional[int] = None,
         is_anonymous: Optional[bool] = None,
         type: Optional[Literal["quiz", "regular"]] = None,
@@ -424,7 +424,7 @@ class API:
         explanation_parse_mode: Optional[
             Literal["MarkdownV2", "Markdown", "HTML"]
         ] = None,
-        explanation_entities: Optional[List[MessageEntity]] = None,
+        explanation_entities: Optional[list[MessageEntity]] = None,
         open_period: Optional[int] = None,
         close_date: Optional[int] = None,
         is_closed: Optional[bool] = None,
@@ -482,7 +482,7 @@ class API:
         self,
         chat_id: Union[int, str],
         message_id: int,
-        reaction: Optional[List[ReactionType]] = None,
+        reaction: Optional[list[ReactionType]] = None,
         is_big: Optional[bool] = None,
     ) -> Literal[True]: ...
 
@@ -624,7 +624,7 @@ class API:
 
     async def get_chat_administrators(
         self, chat_id: Union[int, str]
-    ) -> List[ChatMember]: ...
+    ) -> list[ChatMember]: ...
 
     async def get_chat_member_count(self, chat_id: Union[int, str]) -> int: ...
 
@@ -640,7 +640,7 @@ class API:
         self, chat_id: Union[int, str]
     ) -> Literal[True]: ...
 
-    async def get_forum_topic_icon_stickers(self) -> List[Sticker]: ...
+    async def get_forum_topic_icon_stickers(self) -> list[Sticker]: ...
 
     async def create_forum_topic(
         self,
@@ -713,7 +713,7 @@ class API:
 
     async def set_my_commands(
         self,
-        commands: List[BotCommand],
+        commands: list[BotCommand],
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None,
     ) -> Literal[True]: ...
@@ -728,7 +728,7 @@ class API:
         self,
         scope: Optional[BotCommandScope] = None,
         language_code: Optional[str] = None,
-    ) -> List[BotCommand]: ...
+    ) -> list[BotCommand]: ...
 
     async def set_my_name(
         self, name: Optional[str] = None, language_code: Optional[str] = None
@@ -779,7 +779,7 @@ class API:
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        entities: Optional[List[MessageEntity]] = None,
+        entities: Optional[list[MessageEntity]] = None,
         link_preview_options: Optional[LinkPreviewOptions] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Union[Message, Literal[True]]: ...
@@ -791,7 +791,7 @@ class API:
         inline_message_id: Optional[str] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
-        caption_entities: Optional[List[MessageEntity]] = None,
+        caption_entities: Optional[list[MessageEntity]] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
     ) -> Union[Message, Literal[True]]: ...
 
@@ -845,7 +845,7 @@ class API:
     ) -> Literal[True]: ...
 
     async def delete_messages(
-        self, chat_id: Union[int, str], message_ids: List[int]
+        self, chat_id: Union[int, str], message_ids: list[int]
     ) -> Literal[True]: ...
 
     async def send_sticker(
@@ -870,8 +870,8 @@ class API:
     async def get_sticker_set(self, name: str) -> StickerSet: ...
 
     async def get_custom_emoji_stickers(
-        self, custom_emoji_ids: List[str]
-    ) -> List[Sticker]: ...
+        self, custom_emoji_ids: list[str]
+    ) -> list[Sticker]: ...
 
     async def upload_sticker_file(
         self,
@@ -885,7 +885,7 @@ class API:
         user_id: int,
         name: str,
         title: str,
-        stickers: List[InputSticker],
+        stickers: list[InputSticker],
         sticker_format: Literal["static", "animated", "video"],
         sticker_type: Optional[str] = None,
         needs_repainting: Optional[bool] = None,
@@ -905,11 +905,11 @@ class API:
     async def delete_sticker_from_set(self, sticker: str) -> Literal[True]: ...
 
     async def set_sticker_emoji_list(
-        self, sticker: str, emoji_list: List[str]
+        self, sticker: str, emoji_list: list[str]
     ) -> Literal[True]: ...
 
     async def set_sticker_keywords(
-        self, sticker: str, keywords: Optional[List[str]] = None
+        self, sticker: str, keywords: Optional[list[str]] = None
     ) -> Literal[True]: ...
 
     async def set_sticker_mask_position(
@@ -931,7 +931,7 @@ class API:
     async def answer_inline_query(
         self,
         inline_query_id: str,
-        results: List[InlineQueryResult],
+        results: list[InlineQueryResult],
         cache_time: Optional[int] = None,
         is_personal: Optional[bool] = None,
         next_offset: Optional[str] = None,
@@ -950,10 +950,10 @@ class API:
         payload: str,
         provider_token: str,
         currency: str,
-        prices: List[LabeledPrice],
+        prices: list[LabeledPrice],
         message_thread_id: Optional[int] = None,
         max_tip_amount: Optional[int] = None,
-        suggested_tip_amounts: Optional[List[int]] = None,
+        suggested_tip_amounts: Optional[list[int]] = None,
         start_parameter: Optional[str] = None,
         provider_data: Optional[str] = None,
         photo_url: Optional[str] = None,
@@ -980,9 +980,9 @@ class API:
         payload: str,
         provider_token: str,
         currency: str,
-        prices: List[LabeledPrice],
+        prices: list[LabeledPrice],
         max_tip_amount: Optional[int] = None,
-        suggested_tip_amounts: Optional[List[int]] = None,
+        suggested_tip_amounts: Optional[list[int]] = None,
         provider_data: Optional[str] = None,
         photo_url: Optional[str] = None,
         photo_size: Optional[int] = None,
@@ -1001,7 +1001,7 @@ class API:
         self,
         shipping_query_id: str,
         ok: bool,
-        shipping_options: Optional[List[ShippingOption]] = None,
+        shipping_options: Optional[list[ShippingOption]] = None,
         error_message: Optional[str] = None,
     ) -> Literal[True]: ...
 
@@ -1010,7 +1010,7 @@ class API:
     ) -> Literal[True]: ...
 
     async def set_passport_data_errors(
-        self, user_id: int, errors: List[PassportElementError]
+        self, user_id: int, errors: list[PassportElementError]
     ) -> Literal[True]: ...
 
     async def send_game(
@@ -1041,4 +1041,4 @@ class API:
         chat_id: Optional[int] = None,
         message_id: Optional[int] = None,
         inline_message_id: Optional[str] = None,
-    ) -> List[GameHighScore]: ...
+    ) -> list[GameHighScore]: ...

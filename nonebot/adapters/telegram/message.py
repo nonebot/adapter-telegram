@@ -1,5 +1,5 @@
 from typing_extensions import override
-from typing import Any, Dict, List, Type, Tuple, Union, Literal, Iterable, Optional
+from typing import Any, Union, Literal, Iterable, Optional
 
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
@@ -14,7 +14,7 @@ class MessageSegment(BaseMessageSegment):
 
     @classmethod
     @override
-    def get_message_class(cls) -> Type["Message"]:
+    def get_message_class(cls) -> type["Message"]:
         return Message
 
     @override
@@ -88,7 +88,7 @@ class MessageSegment(BaseMessageSegment):
     @staticmethod
     def poll(
         question: str,
-        options: List[str],
+        options: list[str],
         is_anonymous: Optional[bool] = None,
         type: Optional[str] = None,
         allows_multiple_answers: Optional[bool] = None,
@@ -114,7 +114,7 @@ class MessageSegment(BaseMessageSegment):
 
     @staticmethod
     def dice(
-        emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲"
+        emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲",
     ) -> "MessageSegment":
         return MessageSegment("dice", {"emoji": emoji})
 
@@ -132,7 +132,7 @@ class MessageSegment(BaseMessageSegment):
             "find_location",
             "record_video_note",
             "upload_video_note",
-        ]
+        ],
     ) -> "MessageSegment":
         """
         仅发送，用于提醒用户机器人正在准备什么
@@ -267,7 +267,7 @@ class Entity(MessageSegment):
         )
 
     @staticmethod
-    def from_telegram_entities(text, entities: List[Dict[str, Any]]) -> List["Entity"]:
+    def from_telegram_entities(text, entities: list[dict[str, Any]]) -> list["Entity"]:
         nb_entites = []
         offset = 0
         for entity in entities:
@@ -294,7 +294,7 @@ class Entity(MessageSegment):
         return nb_entites
 
     @staticmethod
-    def build_telegram_entities(entities: "Message") -> List[MessageEntity]:
+    def build_telegram_entities(entities: "Message") -> list[MessageEntity]:
         return (
             (
                 [
@@ -319,17 +319,17 @@ class Entity(MessageSegment):
 class File(MessageSegment):
     @staticmethod
     def photo(
-        file: Union[str, bytes, Tuple[str, bytes]], has_spoiler: Optional[bool] = None
+        file: Union[str, bytes, tuple[str, bytes]], has_spoiler: Optional[bool] = None
     ) -> "MessageSegment":
         return File("photo", {"file": file, "has_spoiler": has_spoiler})
 
     @staticmethod
-    def voice(file: Union[str, bytes, Tuple[str, bytes]]) -> "MessageSegment":
+    def voice(file: Union[str, bytes, tuple[str, bytes]]) -> "MessageSegment":
         return File("voice", {"file": file})
 
     @staticmethod
     def animation(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
@@ -340,21 +340,21 @@ class File(MessageSegment):
 
     @staticmethod
     def audio(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         return File("audio", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def document(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         return File("document", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def video(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
@@ -366,12 +366,12 @@ class File(MessageSegment):
 
 class UnCombinFile(File):
     @staticmethod
-    def sticker(file: Union[str, bytes, Tuple[str, bytes]]) -> "MessageSegment":
+    def sticker(file: Union[str, bytes, tuple[str, bytes]]) -> "MessageSegment":
         return File("sticker", {"file": file})
 
     @staticmethod
     def video_note(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         """
@@ -386,7 +386,7 @@ class Message(BaseMessage[MessageSegment]):
 
     @classmethod
     @override
-    def get_segment_class(cls) -> Type["MessageSegment"]:
+    def get_segment_class(cls) -> type["MessageSegment"]:
         return MessageSegment
 
     @staticmethod
@@ -395,7 +395,7 @@ class Message(BaseMessage[MessageSegment]):
         yield Entity.text(msg)
 
     @classmethod
-    def model_validate(cls, obj: Dict[str, Any]) -> "Message":
+    def model_validate(cls, obj: dict[str, Any]) -> "Message":
         msg = []
         if "text" in obj or "caption" in obj:
             key, entities_key = (
