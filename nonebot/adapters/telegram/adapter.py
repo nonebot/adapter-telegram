@@ -1,10 +1,10 @@
 import json
 import asyncio
-from typing import Any, Dict, List, Tuple, Union, Iterable, Optional, cast
+from typing_extensions import override
+from typing import Any, Union, Iterable, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
-from nonebot.typing import overrides
 from pydantic.json import pydantic_encoder
 from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
@@ -18,7 +18,7 @@ from .model import InputFile, InputMedia
 from .exception import ActionFailed, NetworkError, ApiNotAvailable
 
 
-def _escape_none(data: Dict[str, Any]) -> Dict[str, Any]:
+def _escape_none(data: dict[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in data.items() if v is not None}
 
 
@@ -26,19 +26,19 @@ log = logger_wrapper("Telegram")
 
 
 class Adapter(BaseAdapter):
-    @overrides(BaseAdapter)
+    @override
     def __init__(self, driver: Driver, **kwargs: Any):
         super().__init__(driver, **kwargs)
         self.adapter_config = AdapterConfig(**self.config.model_dump())
-        self.tasks: List[asyncio.Task] = []
+        self.tasks: list[asyncio.Task] = []
         self.setup()
 
     @classmethod
-    @overrides(BaseAdapter)
+    @override
     def get_name(cls) -> str:
         return "Telegram"
 
-    async def __handle_update(self, bot: Bot, update: Dict[str, Any]):
+    async def __handle_update(self, bot: Bot, update: dict[str, Any]):
         try:
             event = Event.parse_event(update)
         except Exception as e:
@@ -143,7 +143,7 @@ class Adapter(BaseAdapter):
             else:
                 self.setup_polling(bot)
 
-    @overrides(BaseAdapter)
+    @override
     async def _call_api(self, bot: Bot, api: str, **data) -> Any:
         # 将方法名称改为驼峰式
         api = api.split("_", maxsplit=1)[0] + "".join(
@@ -152,7 +152,7 @@ class Adapter(BaseAdapter):
         data = _escape_none(data)
 
         # 分离文件到 files
-        files: Dict[str, Tuple[str, bytes]] = {}
+        files: dict[str, tuple[str, bytes]] = {}
         bytes_upload_count = 0
 
         async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
@@ -200,6 +200,7 @@ class Adapter(BaseAdapter):
             "sendAnimation",
             "sendVoice",
             "sendVideoNote",
+            "sendSticker",
         ):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
@@ -223,6 +224,7 @@ class Adapter(BaseAdapter):
                 )
 
         log("DEBUG", f"Calling API <y>{api}</y>")
+        log("DEBUG", f"Calling API <y>{data}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",

@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Optional
 
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, ConfigDict
 
 
 class BotConfig(BaseModel):
@@ -18,10 +18,6 @@ class BotConfig(BaseModel):
     api_server: str = "https://api.telegram.org/"
     is_webhook: bool = False
 
-    class Config:
-        extra = "ignore"
-        allow_population_by_field_name = True
-
 
 class AdapterConfig(BaseModel):
     """
@@ -35,9 +31,9 @@ class AdapterConfig(BaseModel):
     """
 
     proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
-    telegram_bots: List["BotConfig"] = []
+    telegram_bots: list["BotConfig"] = []
     telegram_webhook_url: Optional[str] = None
-
-    class Config:
-        extra = "ignore"
-        allow_population_by_field_name = True
+    model_config: ConfigDict = ConfigDict(
+        extra="ignore",
+        populate_by_name=True,
+    )

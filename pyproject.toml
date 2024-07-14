@@ -1,10 +1,14 @@
 [project]
 name = "nonebot-adapter-telegram"
-version = "0.1.0b16"
+version = "0.1.0b17"
 description = "Telegram Adapter for NoneBot2"
 authors = [{ name = "Jigsaw", email = "j1g5aw@foxmail.com" }]
-dependencies = ["nonebot2<3.0.0,>=2.1.3", "anyio<5.0.0,>=4.2.0", "pydantic >=2.0.3,<3.0.0,!=2.5.0,!=2.5.1"]
-requires-python = ">=3.8,<4.0"
+dependencies = [
+    "nonebot2<3.0.0,>=2.1.3",
+    "anyio<5.0.0,>=4.2.0",
+    "pydantic >=2.0.3,<3.0.0,!=2.5.0,!=2.5.1",
+]
+requires-python = ">=3.9,<4.0"
 readme = "README.md"
 license = { text = "MIT" }
 keywords = ["bot", "telegram"]
@@ -25,10 +29,11 @@ changelog = "https://github.com/nonebot/adapter-telegram/blob/beta/CHANGELOG.md"
 
 [tool.pdm.dev-dependencies]
 nonebot = [
-  "httpx<1.0.0,>=0.23.0",
-  "fastapi<1.0.0,>=0.89.0",
-  "uvicorn>=0.12.0,<0.21.0",
-  "nonebot2 @ git+https://github.com/nonebot/nonebot2.git",
+    "nonebot2 @ git+https://github.com/nonebot/nonebot2.git",
+    "httpx<1.0.0,>=0.23.0",
+    "fastapi<1.0.0,>=0.89.0",
+    "uvicorn[standard]>=0.20.0,<1.0.0",
+    "aiohttp>=3.9.3",
 ]
 pre-commit = ["pycln", "isort", "black", "nonemoji", "pre-commit"]
 tests = [
@@ -63,11 +68,10 @@ addopts = "--cov nonebot/adapters/telegram --cov-report term-missing"
 
 [tool.pyright]
 reportShadowedImports = false
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 pythonPlatform = "All"
 typeCheckingMode = "basic"
 ignore = ["./example", "./tests"]
-defineConstant = { PYDANTIC_V2 = true }
 
 [tool.pdm.build]
 includes = ["nonebot"]

@@ -14,5 +14,4 @@ runs:
       name: Setup PDM
       with:
         python-version: ${{ inputs.python-version }}
-        architecture: "x64"
         cache: true

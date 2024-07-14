@@ -1,9 +1,8 @@
 from copy import deepcopy
-from typing import List, Literal, Optional
-from typing_extensions import Protocol, runtime_checkable
+from typing import Literal, Optional
+from typing_extensions import Protocol, override, runtime_checkable
 
 from pydantic import Field
-from nonebot.typing import overrides
 from nonebot.utils import escape_tag
 
 from nonebot.adapters import Event as BaseEvent
@@ -81,15 +80,15 @@ class Event(BaseEvent):
         else:
             return cls._parse_event(obj)
 
-    @overrides(BaseEvent)
+    @override
     def get_type(self) -> str:
         return ""
 
-    @overrides(BaseEvent)
+    @override
     def get_event_name(self) -> str:
         return ""
 
-    @overrides(BaseEvent)
+    @override
     def get_event_description(self) -> str:
         return escape_tag(
             str(
@@ -99,24 +98,24 @@ class Event(BaseEvent):
             )
         )
 
-    @overrides(BaseEvent)
+    @override
     def get_user_id(self) -> str:
         raise ValueError("Event has no user!")
 
-    @overrides(BaseEvent)
+    @override
     def get_session_id(self) -> str:
         raise ValueError("Event has no session!")
 
-    @overrides(BaseEvent)
+    @override
     def get_message(self) -> Message:
         raise ValueError("Event has no message!")
 
-    @overrides(BaseEvent)
+    @override
     def is_tome(self) -> bool:
         return False
 
     def get_message_description(self) -> str:
-        msg_string: List[str] = []
+        msg_string: list[str] = []
         for seg in self.get_message():
             text = escape_tag(repr(seg))
             if seg.type == "text":
@@ -166,23 +165,23 @@ class MessageEvent(Event):
                 setattr(event, "reply_to_message", cls.parse_event(reply_to_message))
             return event
 
-    @overrides(Event)
+    @override
     def get_type(self) -> str:
         return "message"
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "message"
 
-    @overrides(Event)
+    @override
     def get_message(self) -> Message:
         return self.message
 
-    @overrides(Event)
+    @override
     def is_tome(self) -> bool:
         return self._tome
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"Message {self.message_id} @[Chat {self.chat.id}]: {self.get_message_description()}"
 
@@ -190,23 +189,23 @@ class MessageEvent(Event):
 class PrivateMessageEvent(MessageEvent):
     from_: User = Field(alias="from")
 
-    @overrides(MessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "message.private"
 
-    @overrides(MessageEvent)
+    @override
     def get_user_id(self) -> str:
         return str(self.from_.id)
 
-    @overrides(MessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"private_{self.chat.id}"
 
-    @overrides(MessageEvent)
+    @override
     def is_tome(self) -> bool:
         return True
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"Message {self.message_id} from {self.from_.id}: {self.get_message_description()}"
 
@@ -224,19 +223,19 @@ class GroupMessageEvent(MessageEvent):
     from_: User = Field(alias="from")
     sender_chat: Optional[Chat] = None
 
-    @overrides(MessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "message.group"
 
-    @overrides(MessageEvent)
+    @override
     def get_user_id(self) -> str:
         return str(self.from_.id)
 
-    @overrides(MessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_{self.from_.id}"
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {self.get_message_description()}"
 
@@ -244,15 +243,15 @@ class GroupMessageEvent(MessageEvent):
 class ForumTopicMessageEvent(GroupMessageEvent):
     message_thread_id: int
 
-    @overrides(MessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "message.group.forum_topic"
 
-    @overrides(MessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"Message {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {self.get_message_description()}"
 
@@ -260,11 +259,11 @@ class ForumTopicMessageEvent(GroupMessageEvent):
 class ChannelPostEvent(MessageEvent):
     sender_chat: Optional[Chat] = None
 
-    @overrides(MessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "message.channel_post"
 
-    @overrides(MessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"channel_{self.chat.id}"
 
@@ -298,23 +297,23 @@ class EditedMessageEvent(Event):
             )
         return event
 
-    @overrides(Event)
+    @override
     def get_type(self) -> str:
         return "edit_message"
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "edit_message"
 
-    @overrides(Event)
+    @override
     def get_message(self) -> Message:
         return self.message
 
-    @overrides(Event)
+    @override
     def get_plaintext(self) -> str:
         return self.message.extract_plain_text()
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"EditedMessage {self.message_id} @[Chat {self.chat.id}]: {self.get_message_description()}"
 
@@ -323,23 +322,23 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(alias="from")
     sender_chat: Optional[Chat] = None
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "edited_message.private"
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_user_id(self) -> str:
         return str(self.from_.id)
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"private_{self.chat.id}"
 
-    @overrides(EditedMessageEvent)
+    @override
     def is_tome(self) -> bool:
         return True
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"EditedMessage {self.message_id} from {self.from_.id}: {self.get_message_description()}"
 
@@ -357,19 +356,19 @@ class GroupEditedMessageEvent(EditedMessageEvent):
             event = cls.model_validate(obj)
         return event
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_event_name(self) -> str:
-        return f"edited_message.group"
+        return "edited_message.group"
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_user_id(self) -> str:
         return str(self.from_.id)
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_{self.from_.id}"
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id}]: {self.get_message_description()}"
 
@@ -377,15 +376,15 @@ class GroupEditedMessageEvent(EditedMessageEvent):
 class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
     message_thread_id: int
 
-    @overrides(MessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "edited_message.group.forum_topic"
 
-    @overrides(MessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id} Thread {self.message_thread_id}]: {self.get_message_description()}"
 
@@ -393,11 +392,11 @@ class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
 class EditedChannelPostEvent(EditedMessageEvent):
     sender_chat: Optional[Chat] = None
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_event_name(self) -> str:
         return "edited_message.channel_post"
 
-    @overrides(EditedMessageEvent)
+    @override
     def get_session_id(self) -> str:
         return f"channel_{self.chat.id}"
 
@@ -432,11 +431,11 @@ class NoticeEvent(Event):
         else:
             return cls._parse_event(obj)
 
-    @overrides(Event)
+    @override
     def get_type(self) -> str:
         return "notice"
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice"
 
@@ -456,15 +455,15 @@ class PinnedMessageEvent(NoticeEvent):
         setattr(event, "pinned_message", MessageEvent.parse_event(pinned_message))
         return event
 
-    @overrides(NoticeEvent)
+    @override
     def get_event_name(self) -> str:
         return "notice.pinned_message"
 
-    @overrides(NoticeEvent)
+    @override
     def get_message(self) -> Message:
         return self.pinned_message.get_message()
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"PinnedMessage {self.pinned_message.message_id} @[Chat {self.pinned_message.chat.id}]: {self.get_message_description()}"
 
@@ -474,9 +473,9 @@ class NewChatMemberEvent(NoticeEvent):
     from_: Optional[User] = Field(default=None, alias="from")
     chat: Chat
     date: int
-    new_chat_members: List[User]
+    new_chat_members: list[User]
 
-    @overrides(NoticeEvent)
+    @override
     def get_event_name(self) -> str:
         return "notice.chat_member.new"
 
@@ -488,25 +487,25 @@ class LeftChatMemberEvent(NoticeEvent):
     date: int
     left_chat_member: User
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.chat_member.left"
 
 
 class ChatMemberUpdatedEvent(NoticeEvent, ChatMemberUpdated):
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.chat_member.updated"
 
 
 class PollEvent(NoticeEvent, Poll):
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.poll"
 
 
 class PollAnswerEvent(NoticeEvent, PollAnswer):
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.poll_answer"
 
@@ -517,7 +516,7 @@ class NewChatTitleEvent(NoticeEvent):
     chat: Chat
     new_chat_title: str
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.chat.new_title"
 
@@ -526,9 +525,9 @@ class NewChatPhotoEvent(NoticeEvent):
     date: int
     from_: Optional[User] = Field(default=None, alias="from")
     chat: Chat
-    new_chat_photo: List[PhotoSize]
+    new_chat_photo: list[PhotoSize]
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.chat.new_photo"
 
@@ -539,7 +538,7 @@ class DeleteChatPhotoEvent(NoticeEvent):
     chat: Chat
     delete_chat_photo: Literal[True]
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.chat.delete_photo"
 
@@ -551,7 +550,7 @@ class ForumTopicCreatedEvent(NoticeEvent):
     date: int
     forum_topic_created: ForumTopicCreated
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.forum_topic.created"
 
@@ -563,7 +562,7 @@ class ForumTopicEditedEvent(NoticeEvent):
     date: int
     forum_topic_edited: ForumTopicEdited
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.forum_topic.edited"
 
@@ -575,7 +574,7 @@ class ForumTopicClosedEvent(NoticeEvent):
     date: int
     forum_topic_closed: ForumTopicClosed
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.forum_topic.closed"
 
@@ -587,7 +586,7 @@ class ForumTopicReopenedEvent(NoticeEvent):
     date: int
     forum_topic_reopened: ForumTopicReopened
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.forum_topic.reopened"
 
@@ -598,7 +597,7 @@ class GeneralForumTopicHiddenEvent(NoticeEvent):
     date: int
     general_forum_topic_hidden: GeneralForumTopicHidden
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.general_forum_topic.hidden"
 
@@ -609,65 +608,65 @@ class GeneralForumTopicUnhiddenEvent(NoticeEvent):
     date: int
     general_forum_topic_unhidden: GeneralForumTopicUnhidden
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "notice.general_forum_topic.unhidden"
 
 
 class RequestEvent(Event):
-    @overrides(Event)
+    @override
     def get_type(self) -> str:
         return "request"
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "request"
 
 
 class ChatJoinRequestEvent(RequestEvent, ChatJoinRequest):
-    @overrides(NoticeEvent)
+    @override
     def get_event_name(self) -> str:
         return "request.chat_join"
 
 
 class InlineEvent(Event):
-    @overrides(Event)
+    @override
     def get_type(self) -> str:
         return "inline"
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "inline"
 
 
 class InlineQueryEvent(InlineEvent, InlineQuery):
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "inline.query"
 
-    @overrides(Event)
+    @override
     def get_message(self) -> Message:
         return Message(self.query)
 
-    @overrides(Event)
+    @override
     def get_plaintext(self) -> str:
         return self.query
 
-    @overrides(Event)
+    @override
     def is_tome(self) -> bool:
         return True
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"InlineQuery {self.id} from {self.from_.id}: {self.get_message_description()}"
 
 
 class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "inline.chosen_result"
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"ChosenInlineResult {self.result_id} from {self.from_.id} for Query {self.query}"
 
@@ -675,11 +674,11 @@ class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
 class CallbackQueryEvent(InlineEvent, CallbackQuery):
     chat: Chat = Field(default=None)
 
-    @overrides(Event)
+    @override
     def get_event_name(self) -> str:
         return "inline.callback_query"
 
-    @overrides(Event)
+    @override
     def get_event_description(self) -> str:
         return f"CallbackQuery {self.id} from {self.from_.id}: {self.data}"
 

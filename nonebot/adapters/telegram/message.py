@@ -1,11 +1,10 @@
-from typing import Any, Dict, List, Type, Tuple, Union, Literal, Iterable, Optional
-
-from nonebot.typing import overrides
+from typing_extensions import override
+from typing import Any, Union, Literal, Iterable, Optional
 
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
 
-from .model import User, LabeledPrice
+from .model import User, MessageEntity
 
 
 class MessageSegment(BaseMessageSegment):
@@ -14,11 +13,11 @@ class MessageSegment(BaseMessageSegment):
     """
 
     @classmethod
-    @overrides(BaseMessageSegment)
-    def get_message_class(cls) -> Type["Message"]:
+    @override
+    def get_message_class(cls) -> type["Message"]:
         return Message
 
-    @overrides(BaseMessageSegment)
+    @override
     def __str__(self) -> str:
         if self.is_text():
             return self.data.get("text", "")
@@ -36,36 +35,86 @@ class MessageSegment(BaseMessageSegment):
         )
         return f"[{self.type}{':' if params else ''}{params}]"
 
-    @overrides(BaseMessageSegment)
+    @override
     def is_text(self) -> bool:
         return False
 
-    # TODO need test
     @staticmethod
-    def location(latitude: float, longitude: float) -> "MessageSegment":
+    def location(
+        latitude: float,
+        longitude: float,
+        horizontal_accuracy: Optional[float] = None,
+        live_period: Optional[int] = None,
+        heading: Optional[int] = None,
+        proximity_alert_radius: Optional[int] = None,
+    ) -> "MessageSegment":
         return MessageSegment(
-            "location", {"latitude": latitude, "longitute": longitude}
+            "location",
+            {
+                "latitude": latitude,
+                "longitude": longitude,
+                "horizontal_accuracy": horizontal_accuracy,
+                "live_period": live_period,
+                "heading": heading,
+                "proximity_alert_radius": proximity_alert_radius,
+            },
         )
 
-    # TODO need test
     @staticmethod
     def venue(
-        latitude: float, longitude: float, title: str, address: str
+        latitude: float,
+        longitude: float,
+        title: str,
+        address: str,
+        foursquare_id: Optional[str] = None,
+        foursquare_type: Optional[str] = None,
+        google_place_id: Optional[str] = None,
+        google_place_type: Optional[str] = None,
     ) -> "MessageSegment":
-        return MessageSegment("venue", {"latitude": latitude, "longitute": longitude})
+        return MessageSegment(
+            "venue",
+            {
+                "latitude": latitude,
+                "longitude": longitude,
+                "title": title,
+                "address": address,
+                "foursquare_id": foursquare_id,
+                "foursquare_type": foursquare_type,
+                "google_place_id": google_place_id,
+                "google_place_type": google_place_type,
+            },
+        )
 
-    # TODO DELAY
     @staticmethod
-    def contact():
-        pass
-
-    @staticmethod
-    def poll(question: str, options: List[str]) -> "MessageSegment":
-        return MessageSegment("poll", {"question": question, "options": options})
+    def poll(
+        question: str,
+        options: list[str],
+        is_anonymous: Optional[bool] = None,
+        type: Optional[str] = None,
+        allows_multiple_answers: Optional[bool] = None,
+        correct_option_id: Optional[int] = None,
+        explanation: Optional[str] = None,
+        open_period: Optional[int] = None,
+        close_date: Optional[int] = None,
+    ) -> "MessageSegment":
+        return MessageSegment(
+            "poll",
+            {
+                "question": question,
+                "options": options,
+                "is_anonymous": is_anonymous,
+                "type": type,
+                "allows_multiple_answers": allows_multiple_answers,
+                "correct_option_id": correct_option_id,
+                "explanation": explanation,
+                "open_period": open_period,
+                "close_date": close_date,
+            },
+        )
 
     @staticmethod
     def dice(
-        emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲"
+        emoji: Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"] = "🎲",
     ) -> "MessageSegment":
         return MessageSegment("dice", {"emoji": emoji})
 
@@ -83,39 +132,56 @@ class MessageSegment(BaseMessageSegment):
             "find_location",
             "record_video_note",
             "upload_video_note",
-        ]
+        ],
     ) -> "MessageSegment":
         """
         仅发送，用于提醒用户机器人正在准备什么
         """
         return MessageSegment("chat_action", {"action": action})
 
-    # TODO DELAY
+    # TODO NEVER
     @staticmethod
-    def invoice(
-        title: str,
-        description: str,
-        payload: str,
-        provider_token: str,
-        currency: str,
-        prices: List[LabeledPrice],
-    ):
+    def invoice():
+        raise NotImplementedError
+
+    # TODO NEVER
+    @staticmethod
+    def contact():
         raise NotImplementedError
 
     # TODO DELAY
     @staticmethod
-    def game(game_short_name: str):
+    def game():
         raise NotImplementedError
 
 
 class Reply(MessageSegment):
     @staticmethod
-    def reply(message_id: int, chat_id: Optional[Union[int, str]] = None, **kargs):
-        return Reply("reply", {"message_id": message_id, "chat_id": chat_id, **kargs})
+    def reply(
+        message_id: int,
+        chat_id: Optional[Union[int, str]] = None,
+        allow_sending_without_reply: Optional[bool] = None,
+        quote: Optional[str] = None,
+        quote_position: Optional[int] = None,
+    ):
+        return Reply(
+            "reply",
+            {
+                "message_id": message_id,
+                "chat_id": chat_id,
+                "allow_sending_without_reply": allow_sending_without_reply,
+                "quote": quote,
+                "quote_position": quote_position,
+            },
+        )
+
+    @staticmethod
+    def markup():
+        pass
 
 
 class Entity(MessageSegment):
-    @overrides(BaseMessageSegment)
+    @override
     def is_text(self) -> bool:
         return True
 
@@ -176,7 +242,7 @@ class Entity(MessageSegment):
 
     @staticmethod
     def blockquote(text: str):
-        return Entity("spoiler", {"text": text})
+        return Entity("blockquote", {"text": text})
 
     @staticmethod
     def code(text: str):
@@ -200,21 +266,70 @@ class Entity(MessageSegment):
             "custom_emoji", {"text": text, "custom_emoji_id": custom_emoji_id}
         )
 
+    @staticmethod
+    def from_telegram_entities(text, entities: list[dict[str, Any]]) -> list["Entity"]:
+        nb_entites = []
+        offset = 0
+        for entity in entities:
+            if entity["offset"] > offset:
+                nb_entites.append(
+                    Entity("text", {"text": text[offset : entity["offset"]]})
+                )
+            nb_entity = Entity(
+                entity["type"],
+                {"text": text[entity["offset"] : entity["offset"] + entity["length"]]},
+            )
+            if "language" in entity:
+                nb_entity.data["language"] = entity["language"]
+            if "url" in entity:
+                nb_entity.data["url"] = entity["url"]
+            if "user" in entity:
+                nb_entity.data["user"] = User(**entity["user"])
+            if "custom_emoji_id" in entity:
+                nb_entity.data["custom_emoji_id"] = entity["custom_emoji_id"]
+            nb_entites.append(nb_entity)
+            offset = entity["offset"] + entity["length"]
+        if offset < len(text):
+            nb_entites.append(Entity("text", {"text": text[offset:]}))
+        return nb_entites
+
+    @staticmethod
+    def build_telegram_entities(entities: "Message") -> list[MessageEntity]:
+        return (
+            (
+                [
+                    MessageEntity(
+                        type=entity.type,  # type: ignore
+                        offset=sum(map(len, entities[:i])),
+                        length=len(entity.data["text"]),
+                        url=entity.data.get("url"),
+                        user=entity.data.get("user"),
+                        language=entity.data.get("language"),
+                    )
+                    for i, entity in enumerate(entities)
+                    if entity.is_text() and entity.type != "text"
+                ]
+                or None
+            )
+            if entities
+            else None
+        )
+
 
 class File(MessageSegment):
     @staticmethod
     def photo(
-        file: Union[str, bytes, Tuple[str, bytes]], has_spoiler: Optional[bool] = None
+        file: Union[str, bytes, tuple[str, bytes]], has_spoiler: Optional[bool] = None
     ) -> "MessageSegment":
         return File("photo", {"file": file, "has_spoiler": has_spoiler})
 
     @staticmethod
-    def voice(file: Union[str, bytes, Tuple[str, bytes]]) -> "MessageSegment":
+    def voice(file: Union[str, bytes, tuple[str, bytes]]) -> "MessageSegment":
         return File("voice", {"file": file})
 
     @staticmethod
     def animation(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
@@ -225,21 +340,21 @@ class File(MessageSegment):
 
     @staticmethod
     def audio(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         return File("audio", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def document(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         return File("document", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def video(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
         has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
@@ -251,14 +366,17 @@ class File(MessageSegment):
 
 class UnCombinFile(File):
     @staticmethod
-    def sticker(file: Union[str, bytes, Tuple[str, bytes]]) -> "MessageSegment":
+    def sticker(file: Union[str, bytes, tuple[str, bytes]]) -> "MessageSegment":
         return File("sticker", {"file": file})
 
     @staticmethod
     def video_note(
-        file: Union[str, bytes, Tuple[str, bytes]],
+        file: Union[str, bytes, tuple[str, bytes]],
         thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
+        """
+        不支持 URL
+        """
         return File("video_note", {"file": file, "thumbnail": thumbnail})
 
 
@@ -267,17 +385,17 @@ class Message(BaseMessage[MessageSegment]):
         return "".join(repr(seg) for seg in self)
 
     @classmethod
-    @overrides(BaseMessage)
-    def get_segment_class(cls) -> Type["MessageSegment"]:
+    @override
+    def get_segment_class(cls) -> type["MessageSegment"]:
         return MessageSegment
 
     @staticmethod
-    @overrides(BaseMessage)
+    @override
     def _construct(msg: str) -> Iterable[MessageSegment]:
         yield Entity.text(msg)
 
     @classmethod
-    def model_validate(cls, obj: Dict[str, Any]) -> "Message":
+    def model_validate(cls, obj: dict[str, Any]) -> "Message":
         msg = []
         if "text" in obj or "caption" in obj:
             key, entities_key = (
@@ -285,32 +403,9 @@ class Message(BaseMessage[MessageSegment]):
                 if "text" in obj
                 else ("caption", "caption_entities")
             )
-            offset = 0
-            for entity in obj.get(entities_key, ()):
-                if entity["offset"] > offset:
-                    msg.append(
-                        Entity("text", {"text": obj[key][offset : entity["offset"]]})
-                    )
-                nb_entity = Entity(
-                    entity["type"],
-                    {
-                        "text": obj[key][
-                            entity["offset"] : entity["offset"] + entity["length"]
-                        ]
-                    },
-                )
-                if "language" in entity:
-                    nb_entity.data["language"] = entity["language"]
-                if "url" in entity:
-                    nb_entity.data["url"] = entity["url"]
-                if "user" in entity:
-                    nb_entity.data["user"] = User(**entity["user"])
-                if "custom_emoji_id" in entity:
-                    nb_entity.data["custom_emoji_id"] = entity["custom_emoji_id"]
-                msg.append(nb_entity)
-                offset = entity["offset"] + entity["length"]
-            if offset < len(obj[key]):
-                msg.append(Entity("text", {"text": obj[key][offset:]}))
+            msg.extend(
+                Entity.from_telegram_entities(obj[key], obj.get(entities_key, ()))
+            )
             del obj[key]
             obj.pop(entities_key, None)
         kargs = {}
@@ -321,19 +416,22 @@ class Message(BaseMessage[MessageSegment]):
             del obj["document"]
         for key in tuple(obj.keys()):
             if key == "photo":
-                seg = File("photo", {"file": obj[key][-1]["file_id"], **kargs})
+                seg = File("photo", {"file": obj[key][-1]["file_id"]})
             elif key in ("voice", "audio", "animation", "document", "video"):
                 seg = File(key, {"file": obj[key]["file_id"]})
             elif key in ("sticker", "video_note"):
                 seg = UnCombinFile(key, {"file": obj[key]["file_id"]})
-            elif key == "dice":
-                seg = MessageSegment(
-                    key, {"emoji": obj[key]["emoji"], "value": obj[key]["value"]}
-                )
-            elif key == "poll":
+            elif key in ("dice", "poll", "location"):
+                seg = MessageSegment(key, obj[key])
+            elif key == "venue":
+                location = obj[key].pop("location")
                 seg = MessageSegment(
                     key,
-                    {"question": obj[key]["question"], "options": obj[key]["options"]},
+                    {
+                        "latitude": location["latitude"],
+                        "longitude": location["longitude"],
+                        **obj[key],
+                    },
                 )
             else:
                 continue
