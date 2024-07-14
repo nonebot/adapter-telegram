@@ -1,12 +1,12 @@
 from enum import Enum
-from typing import Any, Dict, List, Union, Literal, Annotated  # type: ignore
+from typing import Any, Union, Literal, Annotated  # type: ignore
 
 from pydantic import Field, BaseModel
 
 DataType = Any
 
 
-obj_schemas: Dict[str, "Object"] = {}
+obj_schemas: dict[str, "Object"] = {}
 
 
 class TypeEnum(str, Enum):
@@ -33,7 +33,7 @@ class Array(BaseModel):
     item: Union["Type", "Object", "Array"]
 
     def to_annotation(self):
-        return f"List[{self.item.to_annotation()}]"
+        return f"list[{self.item.to_annotation()}]"
 
 
 class String(BaseModel):
@@ -66,7 +66,7 @@ class Float(BaseModel):
 
 class Union_(BaseModel):
     type: Literal[TypeEnum.union] = TypeEnum.union
-    items: List[Union["Type", "Object"]]
+    items: list[Union["Type", "Object"]]
 
     def to_annotation(self):
         return f"Union[{', '.join(i.to_annotation() for i in self.items)}]"
@@ -75,9 +75,9 @@ class Union_(BaseModel):
 class Object(BaseModel):
     name: str
     type: TypeEnum = TypeEnum.object
-    items: List[Union["Type", "Object"]] = Field(default_factory=list)
-    properties: Dict[str, "Type"] = Field(default_factory=dict)
-    required: List[str] = Field(default_factory=list)
+    items: list[Union["Type", "Object"]] = Field(default_factory=list)
+    properties: dict[str, "Type"] = Field(default_factory=dict)
+    required: list[str] = Field(default_factory=list)
 
     def to_annotation(self):
         return self.name
@@ -91,15 +91,11 @@ class Object(BaseModel):
 
 class Method(BaseModel):
     name: str
-    params: Dict[str, "Type"] = Field(default_factory=dict)
-    required: List[str] = Field(default_factory=list)
+    params: dict[str, "Type"] = Field(default_factory=dict)
+    required: list[str] = Field(default_factory=list)
 
 
 Type = Annotated[
     Union[Boolean, Integer, Float, String, LiteralTrue],
     Field(discriminator="type"),
 ]
-
-Array.update_forward_refs()
-Object.update_forward_refs()
-Union_.update_forward_refs()

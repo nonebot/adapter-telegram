@@ -1,10 +1,9 @@
 from keyword import kwlist
-from typing import Dict, List
 
 from .model import Array, Method, Object, Union_, TypeEnum, obj_schemas
 
 
-def gen_requires(schemas: Dict[str, Object]):
+def gen_requires(schemas: dict[str, Object]):
     requires = {}
     for name, model in schemas.items():
         requires[name] = []
@@ -27,7 +26,7 @@ def gen_requires(schemas: Dict[str, Object]):
     return requires
 
 
-def sort_models(models: List[Object], requires: Dict[str, List[str]]) -> List[Object]:
+def sort_models(models: list[Object], requires: dict[str, list[str]]) -> list[Object]:
     new_models = []
     for model in models:
         if model.name not in requires:
@@ -40,7 +39,7 @@ def sort_models(models: List[Object], requires: Dict[str, List[str]]) -> List[Ob
     return new_models
 
 
-def gen_model(models: List[Object]) -> str:
+def gen_model(models: list[Object]) -> str:
     output = ""
     for model in sort_models(models, gen_requires(obj_schemas)):
         if model.type == TypeEnum.union:
@@ -52,7 +51,7 @@ def gen_model(models: List[Object]) -> str:
         for name in model.properties:
             text = f"    {name}: {model.property_annotation(name)}"
             if name not in model.required:
-                text = text + f" = None"
+                text = text + " = None"
             if name in kwlist:
                 text = f'    {name}_: {model.property_annotation(name)} = Field(alias="{name}")'
                 if name not in model.required:
@@ -64,7 +63,7 @@ def gen_model(models: List[Object]) -> str:
     return output
 
 
-def gen_api(methods: List[Method]) -> str:
+def gen_api(methods: list[Method]) -> str:
     output = "class API:\n"
     for method in methods:
         text = ""
