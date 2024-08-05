@@ -1,7 +1,6 @@
 from typing import Union, Literal, Optional
 
 from .model import (
-    Chat,
     File,
     Poll,
     User,

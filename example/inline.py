@@ -2,13 +2,9 @@
 Inline Bots：https://core.telegram.org/bots/inline
 """
 
-from nonebot import on, on_command
+from nonebot import on
 from nonebot.adapters.telegram import Bot
-from nonebot.adapters.telegram.event import (
-    MessageEvent,
-    InlineQueryEvent,
-    CallbackQueryEvent,
-)
+from nonebot.adapters.telegram.event import InlineQueryEvent, CallbackQueryEvent
 from nonebot.adapters.telegram.model import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,

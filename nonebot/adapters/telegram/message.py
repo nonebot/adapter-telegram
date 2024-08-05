@@ -1,5 +1,6 @@
+from collections.abc import Iterable
 from typing_extensions import override
-from typing import Any, Union, Literal, TypeVar, Iterable, Optional
+from typing import Any, Union, Literal, TypeVar, Optional
 
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
@@ -30,7 +31,11 @@ class MessageSegment(BaseMessageSegment):
             return self.data.get("text", "")
         params = ", ".join(
             [
-                f"{k}={f'<file {v[0]}>' if isinstance(v, tuple) else ('<bytes>' if isinstance(v, bytes) else v)}"
+                (
+                    f"{k}=" + f"<file {v[0]}>"
+                    if isinstance(v, tuple)
+                    else ("<bytes>" if isinstance(v, bytes) else v)
+                )
                 for k, v in self.data.items()
                 if v is not None
             ]
@@ -328,7 +333,7 @@ class Entity(MessageSegment):
                 [
                     MessageEntity(
                         type=entity.type,  # type: ignore
-                        offset=sum(map(lambda _: _._length, entities[:i])),
+                        offset=sum(_._length for _ in entities[:i]),
                         length=entity._length,
                         url=entity.data.get("url"),
                         user=entity.data.get("user"),
@@ -433,7 +438,7 @@ class Message(BaseMessage[TMS]):
                 else ("caption", "caption_entities")
             )
             msg.extend(
-                Entity.from_telegram_entities(obj[key], obj.get(entities_key, ()))
+                Entity.from_telegram_entities(obj[key], obj.get(entities_key, []))
             )
             del obj[key]
             obj.pop(entities_key, None)

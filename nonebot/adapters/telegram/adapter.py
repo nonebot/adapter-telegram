@@ -1,7 +1,8 @@
 import json
 import asyncio
+from collections.abc import Iterable
 from typing_extensions import override
-from typing import Any, Union, Iterable, Optional, cast
+from typing import Any, Union, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
@@ -89,10 +90,8 @@ class Adapter(BaseAdapter):
                 if update_offset is not None:
                     for update in updates:
                         update_offset = update.update_id + 1
-                        asyncio.create_task(
-                            self.__handle_update(
-                                bot, update.model_dump(by_alias=True, exclude_none=True)
-                            )
+                        await self.__handle_update(
+                            bot, update.model_dump(by_alias=True, exclude_none=True)
                         )
                 elif updates:
                     update_offset = updates[0].update_id
@@ -118,7 +117,7 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    asyncio.create_task(self.__handle_update(bot, update))
+                    await self.__handle_update(bot, update)
                 return Response(204)
         return Response(401)
 
@@ -247,5 +246,5 @@ class Adapter(BaseAdapter):
         if response.status_code == 404:
             raise ApiNotAvailable
         raise NetworkError(
-            f"HTTP request received unexpected {response.status_code} {response.content}",
+            f"Received unexpected {response.status_code} {response.content}"
         )

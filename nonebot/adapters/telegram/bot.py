@@ -123,7 +123,8 @@ class Bot(BaseBot, API):
         **kwargs,
     ):
         """
-        由于 Telegram 对于不同类型的消息有不同的 API，如果需要使用同一方法发送不同类型的消息请使用此方法。
+        由于 Telegram 对于不同类型的消息有不同的 API，
+        如果需要使用同一方法发送不同类型的消息请使用此方法。
 
         - `File` 或 `Entity` 可随意组合
         - 非 `File` 非 `Entity` 的 `MessageSegment` 无法组合
