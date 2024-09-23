@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-adapter-telegram"
-version = "0.1.0b17"
+version = "0.1.0b18"
 description = "Telegram Adapter for NoneBot2"
 authors = [{ name = "Jigsaw", email = "j1g5aw@foxmail.com" }]
 dependencies = [
