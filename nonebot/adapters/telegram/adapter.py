@@ -97,6 +97,7 @@ class Adapter(BaseAdapter):
                     update_offset = updates[0].update_id
             except Exception as e:
                 log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
+                await asyncio.sleep(5)
 
     def setup_polling(self, bot: Bot):
         @self.on_ready
