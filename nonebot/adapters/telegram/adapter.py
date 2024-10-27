@@ -90,8 +90,10 @@ class Adapter(BaseAdapter):
                 if update_offset is not None:
                     for update in updates:
                         update_offset = update.update_id + 1
-                        await self.__handle_update(
-                            bot, update.model_dump(by_alias=True, exclude_none=True)
+                        asyncio.create_task(
+                            self.__handle_update(
+                                bot, update.model_dump(by_alias=True, exclude_none=True)
+                            )
                         )
                 elif updates:
                     update_offset = updates[0].update_id
@@ -118,7 +120,7 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    await self.__handle_update(bot, update)
+                    asyncio.create_task(self.__handle_update(bot, update))
                 return Response(204)
         return Response(401)
 
