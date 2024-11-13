@@ -226,7 +226,7 @@ class Adapter(BaseAdapter):
                 )
 
         log("DEBUG", f"Calling API <y>{api}</y>")
-        log("DEBUG", f"Calling API <y>{data}</y>")
+        log("DEBUG", f"Calling API <y>{escape_tag(str(data))}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
