@@ -104,6 +104,7 @@ class API:
         link_preview_options: Optional[LinkPreviewOptions] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -143,11 +144,12 @@ class API:
         message_id: int,
         message_thread_id: Optional[int] = None,
         caption: Optional[str] = None,
-        parse_mode: Optional[Literal["MarkdownV3", "Markdown", "HTML"]] = None,
+        parse_mode: Optional[Literal["MarkdownV2", "Markdown", "HTML"]] = None,
         caption_entities: Optional[list[MessageEntity]] = None,
         show_caption_above_media: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
@@ -183,6 +185,7 @@ class API:
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -210,6 +213,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -235,6 +239,7 @@ class API:
         disable_content_type_detection: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -265,6 +270,7 @@ class API:
         supports_streaming: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -294,6 +300,7 @@ class API:
         has_spoiler: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -318,6 +325,7 @@ class API:
         duration: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -341,6 +349,7 @@ class API:
         thumbnail: Optional[Union[str, InputFile]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -357,12 +366,15 @@ class API:
         chat_id: Union[int, str],
         star_count: int,
         media: list[InputPaidMedia],
+        business_connection_id: Optional[str] = None,
+        payload: Optional[str] = None,
         caption: Optional[str] = None,
         parse_mode: Optional[str] = None,
         caption_entities: Optional[list[MessageEntity]] = None,
         show_caption_above_media: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
             Union[
@@ -384,6 +396,7 @@ class API:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
     ) -> list[Message]: ...
@@ -401,6 +414,7 @@ class API:
         proximity_alert_radius: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -428,6 +442,7 @@ class API:
         google_place_type: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -451,6 +466,7 @@ class API:
         vcard: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -486,6 +502,7 @@ class API:
         is_closed: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -506,6 +523,7 @@ class API:
         emoji: Optional[Literal["🎲", "🎯", "🏀", "⚽", "🎳", "🎰"]] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -637,6 +655,16 @@ class API:
         creates_join_request: Optional[bool] = None,
     ) -> ChatInviteLink: ...
 
+    async def create_chat_subscription_invite_link(
+        self,
+        chat_id: Union[int, str],
+        subscription_period: int,
+        subscription_price: int,
+        name: Optional[str] = None,
+    ) -> ChatInviteLink: ...
+    async def edit_chat_subscription_invite_link(
+        self, chat_id: Union[int, str], invite_link: str, name: Optional[str] = None
+    ) -> ChatInviteLink: ...
     async def revoke_chat_invite_link(
         self, chat_id: Union[int, str], invite_link: str
     ) -> ChatInviteLink: ...
@@ -667,11 +695,15 @@ class API:
         self,
         chat_id: Union[int, str],
         message_id: int,
+        business_connection_id: Optional[str] = None,
         disable_notification: Optional[bool] = None,
     ) -> Literal[True]: ...
 
     async def unpin_chat_message(
-        self, chat_id: Union[int, str], message_id: Optional[int] = None
+        self,
+        chat_id: Union[int, str],
+        business_connection_id: Optional[str] = None,
+        message_id: Optional[int] = None,
     ) -> Literal[True]: ...
 
     async def unpin_all_chat_messages(
@@ -929,6 +961,7 @@ class API:
         emoji: Optional[str] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[
@@ -1049,6 +1082,7 @@ class API:
         is_flexible: Optional[bool] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,
@@ -1108,6 +1142,7 @@ class API:
         message_thread_id: Optional[int] = None,
         disable_notification: Optional[bool] = None,
         protect_content: Optional[bool] = None,
+        allow_paid_broadcast: Optional[bool] = None,
         message_effect_id: Optional[str] = None,
         reply_parameters: Optional[ReplyParameters] = None,
         reply_markup: Optional[InlineKeyboardMarkup] = None,

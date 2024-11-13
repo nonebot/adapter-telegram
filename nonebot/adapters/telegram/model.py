@@ -16,6 +16,7 @@ class User(BaseModel):
     can_read_all_group_messages: Optional[bool] = None
     supports_inline_queries: Optional[bool] = None
     can_connect_to_business: Optional[bool] = None
+    has_main_web_app: Optional[bool] = None
 
 
 class Chat(BaseModel):
@@ -260,6 +261,7 @@ class Giveaway(BaseModel):
     has_public_winners: Optional[Literal[True]] = None
     prize_description: Optional[str] = None
     country_codes: Optional[list[str]] = None
+    prize_star_count: Optional[int] = None
     premium_subscription_month_count: Optional[int] = None
 
 
@@ -270,6 +272,7 @@ class GiveawayWinners(BaseModel):
     winner_count: int
     winners: list[User]
     additional_chat_count: Optional[int] = None
+    prize_star_count: Optional[int] = None
     premium_subscription_month_count: Optional[int] = None
     unclaimed_prize_count: Optional[int] = None
     only_new_members: Optional[Literal[True]] = None
@@ -580,13 +583,14 @@ class GeneralForumTopicUnhidden(BaseModel):
 
 
 class GiveawayCreated(BaseModel):
-    pass
+    prize_star_count: Optional[int] = None
 
 
 class GiveawayCompleted(BaseModel):
     winner_count: int
     unclaimed_prize_count: Optional[int] = None
     giveaway_message: Optional["Message"] = None
+    is_star_giveaway: Optional[Literal[True]] = None
 
 
 class VideoChatScheduled(BaseModel):
@@ -629,6 +633,10 @@ class SwitchInlineQueryChosenChat(BaseModel):
     allow_channel_chats: Optional[bool] = None
 
 
+class CopyTextButton(BaseModel):
+    text: str
+
+
 class CallbackGame(BaseModel):
     pass
 
@@ -642,6 +650,7 @@ class InlineKeyboardButton(BaseModel):
     switch_inline_query: Optional[str] = None
     switch_inline_query_current_chat: Optional[str] = None
     switch_inline_query_chosen_chat: Optional[SwitchInlineQueryChosenChat] = None
+    copy_text: Optional[CopyTextButton] = None
     callback_game: Optional[CallbackGame] = None
     pay: Optional[bool] = None
 
@@ -763,7 +772,11 @@ class ReactionTypeCustomEmoji(BaseModel):
     custom_emoji_id: str
 
 
-ReactionType = Union[ReactionTypeEmoji, ReactionTypeCustomEmoji]
+class ReactionTypePaid(BaseModel):
+    type: str
+
+
+ReactionType = Union[ReactionTypeEmoji, ReactionTypeCustomEmoji, ReactionTypePaid]
 
 
 class MessageReactionUpdated(BaseModel):
@@ -834,6 +847,11 @@ class PreCheckoutQuery(BaseModel):
     order_info: Optional[OrderInfo] = None
 
 
+class PaidMediaPurchased(BaseModel):
+    from_: User = Field(alias="from")
+    paid_media_payload: str
+
+
 class PollAnswer(BaseModel):
     poll_id: str
     voter_chat: Optional[Chat] = None
@@ -873,6 +891,7 @@ class ChatMemberAdministrator(BaseModel):
 class ChatMemberMember(BaseModel):
     status: Literal["member"] = "member"
     user: User
+    until_date: Optional[int] = None
 
 
 class ChatMemberRestricted(BaseModel):
@@ -927,6 +946,8 @@ class ChatInviteLink(BaseModel):
     expire_date: Optional[int] = None
     member_limit: Optional[int] = None
     pending_join_request_count: Optional[int] = None
+    subscription_period: Optional[int] = None
+    subscription_price: Optional[int] = None
 
 
 class ChatMemberUpdated(BaseModel):
@@ -963,6 +984,7 @@ class ChatBoostSourceGiveaway(BaseModel):
     source: Literal["giveaway"] = "giveaway"
     giveaway_message_id: int
     user: Optional[User] = None
+    prize_star_count: Optional[int] = None
     is_unclaimed: Optional[Literal[True]] = None
 
 
@@ -1007,6 +1029,7 @@ class Update(BaseModel):
     callback_query: Optional[CallbackQuery] = None
     shipping_query: Optional[ShippingQuery] = None
     pre_checkout_query: Optional[PreCheckoutQuery] = None
+    purchased_paid_media: Optional[PaidMediaPurchased] = None
     poll: Optional[Poll] = None
     poll_answer: Optional[PollAnswer] = None
     my_chat_member: Optional[ChatMemberUpdated] = None
@@ -1851,6 +1874,8 @@ class TransactionPartnerUser(BaseModel):
     type: str
     user: User
     invoice_payload: Optional[str] = None
+    paid_media: Optional[list[PaidMedia]] = None
+    paid_media_payload: Optional[str] = None
 
 
 class TransactionPartnerFragment(BaseModel):
@@ -1862,6 +1887,11 @@ class TransactionPartnerTelegramAds(BaseModel):
     type: str
 
 
+class TransactionPartnerTelegramApi(BaseModel):
+    type: str
+    request_count: int
+
+
 class TransactionPartnerOther(BaseModel):
     type: str
 
@@ -1870,6 +1900,7 @@ TransactionPartner = Union[
     TransactionPartnerUser,
     TransactionPartnerFragment,
     TransactionPartnerTelegramAds,
+    TransactionPartnerTelegramApi,
     TransactionPartnerOther,
 ]
 
