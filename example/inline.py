@@ -4,6 +4,7 @@ Inline Bots：https://core.telegram.org/bots/inline
 
 from nonebot import on
 from nonebot.adapters.telegram import Bot
+from nonebot.adapters.telegram.utils import resolve_inline_message_id
 from nonebot.adapters.telegram.event import InlineQueryEvent, CallbackQueryEvent
 from nonebot.adapters.telegram.model import (
     InlineKeyboardButton,
@@ -53,8 +54,7 @@ async def _(bot: Bot, event: InlineQueryEvent):
 
 @on("inline").handle()
 async def _(bot: Bot, event: CallbackQueryEvent):
-    if event.message:
-        await bot.edit_message_text(
-            "Hello CallbackQuery!", event.message.chat.id, event.message.message_id
+    if event.data == "hello":
+        await bot.answer_callback_query(
+            show_alert=True, callback_query_id=event.id, text="Hello CallbackQuery!"
         )
-        await bot.answer_callback_query(event.id, text="Hello CallbackQuery!")
