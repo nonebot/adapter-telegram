@@ -1,10 +1,13 @@
+from collections.abc import Iterable
 from typing_extensions import override
-from typing import Any, Union, Literal, Iterable, Optional
+from typing import Any, Union, Literal, TypeVar, Optional
 
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
 
 from .model import User, MessageEntity
+
+TMS = TypeVar("TMS", bound="MessageSegment")
 
 
 class MessageSegment(BaseMessageSegment):
@@ -28,7 +31,11 @@ class MessageSegment(BaseMessageSegment):
             return self.data.get("text", "")
         params = ", ".join(
             [
-                f"{k}={f'<file {v[0]}>' if isinstance(v, tuple) else ('<bytes>' if isinstance(v, bytes) else v)}"
+                (
+                    f"{k}=" + f"<file {v[0]}>"
+                    if isinstance(v, tuple)
+                    else ("<bytes>" if isinstance(v, bytes) else v)
+                )
                 for k, v in self.data.items()
                 if v is not None
             ]
@@ -181,6 +188,12 @@ class Reply(MessageSegment):
 
 
 class Entity(MessageSegment):
+    def __init__(self, type: str, data: dict[str, Any], _length: int = 0):
+        super().__init__(type, data)
+        self._length = _length
+        if _length == 0:
+            self._length = len(self.data["text"].encode("utf-16-le")) // 2
+
     @override
     def is_text(self) -> bool:
         return True
@@ -270,14 +283,28 @@ class Entity(MessageSegment):
     def from_telegram_entities(text, entities: list[dict[str, Any]]) -> list["Entity"]:
         nb_entites = []
         offset = 0
+        text = text.encode("utf-16-le")
         for entity in entities:
             if entity["offset"] > offset:
                 nb_entites.append(
-                    Entity("text", {"text": text[offset : entity["offset"]]})
+                    Entity(
+                        "text",
+                        {
+                            "text": text[offset * 2 : entity["offset"] * 2].decode(
+                                "utf-16-le"
+                            )
+                        },
+                        entity["offset"] - offset,
+                    )
                 )
             nb_entity = Entity(
                 entity["type"],
-                {"text": text[entity["offset"] : entity["offset"] + entity["length"]]},
+                {
+                    "text": text[
+                        entity["offset"] * 2 : (entity["offset"] + entity["length"]) * 2
+                    ].decode("utf-16-le")
+                },
+                entity["length"],
             )
             if "language" in entity:
                 nb_entity.data["language"] = entity["language"]
@@ -290,21 +317,28 @@ class Entity(MessageSegment):
             nb_entites.append(nb_entity)
             offset = entity["offset"] + entity["length"]
         if offset < len(text):
-            nb_entites.append(Entity("text", {"text": text[offset:]}))
+            nb_entites.append(
+                Entity(
+                    "text",
+                    {"text": text[offset * 2 :].decode("utf-16-le")},
+                    (len(text) - offset * 2) // 2,
+                )
+            )
         return nb_entites
 
     @staticmethod
-    def build_telegram_entities(entities: "Message") -> list[MessageEntity]:
+    def build_telegram_entities(entities: list["Entity"]) -> list[MessageEntity]:
         return (
             (
                 [
                     MessageEntity(
                         type=entity.type,  # type: ignore
-                        offset=sum(map(len, entities[:i])),
-                        length=len(entity.data["text"]),
+                        offset=sum(_._length for _ in entities[:i]),
+                        length=entity._length,
                         url=entity.data.get("url"),
                         user=entity.data.get("user"),
                         language=entity.data.get("language"),
+                        custom_emoji_id=entity.data.get("custom_emoji_id"),
                     )
                     for i, entity in enumerate(entities)
                     if entity.is_text() and entity.type != "text"
@@ -380,7 +414,7 @@ class UnCombinFile(File):
         return File("video_note", {"file": file, "thumbnail": thumbnail})
 
 
-class Message(BaseMessage[MessageSegment]):
+class Message(BaseMessage[TMS]):
     def __repr__(self) -> str:
         return "".join(repr(seg) for seg in self)
 
@@ -404,7 +438,7 @@ class Message(BaseMessage[MessageSegment]):
                 else ("caption", "caption_entities")
             )
             msg.extend(
-                Entity.from_telegram_entities(obj[key], obj.get(entities_key, ()))
+                Entity.from_telegram_entities(obj[key], obj.get(entities_key, []))
             )
             del obj[key]
             obj.pop(entities_key, None)

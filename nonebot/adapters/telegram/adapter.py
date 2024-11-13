@@ -1,7 +1,8 @@
 import json
 import asyncio
+from collections.abc import Iterable
 from typing_extensions import override
-from typing import Any, Union, Iterable, Optional, cast
+from typing import Any, Union, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
@@ -98,6 +99,7 @@ class Adapter(BaseAdapter):
                     update_offset = updates[0].update_id
             except Exception as e:
                 log("ERROR", f"Get updates for bot {bot.self_id} failed", e)
+                await asyncio.sleep(5)
 
     def setup_polling(self, bot: Bot):
         @self.on_ready
@@ -224,7 +226,7 @@ class Adapter(BaseAdapter):
                 )
 
         log("DEBUG", f"Calling API <y>{api}</y>")
-        log("DEBUG", f"Calling API <y>{data}</y>")
+        log("DEBUG", f"Calling API <y>{escape_tag(str(data))}</y>")
         request = Request(
             "POST",
             f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
@@ -247,5 +249,5 @@ class Adapter(BaseAdapter):
         if response.status_code == 404:
             raise ApiNotAvailable
         raise NetworkError(
-            f"HTTP request received unexpected {response.status_code} {response.content}",
+            f"Received unexpected {response.status_code} {response.content}"
         )

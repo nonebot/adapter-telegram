@@ -44,8 +44,6 @@ async def test_send_to(app: App):
     from nonebot.adapters.telegram.model import Message as ReturnMessage
     from nonebot.adapters.telegram.model import InputMediaAudio, InputMediaPhoto
 
-    Chat.update_forward_refs()
-
     with (Path(__file__).parent / "updates.json").open("r", encoding="utf8") as f:
         test_updates = json.load(f)
     test_update = test_updates[0]
@@ -81,6 +79,8 @@ async def test_send_to(app: App):
                 "protect_content": None,
                 "reply_to_message_id": None,
                 "allow_sending_without_reply": None,
+                "business_connection_id": None,
+                "message_effect_id": None,
             },
             [
                 ReturnMessage(

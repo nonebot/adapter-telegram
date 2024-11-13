@@ -3,7 +3,12 @@ import asyncio
 from nonebot import on_command
 from nonebot.adapters.telegram import Bot
 from nonebot.adapters.telegram.event import MessageEvent
-from nonebot.adapters.telegram.message import Message, MessageSegment
+from nonebot.adapters.telegram.message import Entity, MessageSegment
+
+
+@on_command("test_emoji").handle()
+async def _(bot: Bot, event: MessageEvent):
+    await bot.send(event, "🧑‍💻" + Entity.bold("🧑‍💻") + "🧑‍💻")
 
 
 @on_command("location").handle()

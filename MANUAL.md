@@ -26,8 +26,7 @@ nb adapter install nonebot-adapter-telegram
 telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI"}]
 ```
 
-> **Note**
->
+> [!IMPORTANT]
 > 如果你需要让你的 Bot 响应除了 `/` 开头之外的消息，你需要向 BotFather 发送 `/setprivacy` 并选择 `Disable`。
 >
 > 如果你需要让你的 Bot 接收 inline query，你还需要向 BotFather 发送 `/setinline`。
@@ -58,7 +57,7 @@ driver=~fastapi+~httpx
 telegram_proxy = "http://127.0.0.1:10809"
 ```
 
-> **Note**
+> [!IMPORTANT]
 > 如果你的代理使用 socks 协议，你需要安装 httpx\[socks\]。
 
 ### 使用 Long polling 获取事件（推荐）
@@ -67,7 +66,7 @@ telegram_proxy = "http://127.0.0.1:10809"
 
 ### 使用 Webhook 获取事件（不推荐）
 
-> **Warning**
+> [!WARNING]
 > 如果你坚持使用此方式获取更新，请确保自己掌握基本的服务器运维知识。
 
 <details><summary>点击展开</summary>
@@ -113,9 +112,6 @@ nb run
 ```
 
 现在，你可以私聊自己的 Telegram Bot `/echo hello world`，不出意外的话，它将回复你 `hello world`。
-
-> **Note**
-> 更多示例：<https://github.com/nonebot/adapter-telegram/blob/beta/example>
 
 ## FAQ（常见问题解答）
 
