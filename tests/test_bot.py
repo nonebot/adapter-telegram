@@ -80,6 +80,7 @@ async def test_send_to(app: App):
                 "reply_to_message_id": None,
                 "allow_sending_without_reply": None,
                 "business_connection_id": None,
+                "allow_paid_broadcast": None,
                 "message_effect_id": None,
             },
             [
