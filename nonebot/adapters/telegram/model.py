@@ -1353,8 +1353,8 @@ InputFile = Union[bytes, tuple[str, bytes]]
 
 class InputMediaAnimation(BaseModel):
     type: Literal["animation"] = "animation"
-    media: str
-    thumbnail: Optional[Union[InputFile, str]] = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
@@ -1366,8 +1366,8 @@ class InputMediaAnimation(BaseModel):
 
 class InputMediaDocument(BaseModel):
     type: Literal["document"] = "document"
-    media: str
-    thumbnail: Optional[Union[InputFile, str]] = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
@@ -1376,8 +1376,8 @@ class InputMediaDocument(BaseModel):
 
 class InputMediaAudio(BaseModel):
     type: Literal["audio"] = "audio"
-    media: str
-    thumbnail: Optional[Union[InputFile, str]] = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
@@ -1388,7 +1388,7 @@ class InputMediaAudio(BaseModel):
 
 class InputMediaPhoto(BaseModel):
     type: Literal["photo"] = "photo"
-    media: str
+    media: Union[str, InputFile]
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
@@ -1398,8 +1398,8 @@ class InputMediaPhoto(BaseModel):
 
 class InputMediaVideo(BaseModel):
     type: Literal["video"] = "video"
-    media: str
-    thumbnail: Optional[Union[InputFile, str]] = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
     caption: Optional[str] = None
     parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
     caption_entities: Optional[list[MessageEntity]] = None
@@ -1422,13 +1422,13 @@ InputMedia = Union[
 
 class InputPaidMediaPhoto(BaseModel):
     type: Literal["photo"] = "photo"
-    media: str
+    media: Union[str, InputFile]
 
 
 class InputPaidMediaVideo(BaseModel):
     type: Literal["video"] = "video"
-    media: str
-    thumbnail: Optional[Union[InputFile, str]] = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
     width: Optional[int] = None
     height: Optional[int] = None
     duration: Optional[int] = None
@@ -1447,7 +1447,7 @@ class StickerSet(BaseModel):
 
 
 class InputSticker(BaseModel):
-    sticker: Union[InputFile, str]
+    sticker: Union[str, InputFile]
     format: Literal["static", "animated", "video"]
     emoji_list: list[str]
     mask_position: Optional[MaskPosition] = None

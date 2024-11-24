@@ -15,7 +15,7 @@ async def _(bot: Bot, event: MessageEvent):
     async with await open_file("./docs/logo.png", "rb") as f:
         await bot.send(
             event,
-            File.photo(await f.read()),
+            File.photo(("test.png", await f.read())),
         )
 
 
@@ -40,13 +40,15 @@ async def _(bot: Bot, event: MessageEvent):
 # 多张图片
 @on_command("photo4").handle()
 async def _(bot: Bot, event: MessageEvent):
-    await bot.send(
-        event,
-        File.photo("./docs/logo.png")
-        + File.photo(
-            "https://raw.githubusercontent.com/nonebot/adapter-telegram/beta/docs/logo.png"
-        ),
-    )
+    async with await open_file("./docs/logo.png", "rb") as f:
+        await bot.send(
+            event,
+            File.photo(("test.png", await f.read()))
+            + File.photo("./docs/logo.png")
+            + File.photo(
+                "https://raw.githubusercontent.com/nonebot/adapter-telegram/beta/docs/logo.png"
+            ),
+        )
 
 
 # 使用原生 API 发送图片
@@ -60,12 +62,14 @@ async def _(bot: Bot, event: MessageEvent):
 # 使用原生 API 发送多张图片
 @on_command("photo6").handle()
 async def _(bot: Bot, event: MessageEvent):
-    await bot.send_media_group(
-        chat_id=event.chat.id,
-        media=[
-            InputMediaPhoto(media="./docs/logo.png"),
-            InputMediaPhoto(
-                media="https://raw.githubusercontent.com/nonebot/adapter-telegram/beta/docs/logo.png"
-            ),
-        ],
-    )
+    async with await open_file("./docs/logo.png", "rb") as f:
+        await bot.send_media_group(
+            chat_id=event.chat.id,
+            media=[
+                InputMediaPhoto(media=("test.png", await f.read())),
+                InputMediaPhoto(media="./docs/logo.png"),
+                InputMediaPhoto(
+                    media="https://raw.githubusercontent.com/nonebot/adapter-telegram/beta/docs/logo.png"
+                ),
+            ],
+        )
