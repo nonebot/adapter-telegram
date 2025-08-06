@@ -26,6 +26,11 @@ nb adapter install nonebot-adapter-telegram
 telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI"}]
 ```
 
+如果你有自己的Telegram API端点，可以自定义：
+```dotenv
+telegram_bots = [{"token": "1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI", "api_server": "https://tgapi.yourdomain.com/"}]
+```
+
 > [!IMPORTANT]
 > 如果你需要让你的 Bot 响应除了 `/` 开头之外的消息，你需要向 BotFather 发送 `/setprivacy` 并选择 `Disable`。
 >
