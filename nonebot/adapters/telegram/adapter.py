@@ -5,8 +5,8 @@ from typing_extensions import override
 from typing import Any, Union, Optional, cast
 
 import anyio
-from pydantic.main import BaseModel
-from pydantic.json import pydantic_encoder
+from pydantic import BaseModel
+from pydantic_core import to_jsonable_python
 from nonebot.utils import escape_tag, logger_wrapper
 from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
 
@@ -220,7 +220,7 @@ class Adapter(BaseAdapter):
                         lambda o: (
                             o.model_dump(exclude_none=True)
                             if isinstance(o, BaseModel)
-                            else pydantic_encoder(o)
+                            else to_jsonable_python(o)
                         )
                     ),
                 )
