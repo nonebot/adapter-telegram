@@ -39,7 +39,7 @@ class Adapter(BaseAdapter):
     def __init__(self, driver: Driver, **kwargs: Any):
         super().__init__(driver, **kwargs)
         self.adapter_config = AdapterConfig(**self.config.model_dump())
-        self.tasks: list[asyncio.Task] = []
+        self.tasks: set[asyncio.Task] = set()
         self.setup()
 
     @classmethod
@@ -98,11 +98,13 @@ class Adapter(BaseAdapter):
                 if update_offset is not None:
                     for update in updates:
                         update_offset = update.update_id + 1
-                        asyncio.create_task(
+                        task = asyncio.create_task(
                             self.__handle_update(
                                 bot, update.model_dump(by_alias=True, exclude_none=True)
                             )
                         )
+                        self.tasks.add(task)
+                        task.add_done_callback(self.tasks.discard)
                 elif updates:
                     update_offset = updates[0].update_id
             except Exception as e:
@@ -112,7 +114,9 @@ class Adapter(BaseAdapter):
     def setup_polling(self, bot: Bot):
         @self.on_ready
         async def _():
-            self.tasks.append(asyncio.create_task(self.poll(bot)))
+            task = asyncio.create_task(self.poll(bot))
+            self.tasks.add(task)
+            task.add_done_callback(self.tasks.discard)
 
         @self.driver.on_shutdown
         async def _():
@@ -128,7 +132,9 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    asyncio.create_task(self.__handle_update(bot, update))
+                    task = asyncio.create_task(self.__handle_update(bot, update))
+                    self.tasks.add(task)
+                    task.add_done_callback(self.tasks.discard)
                 return Response(204)
         return Response(401)
 
