@@ -7,26 +7,26 @@ class User(BaseModel):
     id: int
     is_bot: bool
     first_name: str
-    last_name: str | None = None
-    username: str | None = None
-    language_code: str | None = None
-    is_premium: Literal[True] | None = None
-    added_to_attachment_menu: Literal[True] | None = None
-    can_join_groups: bool | None = None
-    can_read_all_group_messages: bool | None = None
-    supports_inline_queries: bool | None = None
-    can_connect_to_business: bool | None = None
-    has_main_web_app: bool | None = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    language_code: Optional[str] = None
+    is_premium: Optional[Literal[True]] = None
+    added_to_attachment_menu: Optional[Literal[True]] = None
+    can_join_groups: Optional[bool] = None
+    can_read_all_group_messages: Optional[bool] = None
+    supports_inline_queries: Optional[bool] = None
+    can_connect_to_business: Optional[bool] = None
+    has_main_web_app: Optional[bool] = None
 
 
 class Chat(BaseModel):
     id: int
     type: Literal["private", "group", "supergroup", "channel"]
-    title: str | None = None
-    username: str | None = None
-    first_name: str | None = None
-    last_name: str | None = None
-    is_forum: Literal[True] | None = None
+    title: Optional[str] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    is_forum: Optional[Literal[True]] = None
 
 
 class MessageOriginUser(BaseModel):
@@ -45,7 +45,7 @@ class MessageOriginChat(BaseModel):
     type: Literal["chat"] = "chat"
     date: int
     sender_chat: Chat
-    author_signature: str | None = None
+    author_signature: Optional[str] = None
 
 
 class MessageOriginChannel(BaseModel):
@@ -53,7 +53,7 @@ class MessageOriginChannel(BaseModel):
     date: int
     chat: Chat
     message_id: int
-    author_signature: str | None = None
+    author_signature: Optional[str] = None
 
 
 MessageOrigin = Union[
@@ -62,11 +62,11 @@ MessageOrigin = Union[
 
 
 class LinkPreviewOptions(BaseModel):
-    is_disabled: bool | None = None
-    url: str | None = None
-    prefer_small_media: bool | None = None
-    prefer_large_media: bool | None = None
-    show_above_text: bool | None = None
+    is_disabled: Optional[bool] = None
+    url: Optional[str] = None
+    prefer_small_media: Optional[bool] = None
+    prefer_large_media: Optional[bool] = None
+    show_above_text: Optional[bool] = None
 
 
 class PhotoSize(BaseModel):
@@ -74,7 +74,7 @@ class PhotoSize(BaseModel):
     file_unique_id: str
     width: int
     height: int
-    file_size: int | None = None
+    file_size: Optional[int] = None
 
 
 class Animation(BaseModel):
@@ -83,38 +83,38 @@ class Animation(BaseModel):
     width: int
     height: int
     duration: int
-    thumbnail: PhotoSize | None = None
-    file_name: str | None = None
-    mime_type: str | None = None
-    file_size: int | None = None
+    thumbnail: Optional[PhotoSize] = None
+    file_name: Optional[str] = None
+    mime_type: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 class Audio(BaseModel):
     file_id: str
     file_unique_id: str
     duration: int
-    performer: str | None = None
-    title: str | None = None
-    file_name: str | None = None
-    mime_type: str | None = None
-    file_size: int | None = None
-    thumbnail: PhotoSize | None = None
+    performer: Optional[str] = None
+    title: Optional[str] = None
+    file_name: Optional[str] = None
+    mime_type: Optional[str] = None
+    file_size: Optional[int] = None
+    thumbnail: Optional[PhotoSize] = None
 
 
 class Document(BaseModel):
     file_id: str
     file_unique_id: str
-    thumbnail: PhotoSize | None = None
-    file_name: str | None = None
-    mime_type: str | None = None
-    file_size: int | None = None
+    thumbnail: Optional[PhotoSize] = None
+    file_name: Optional[str] = None
+    mime_type: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 class PaidMediaPreview(BaseModel):
     type: Literal["preview"] = "preview"
-    width: int | None = None
-    height: int | None = None
-    duration: int | None = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
 
 
 class PaidMediaPhoto(BaseModel):
@@ -128,10 +128,10 @@ class Video(BaseModel):
     width: int
     height: int
     duration: int
-    thumbnail: PhotoSize | None = None
-    file_name: str | None = None
-    mime_type: str | None = None
-    file_size: int | None = None
+    thumbnail: Optional[PhotoSize] = None
+    file_name: Optional[str] = None
+    mime_type: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 class PaidMediaVideo(BaseModel):
@@ -150,8 +150,8 @@ class PaidMediaInfo(BaseModel):
 class File(BaseModel):
     file_id: str
     file_unique_id: str
-    file_size: int | None = None
-    file_path: str | None = None
+    file_size: Optional[int] = None
+    file_path: Optional[str] = None
 
 
 class MaskPosition(BaseModel):
@@ -169,14 +169,14 @@ class Sticker(BaseModel):
     height: int
     is_animated: bool
     is_video: bool
-    thumbnail: PhotoSize | None = None
-    emoji: str | None = None
-    set_name: str | None = None
-    premium_animation: File | None = None
-    mask_position: MaskPosition | None = None
-    custom_emoji_id: str | None = None
-    needs_repainting: Literal[True] | None = None
-    file_size: int | None = None
+    thumbnail: Optional[PhotoSize] = None
+    emoji: Optional[str] = None
+    set_name: Optional[str] = None
+    premium_animation: Optional[File] = None
+    mask_position: Optional[MaskPosition] = None
+    custom_emoji_id: Optional[str] = None
+    needs_repainting: Optional[Literal[True]] = None
+    file_size: Optional[int] = None
 
 
 class Story(BaseModel):
@@ -189,24 +189,24 @@ class VideoNote(BaseModel):
     file_unique_id: str
     length: int
     duration: int
-    thumbnail: PhotoSize | None = None
-    file_size: int | None = None
+    thumbnail: Optional[PhotoSize] = None
+    file_size: Optional[int] = None
 
 
 class Voice(BaseModel):
     file_id: str
     file_unique_id: str
     duration: int
-    mime_type: str | None = None
-    file_size: int | None = None
+    mime_type: Optional[str] = None
+    file_size: Optional[int] = None
 
 
 class Contact(BaseModel):
     phone_number: str
     first_name: str
-    last_name: str | None = None
-    user_id: int | None = None
-    vcard: str | None = None
+    last_name: Optional[str] = None
+    user_id: Optional[int] = None
+    vcard: Optional[str] = None
 
 
 class Dice(BaseModel):
@@ -238,31 +238,31 @@ class MessageEntity(BaseModel):
     ]
     offset: int
     length: int
-    url: str | None = None
-    user: User | None = None
-    language: str | None = None
-    custom_emoji_id: str | None = None
+    url: Optional[str] = None
+    user: Optional[User] = None
+    language: Optional[str] = None
+    custom_emoji_id: Optional[str] = None
 
 
 class Game(BaseModel):
     title: str
     description: str
     photo: list[PhotoSize]
-    text: str | None = None
-    text_entities: list[MessageEntity] | None = None
-    animation: Animation | None = None
+    text: Optional[str] = None
+    text_entities: Optional[list[MessageEntity]] = None
+    animation: Optional[Animation] = None
 
 
 class Giveaway(BaseModel):
     chats: list[Chat]
     winners_selection_date: int
     winner_count: int
-    only_new_members: Literal[True] | None = None
-    has_public_winners: Literal[True] | None = None
-    prize_description: str | None = None
-    country_codes: list[str] | None = None
-    prize_star_count: int | None = None
-    premium_subscription_month_count: int | None = None
+    only_new_members: Optional[Literal[True]] = None
+    has_public_winners: Optional[Literal[True]] = None
+    prize_description: Optional[str] = None
+    country_codes: Optional[list[str]] = None
+    prize_star_count: Optional[int] = None
+    premium_subscription_month_count: Optional[int] = None
 
 
 class GiveawayWinners(BaseModel):
@@ -271,13 +271,13 @@ class GiveawayWinners(BaseModel):
     winners_selection_date: int
     winner_count: int
     winners: list[User]
-    additional_chat_count: int | None = None
-    prize_star_count: int | None = None
-    premium_subscription_month_count: int | None = None
-    unclaimed_prize_count: int | None = None
-    only_new_members: Literal[True] | None = None
-    was_refunded: Literal[True] | None = None
-    prize_description: str | None = None
+    additional_chat_count: Optional[int] = None
+    prize_star_count: Optional[int] = None
+    premium_subscription_month_count: Optional[int] = None
+    unclaimed_prize_count: Optional[int] = None
+    only_new_members: Optional[Literal[True]] = None
+    was_refunded: Optional[Literal[True]] = None
+    prize_description: Optional[str] = None
 
 
 class Invoice(BaseModel):
@@ -291,77 +291,77 @@ class Invoice(BaseModel):
 class Location(BaseModel):
     latitude: float
     longitude: float
-    horizontal_accuracy: float | None = None
-    live_period: int | None = None
-    heading: int | None = None
-    proximity_alert_radius: int | None = None
+    horizontal_accuracy: Optional[float] = None
+    live_period: Optional[int] = None
+    heading: Optional[int] = None
+    proximity_alert_radius: Optional[int] = None
 
 
 class PollOption(BaseModel):
     text: str
-    text_entities: list[MessageEntity] | None = None
+    text_entities: Optional[list[MessageEntity]] = None
     voter_count: int
 
 
 class Poll(BaseModel):
     id: str
     question: str
-    question_entities: list[MessageEntity] | None = None
+    question_entities: Optional[list[MessageEntity]] = None
     options: list[PollOption]
     total_voter_count: int
     is_closed: bool
     is_anonymous: bool
     type: Literal["regular", "quiz"]
     allows_multiple_answers: bool
-    correct_option_id: int | None = None
-    explanation: str | None = None
-    explanation_entities: list[MessageEntity] | None = None
-    open_period: int | None = None
-    close_date: int | None = None
+    correct_option_id: Optional[int] = None
+    explanation: Optional[str] = None
+    explanation_entities: Optional[list[MessageEntity]] = None
+    open_period: Optional[int] = None
+    close_date: Optional[int] = None
 
 
 class Venue(BaseModel):
     location: Location
     title: str
     address: str
-    foursquare_id: str | None = None
-    foursquare_type: str | None = None
-    google_place_id: str | None = None
-    google_place_type: str | None = None
+    foursquare_id: Optional[str] = None
+    foursquare_type: Optional[str] = None
+    google_place_id: Optional[str] = None
+    google_place_type: Optional[str] = None
 
 
 class ExternalReplyInfo(BaseModel):
     origin: MessageOrigin
-    chat: Chat | None = None
-    message_id: int | None = None
-    link_preview_options: LinkPreviewOptions | None = None
-    animation: Animation | None = None
-    audio: Audio | None = None
-    document: Document | None = None
-    paid_media: PaidMediaInfo | None = None
-    photo: list[PhotoSize] | None = None
-    sticker: Sticker | None = None
-    story: Story | None = None
-    video: Video | None = None
-    video_note: VideoNote | None = None
-    voice: Voice | None = None
-    has_media_spoiler: Literal[True] | None = None
-    contact: Contact | None = None
-    dice: Dice | None = None
-    game: Game | None = None
-    giveaway: Giveaway | None = None
-    giveaway_winners: GiveawayWinners | None = None
-    invoice: Invoice | None = None
-    location: Location | None = None
-    poll: Poll | None = None
-    venue: Venue | None = None
+    chat: Optional[Chat] = None
+    message_id: Optional[int] = None
+    link_preview_options: Optional[LinkPreviewOptions] = None
+    animation: Optional[Animation] = None
+    audio: Optional[Audio] = None
+    document: Optional[Document] = None
+    paid_media: Optional[PaidMediaInfo] = None
+    photo: Optional[list[PhotoSize]] = None
+    sticker: Optional[Sticker] = None
+    story: Optional[Story] = None
+    video: Optional[Video] = None
+    video_note: Optional[VideoNote] = None
+    voice: Optional[Voice] = None
+    has_media_spoiler: Optional[Literal[True]] = None
+    contact: Optional[Contact] = None
+    dice: Optional[Dice] = None
+    game: Optional[Game] = None
+    giveaway: Optional[Giveaway] = None
+    giveaway_winners: Optional[GiveawayWinners] = None
+    invoice: Optional[Invoice] = None
+    location: Optional[Location] = None
+    poll: Optional[Poll] = None
+    venue: Optional[Venue] = None
 
 
 class TextQuote(BaseModel):
     text: str
-    entities: list[MessageEntity] | None = None
+    entities: Optional[list[MessageEntity]] = None
     position: int
-    is_manual: Literal[True] | None = None
+    is_manual: Optional[Literal[True]] = None
 
 
 class MessageAutoDeleteTimerChanged(BaseModel):
@@ -387,18 +387,18 @@ class ShippingAddress(BaseModel):
 
 
 class OrderInfo(BaseModel):
-    name: str | None = None
-    phone_number: str | None = None
-    email: str | None = None
-    shipping_address: ShippingAddress | None = None
+    name: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    shipping_address: Optional[ShippingAddress] = None
 
 
 class SuccessfulPayment(BaseModel):
     currency: str
     total_amount: int
     invoice_payload: str
-    shipping_option_id: str | None = None
-    order_info: OrderInfo | None = None
+    shipping_option_id: Optional[str] = None
+    order_info: Optional[OrderInfo] = None
     telegram_payment_charge_id: str
     provider_payment_charge_id: str
 
@@ -408,15 +408,15 @@ class RefundedPayment(BaseModel):
     total_amount: int
     invoice_payload: str
     telegram_payment_charge_id: str
-    provider_payment_charge_id: str | None = None
+    provider_payment_charge_id: Optional[str] = None
 
 
 class SharedUser(BaseModel):
     user_id: int
-    first_name: str | None = None
-    last_name: str | None = None
-    username: str | None = None
-    photo: list[PhotoSize] | None = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    photo: Optional[list[PhotoSize]] = None
 
 
 class UsersShared(BaseModel):
@@ -427,15 +427,15 @@ class UsersShared(BaseModel):
 class ChatShared(BaseModel):
     request_id: int
     chat_id: int
-    title: str | None = None
-    username: str | None = None
-    photo: list[PhotoSize] | None = None
+    title: Optional[str] = None
+    username: Optional[str] = None
+    photo: Optional[list[PhotoSize]] = None
 
 
 class WriteAccessAllowed(BaseModel):
-    from_request: bool | None = None
-    web_app_name: str | None = None
-    from_attachment_menu: bool | None = None
+    from_request: Optional[bool] = None
+    web_app_name: Optional[str] = None
+    from_attachment_menu: Optional[bool] = None
 
 
 class PassportFile(BaseModel):
@@ -461,14 +461,14 @@ class EncryptedPassportElement(BaseModel):
         "phone_number",
         "email",
     ]
-    data: str | None = None
-    phone_number: str | None = None
-    email: str | None = None
-    files: list[PassportFile] | None = None
-    front_side: PassportFile | None = None
-    reverse_side: PassportFile | None = None
-    selfie: PassportFile | None = None
-    translation: list[PassportFile] | None = None
+    data: Optional[str] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    files: Optional[list[PassportFile]] = None
+    front_side: Optional[PassportFile] = None
+    reverse_side: Optional[PassportFile] = None
+    selfie: Optional[PassportFile] = None
+    translation: Optional[list[PassportFile]] = None
     hash: str
 
 
@@ -525,8 +525,8 @@ class BackgroundTypeWallpaper(BaseModel):
     type: Literal["wallpaper"] = "wallpaper"
     document: Document
     dark_theme_dimming: int
-    is_blurred: Literal[True] | None = None
-    is_moving: Literal[True] | None = None
+    is_blurred: Optional[Literal[True]] = None
+    is_moving: Optional[Literal[True]] = None
 
 
 class BackgroundTypePattern(BaseModel):
@@ -534,8 +534,8 @@ class BackgroundTypePattern(BaseModel):
     document: Document
     fill: BackgroundFill
     intensity: int
-    is_inverted: Literal[True] | None = None
-    is_moving: Literal[True] | None = None
+    is_inverted: Optional[Literal[True]] = None
+    is_moving: Optional[Literal[True]] = None
 
 
 class BackgroundTypeChatTheme(BaseModel):
@@ -558,12 +558,12 @@ class ChatBackground(BaseModel):
 class ForumTopicCreated(BaseModel):
     name: str
     icon_color: int
-    icon_custom_emoji_id: str | None = None
+    icon_custom_emoji_id: Optional[str] = None
 
 
 class ForumTopicEdited(BaseModel):
-    name: str | None = None
-    icon_custom_emoji_id: str | None = None
+    name: Optional[str] = None
+    icon_custom_emoji_id: Optional[str] = None
 
 
 class ForumTopicClosed(BaseModel):
@@ -583,14 +583,14 @@ class GeneralForumTopicUnhidden(BaseModel):
 
 
 class GiveawayCreated(BaseModel):
-    prize_star_count: int | None = None
+    prize_star_count: Optional[int] = None
 
 
 class GiveawayCompleted(BaseModel):
     winner_count: int
-    unclaimed_prize_count: int | None = None
+    unclaimed_prize_count: Optional[int] = None
     giveaway_message: Optional["Message"] = None
-    is_star_giveaway: Literal[True] | None = None
+    is_star_giveaway: Optional[Literal[True]] = None
 
 
 class VideoChatScheduled(BaseModel):
@@ -620,17 +620,17 @@ class WebAppInfo(BaseModel):
 
 class LoginUrl(BaseModel):
     url: str
-    forward_text: str | None = None
-    bot_username: str | None = None
-    request_write_access: bool | None = None
+    forward_text: Optional[str] = None
+    bot_username: Optional[str] = None
+    request_write_access: Optional[bool] = None
 
 
 class SwitchInlineQueryChosenChat(BaseModel):
-    query: str | None = None
-    allow_user_chats: bool | None = None
-    allow_bot_chats: bool | None = None
-    allow_group_chats: bool | None = None
-    allow_channel_chats: bool | None = None
+    query: Optional[str] = None
+    allow_user_chats: Optional[bool] = None
+    allow_bot_chats: Optional[bool] = None
+    allow_group_chats: Optional[bool] = None
+    allow_channel_chats: Optional[bool] = None
 
 
 class CopyTextButton(BaseModel):
@@ -643,16 +643,16 @@ class CallbackGame(BaseModel):
 
 class InlineKeyboardButton(BaseModel):
     text: str
-    url: str | None = None
-    callback_data: str | None = None
-    web_app: WebAppInfo | None = None
-    login_url: LoginUrl | None = None
-    switch_inline_query: str | None = None
-    switch_inline_query_current_chat: str | None = None
-    switch_inline_query_chosen_chat: SwitchInlineQueryChosenChat | None = None
-    copy_text: CopyTextButton | None = None
-    callback_game: CallbackGame | None = None
-    pay: bool | None = None
+    url: Optional[str] = None
+    callback_data: Optional[str] = None
+    web_app: Optional[WebAppInfo] = None
+    login_url: Optional[LoginUrl] = None
+    switch_inline_query: Optional[str] = None
+    switch_inline_query_current_chat: Optional[str] = None
+    switch_inline_query_chosen_chat: Optional[SwitchInlineQueryChosenChat] = None
+    copy_text: Optional[CopyTextButton] = None
+    callback_game: Optional[CallbackGame] = None
+    pay: Optional[bool] = None
 
 
 class InlineKeyboardMarkup(BaseModel):
@@ -661,90 +661,90 @@ class InlineKeyboardMarkup(BaseModel):
 
 class Message(BaseModel):
     message_id: int
-    message_thread_id: int | None = None
-    from_: User | None = Field(default=None, alias="from")
-    sender_chat: Chat | None = None
-    sender_boost_count: int | None = None
-    sender_business_bot: User | None = None
+    message_thread_id: Optional[int] = None
+    from_: Optional[User] = Field(default=None, alias="from")
+    sender_chat: Optional[Chat] = None
+    sender_boost_count: Optional[int] = None
+    sender_business_bot: Optional[User] = None
     date: int
-    business_connection_id: str | None = None
+    business_connection_id: Optional[str] = None
     chat: Chat
-    forward_origin: MessageOrigin | None = None
-    is_topic_message: Literal[True] | None = None
-    is_automatic_forward: Literal[True] | None = None
+    forward_origin: Optional[MessageOrigin] = None
+    is_topic_message: Optional[Literal[True]] = None
+    is_automatic_forward: Optional[Literal[True]] = None
     reply_to_message: Optional["Message"] = None
-    external_reply: ExternalReplyInfo | None = None
-    quote: TextQuote | None = None
-    reply_to_story: Story | None = None
-    via_bot: User | None = None
-    edit_date: int | None = None
-    has_protected_content: Literal[True] | None = None
-    is_from_offline: Literal[True] | None = None
-    media_group_id: str | None = None
-    author_signature: str | None = None
-    text: str | None = None
-    entities: list[MessageEntity] | None = None
-    link_preview_options: LinkPreviewOptions | None = None
-    effect_id: str | None = None
-    animation: Animation | None = None
-    audio: Audio | None = None
-    document: Document | None = None
-    paid_media: PaidMediaInfo | None = None
-    photo: list[PhotoSize] | None = None
-    sticker: Sticker | None = None
-    story: Story | None = None
-    video: Video | None = None
-    video_note: VideoNote | None = None
-    voice: Voice | None = None
-    caption: str | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: Literal[True] | None = None
-    has_media_spoiler: Literal[True] | None = None
-    contact: Contact | None = None
-    dice: Dice | None = None
-    game: Game | None = None
-    poll: Poll | None = None
-    venue: Venue | None = None
-    location: Location | None = None
-    new_chat_members: list[User] | None = None
-    left_chat_member: User | None = None
-    new_chat_title: str | None = None
-    new_chat_photo: list[PhotoSize] | None = None
-    delete_chat_photo: Literal[True] | None = None
-    group_chat_created: Literal[True] | None = None
-    supergroup_chat_created: Literal[True] | None = None
-    channel_chat_created: Literal[True] | None = None
-    message_auto_delete_timer_changed: MessageAutoDeleteTimerChanged | None = None
-    migrate_to_chat_id: int | None = None
-    migrate_from_chat_id: int | None = None
-    pinned_message: MaybeInaccessibleMessage | None = None
-    invoice: Invoice | None = None
-    successful_payment: SuccessfulPayment | None = None
-    refunded_payment: RefundedPayment | None = None
-    users_shared: UsersShared | None = None
-    chat_shared: ChatShared | None = None
-    connected_website: str | None = None
-    write_access_allowed: WriteAccessAllowed | None = None
-    passport_data: PassportData | None = None
-    proximity_alert_triggered: ProximityAlertTriggered | None = None
-    boost_added: ChatBoostAdded | None = None
-    chat_background_set: ChatBackground | None = None
-    forum_topic_created: ForumTopicCreated | None = None
-    forum_topic_edited: ForumTopicEdited | None = None
-    forum_topic_closed: ForumTopicClosed | None = None
-    forum_topic_reopened: ForumTopicReopened | None = None
-    general_forum_topic_hidden: GeneralForumTopicHidden | None = None
-    general_forum_topic_unhidden: GeneralForumTopicUnhidden | None = None
-    giveaway_created: GiveawayCreated | None = None
-    giveaway: Giveaway | None = None
-    giveaway_winners: GiveawayWinners | None = None
-    giveaway_completed: GiveawayCompleted | None = None
-    video_chat_scheduled: VideoChatScheduled | None = None
-    video_chat_started: VideoChatStarted | None = None
-    video_chat_ended: VideoChatEnded | None = None
-    video_chat_participants_invited: VideoChatParticipantsInvited | None = None
-    web_app_data: WebAppData | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
+    external_reply: Optional[ExternalReplyInfo] = None
+    quote: Optional[TextQuote] = None
+    reply_to_story: Optional[Story] = None
+    via_bot: Optional[User] = None
+    edit_date: Optional[int] = None
+    has_protected_content: Optional[Literal[True]] = None
+    is_from_offline: Optional[Literal[True]] = None
+    media_group_id: Optional[str] = None
+    author_signature: Optional[str] = None
+    text: Optional[str] = None
+    entities: Optional[list[MessageEntity]] = None
+    link_preview_options: Optional[LinkPreviewOptions] = None
+    effect_id: Optional[str] = None
+    animation: Optional[Animation] = None
+    audio: Optional[Audio] = None
+    document: Optional[Document] = None
+    paid_media: Optional[PaidMediaInfo] = None
+    photo: Optional[list[PhotoSize]] = None
+    sticker: Optional[Sticker] = None
+    story: Optional[Story] = None
+    video: Optional[Video] = None
+    video_note: Optional[VideoNote] = None
+    voice: Optional[Voice] = None
+    caption: Optional[str] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[Literal[True]] = None
+    has_media_spoiler: Optional[Literal[True]] = None
+    contact: Optional[Contact] = None
+    dice: Optional[Dice] = None
+    game: Optional[Game] = None
+    poll: Optional[Poll] = None
+    venue: Optional[Venue] = None
+    location: Optional[Location] = None
+    new_chat_members: Optional[list[User]] = None
+    left_chat_member: Optional[User] = None
+    new_chat_title: Optional[str] = None
+    new_chat_photo: Optional[list[PhotoSize]] = None
+    delete_chat_photo: Optional[Literal[True]] = None
+    group_chat_created: Optional[Literal[True]] = None
+    supergroup_chat_created: Optional[Literal[True]] = None
+    channel_chat_created: Optional[Literal[True]] = None
+    message_auto_delete_timer_changed: Optional[MessageAutoDeleteTimerChanged] = None
+    migrate_to_chat_id: Optional[int] = None
+    migrate_from_chat_id: Optional[int] = None
+    pinned_message: Optional[MaybeInaccessibleMessage] = None
+    invoice: Optional[Invoice] = None
+    successful_payment: Optional[SuccessfulPayment] = None
+    refunded_payment: Optional[RefundedPayment] = None
+    users_shared: Optional[UsersShared] = None
+    chat_shared: Optional[ChatShared] = None
+    connected_website: Optional[str] = None
+    write_access_allowed: Optional[WriteAccessAllowed] = None
+    passport_data: Optional[PassportData] = None
+    proximity_alert_triggered: Optional[ProximityAlertTriggered] = None
+    boost_added: Optional[ChatBoostAdded] = None
+    chat_background_set: Optional[ChatBackground] = None
+    forum_topic_created: Optional[ForumTopicCreated] = None
+    forum_topic_edited: Optional[ForumTopicEdited] = None
+    forum_topic_closed: Optional[ForumTopicClosed] = None
+    forum_topic_reopened: Optional[ForumTopicReopened] = None
+    general_forum_topic_hidden: Optional[GeneralForumTopicHidden] = None
+    general_forum_topic_unhidden: Optional[GeneralForumTopicUnhidden] = None
+    giveaway_created: Optional[GiveawayCreated] = None
+    giveaway: Optional[Giveaway] = None
+    giveaway_winners: Optional[GiveawayWinners] = None
+    giveaway_completed: Optional[GiveawayCompleted] = None
+    video_chat_scheduled: Optional[VideoChatScheduled] = None
+    video_chat_started: Optional[VideoChatStarted] = None
+    video_chat_ended: Optional[VideoChatEnded] = None
+    video_chat_participants_invited: Optional[VideoChatParticipantsInvited] = None
+    web_app_data: Optional[WebAppData] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
 
 
 class BusinessConnection(BaseModel):
@@ -782,8 +782,8 @@ ReactionType = Union[ReactionTypeEmoji, ReactionTypeCustomEmoji, ReactionTypePai
 class MessageReactionUpdated(BaseModel):
     chat: Chat
     message_id: int
-    user: User | None = None
-    actor_chat: Chat | None = None
+    user: Optional[User] = None
+    actor_chat: Optional[Chat] = None
     date: int
     old_reaction: list[ReactionType]
     new_reaction: list[ReactionType]
@@ -806,28 +806,28 @@ class InlineQuery(BaseModel):
     from_: User = Field(alias="from")
     query: str
     offset: str
-    chat_type: Literal["sender", "private", "group", "supergroup", "channel"] | None = (
-        None
-    )
-    location: Location | None = None
+    chat_type: Optional[
+        Literal["sender", "private", "group", "supergroup", "channel"]
+    ] = None
+    location: Optional[Location] = None
 
 
 class ChosenInlineResult(BaseModel):
     result_id: str
     from_: User = Field(alias="from")
-    location: Location | None = None
-    inline_message_id: str | None = None
+    location: Optional[Location] = None
+    inline_message_id: Optional[str] = None
     query: str
 
 
 class CallbackQuery(BaseModel):
     id: str
     from_: User = Field(alias="from")
-    message: MaybeInaccessibleMessage | None = None
-    inline_message_id: str | None = None
+    message: Optional[MaybeInaccessibleMessage] = None
+    inline_message_id: Optional[str] = None
     chat_instance: str
-    data: str | None = None
-    game_short_name: str | None = None
+    data: Optional[str] = None
+    game_short_name: Optional[str] = None
 
 
 class ShippingQuery(BaseModel):
@@ -843,8 +843,8 @@ class PreCheckoutQuery(BaseModel):
     currency: str
     total_amount: int
     invoice_payload: str
-    shipping_option_id: str | None = None
-    order_info: OrderInfo | None = None
+    shipping_option_id: Optional[str] = None
+    order_info: Optional[OrderInfo] = None
 
 
 class PaidMediaPurchased(BaseModel):
@@ -854,8 +854,8 @@ class PaidMediaPurchased(BaseModel):
 
 class PollAnswer(BaseModel):
     poll_id: str
-    voter_chat: Chat | None = None
-    user: User | None = None
+    voter_chat: Optional[Chat] = None
+    user: Optional[User] = None
     option_ids: list[int]
 
 
@@ -863,7 +863,7 @@ class ChatMemberOwner(BaseModel):
     status: Literal["creator"] = "creator"
     user: User
     is_anonymous: bool
-    custom_title: str | None = None
+    custom_title: Optional[str] = None
 
 
 class ChatMemberAdministrator(BaseModel):
@@ -881,17 +881,17 @@ class ChatMemberAdministrator(BaseModel):
     can_post_stories: bool
     can_edit_stories: bool
     can_delete_stories: bool
-    can_post_messages: bool | None = None
-    can_edit_messages: bool | None = None
-    can_pin_messages: bool | None = None
-    can_manage_topics: bool | None = None
-    custom_title: str | None = None
+    can_post_messages: Optional[bool] = None
+    can_edit_messages: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
+    custom_title: Optional[str] = None
 
 
 class ChatMemberMember(BaseModel):
     status: Literal["member"] = "member"
     user: User
-    until_date: int | None = None
+    until_date: Optional[int] = None
 
 
 class ChatMemberRestricted(BaseModel):
@@ -942,12 +942,12 @@ class ChatInviteLink(BaseModel):
     creates_join_request: bool
     is_primary: bool
     is_revoked: bool
-    name: str | None = None
-    expire_date: int | None = None
-    member_limit: int | None = None
-    pending_join_request_count: int | None = None
-    subscription_period: int | None = None
-    subscription_price: int | None = None
+    name: Optional[str] = None
+    expire_date: Optional[int] = None
+    member_limit: Optional[int] = None
+    pending_join_request_count: Optional[int] = None
+    subscription_period: Optional[int] = None
+    subscription_price: Optional[int] = None
 
 
 class ChatMemberUpdated(BaseModel):
@@ -956,9 +956,9 @@ class ChatMemberUpdated(BaseModel):
     date: int
     old_chat_member: ChatMember
     new_chat_member: ChatMember
-    invite_link: ChatInviteLink | None = None
-    via_join_request: bool | None = None
-    via_chat_folder_invite_link: bool | None = None
+    invite_link: Optional[ChatInviteLink] = None
+    via_join_request: Optional[bool] = None
+    via_chat_folder_invite_link: Optional[bool] = None
 
 
 class ChatJoinRequest(BaseModel):
@@ -966,8 +966,8 @@ class ChatJoinRequest(BaseModel):
     from_: User = Field(alias="from")
     user_chat_id: int
     date: int
-    bio: str | None = None
-    invite_link: ChatInviteLink | None = None
+    bio: Optional[str] = None
+    invite_link: Optional[ChatInviteLink] = None
 
 
 class ChatBoostSourcePremium(BaseModel):
@@ -983,9 +983,9 @@ class ChatBoostSourceGiftCode(BaseModel):
 class ChatBoostSourceGiveaway(BaseModel):
     source: Literal["giveaway"] = "giveaway"
     giveaway_message_id: int
-    user: User | None = None
-    prize_star_count: int | None = None
-    is_unclaimed: Literal[True] | None = None
+    user: Optional[User] = None
+    prize_star_count: Optional[int] = None
+    is_unclaimed: Optional[Literal[True]] = None
 
 
 ChatBoostSource = Union[
@@ -1014,41 +1014,41 @@ class ChatBoostRemoved(BaseModel):
 
 class Update(BaseModel):
     update_id: int
-    message: Message | None = None
-    edited_message: Message | None = None
-    channel_post: Message | None = None
-    edited_channel_post: Message | None = None
-    business_connection: BusinessConnection | None = None
-    business_message: Message | None = None
-    edited_business_message: Message | None = None
-    deleted_business_messages: BusinessMessagesDeleted | None = None
-    message_reaction: MessageReactionUpdated | None = None
-    message_reaction_count: MessageReactionCountUpdated | None = None
-    inline_query: InlineQuery | None = None
-    chosen_inline_result: ChosenInlineResult | None = None
-    callback_query: CallbackQuery | None = None
-    shipping_query: ShippingQuery | None = None
-    pre_checkout_query: PreCheckoutQuery | None = None
-    purchased_paid_media: PaidMediaPurchased | None = None
-    poll: Poll | None = None
-    poll_answer: PollAnswer | None = None
-    my_chat_member: ChatMemberUpdated | None = None
-    chat_member: ChatMemberUpdated | None = None
-    chat_join_request: ChatJoinRequest | None = None
-    chat_boost: ChatBoostUpdated | None = None
-    removed_chat_boost: ChatBoostRemoved | None = None
+    message: Optional[Message] = None
+    edited_message: Optional[Message] = None
+    channel_post: Optional[Message] = None
+    edited_channel_post: Optional[Message] = None
+    business_connection: Optional[BusinessConnection] = None
+    business_message: Optional[Message] = None
+    edited_business_message: Optional[Message] = None
+    deleted_business_messages: Optional[BusinessMessagesDeleted] = None
+    message_reaction: Optional[MessageReactionUpdated] = None
+    message_reaction_count: Optional[MessageReactionCountUpdated] = None
+    inline_query: Optional[InlineQuery] = None
+    chosen_inline_result: Optional[ChosenInlineResult] = None
+    callback_query: Optional[CallbackQuery] = None
+    shipping_query: Optional[ShippingQuery] = None
+    pre_checkout_query: Optional[PreCheckoutQuery] = None
+    purchased_paid_media: Optional[PaidMediaPurchased] = None
+    poll: Optional[Poll] = None
+    poll_answer: Optional[PollAnswer] = None
+    my_chat_member: Optional[ChatMemberUpdated] = None
+    chat_member: Optional[ChatMemberUpdated] = None
+    chat_join_request: Optional[ChatJoinRequest] = None
+    chat_boost: Optional[ChatBoostUpdated] = None
+    removed_chat_boost: Optional[ChatBoostRemoved] = None
 
 
 class WebhookInfo(BaseModel):
     url: str
     has_custom_certificate: bool
     pending_update_count: int
-    ip_address: str | None = None
-    last_error_date: int | None = None
-    last_error_message: str | None = None
-    last_synchronization_error_date: int | None = None
-    max_connections: int | None = None
-    allowed_updates: list[str] | None = None
+    ip_address: Optional[str] = None
+    last_error_date: Optional[int] = None
+    last_error_message: Optional[str] = None
+    last_synchronization_error_date: Optional[int] = None
+    max_connections: Optional[int] = None
+    allowed_updates: Optional[list[str]] = None
 
 
 class ChatPhoto(BaseModel):
@@ -1061,18 +1061,18 @@ class ChatPhoto(BaseModel):
 class Birthdate(BaseModel):
     day: int
     month: int
-    year: int | None = None
+    year: Optional[int] = None
 
 
 class BusinessIntro(BaseModel):
-    title: str | None = None
-    message: str | None = None
-    sticker: Sticker | None = None
+    title: Optional[str] = None
+    message: Optional[str] = None
+    sticker: Optional[Sticker] = None
 
 
 class BusinessLocation(BaseModel):
     address: str
-    location: Location | None = None
+    location: Optional[Location] = None
 
 
 class BusinessOpeningHoursInterval(BaseModel):
@@ -1086,20 +1086,20 @@ class BusinessOpeningHours(BaseModel):
 
 
 class ChatPermissions(BaseModel):
-    can_send_messages: bool | None = None
-    can_send_audios: bool | None = None
-    can_send_documents: bool | None = None
-    can_send_photos: bool | None = None
-    can_send_videos: bool | None = None
-    can_send_video_notes: bool | None = None
-    can_send_voice_notes: bool | None = None
-    can_send_polls: bool | None = None
-    can_send_other_messages: bool | None = None
-    can_add_web_page_previews: bool | None = None
-    can_change_info: bool | None = None
-    can_invite_users: bool | None = None
-    can_pin_messages: bool | None = None
-    can_manage_topics: bool | None = None
+    can_send_messages: Optional[bool] = None
+    can_send_audios: Optional[bool] = None
+    can_send_documents: Optional[bool] = None
+    can_send_photos: Optional[bool] = None
+    can_send_videos: Optional[bool] = None
+    can_send_video_notes: Optional[bool] = None
+    can_send_voice_notes: Optional[bool] = None
+    can_send_polls: Optional[bool] = None
+    can_send_other_messages: Optional[bool] = None
+    can_add_web_page_previews: Optional[bool] = None
+    can_change_info: Optional[bool] = None
+    can_invite_users: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
 
 
 class ChatLocation(BaseModel):
@@ -1110,48 +1110,48 @@ class ChatLocation(BaseModel):
 class ChatFullInfo(BaseModel):
     id: int
     type: Literal["private", "group", "supergroup", "channel"]
-    title: str | None = None
-    username: str | None = None
-    first_name: str | None = None
-    last_name: str | None = None
-    is_forum: Literal[True] | None = None
+    title: Optional[str] = None
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    is_forum: Optional[Literal[True]] = None
     accent_color_id: int
     max_reaction_count: int
-    photo: ChatPhoto | None = None
-    active_usernames: list[str] | None = None
-    birthdate: Birthdate | None = None
-    business_intro: BusinessIntro | None = None
-    business_location: BusinessLocation | None = None
-    business_opening_hours: BusinessOpeningHours | None = None
-    personal_chat: Chat | None = None
-    available_reactions: list[ReactionType] | None = None
-    background_custom_emoji_id: str | None = None
-    profile_accent_color_id: int | None = None
-    profile_background_custom_emoji_id: str | None = None
-    emoji_status_custom_emoji_id: str | None = None
-    emoji_status_expiration_date: int | None = None
-    bio: str | None = None
-    has_private_forwards: Literal[True] | None = None
-    has_restricted_voice_and_video_messages: Literal[True] | None = None
-    join_to_send_messages: Literal[True] | None = None
-    join_by_request: Literal[True] | None = None
-    description: str | None = None
-    invite_link: str | None = None
+    photo: Optional[ChatPhoto] = None
+    active_usernames: Optional[list[str]] = None
+    birthdate: Optional[Birthdate] = None
+    business_intro: Optional[BusinessIntro] = None
+    business_location: Optional[BusinessLocation] = None
+    business_opening_hours: Optional[BusinessOpeningHours] = None
+    personal_chat: Optional[Chat] = None
+    available_reactions: Optional[list[ReactionType]] = None
+    background_custom_emoji_id: Optional[str] = None
+    profile_accent_color_id: Optional[int] = None
+    profile_background_custom_emoji_id: Optional[str] = None
+    emoji_status_custom_emoji_id: Optional[str] = None
+    emoji_status_expiration_date: Optional[int] = None
+    bio: Optional[str] = None
+    has_private_forwards: Optional[Literal[True]] = None
+    has_restricted_voice_and_video_messages: Optional[Literal[True]] = None
+    join_to_send_messages: Optional[Literal[True]] = None
+    join_by_request: Optional[Literal[True]] = None
+    description: Optional[str] = None
+    invite_link: Optional[str] = None
     pinned_message: Optional["Message"] = None
-    permissions: ChatPermissions | None = None
-    can_send_paid_media: Literal[True] | None = None
-    slow_mode_delay: int | None = None
-    unrestrict_boost_count: int | None = None
-    message_auto_delete_time: int | None = None
-    has_aggressive_anti_spam_enabled: Literal[True] | None = None
-    has_hidden_members: Literal[True] | None = None
-    has_protected_content: Literal[True] | None = None
-    has_visible_history: Literal[True] | None = None
-    sticker_set_name: str | None = None
-    can_set_sticker_set: Literal[True] | None = None
-    custom_emoji_sticker_set_name: str | None = None
-    linked_chat_id: int | None = None
-    location: ChatLocation | None = None
+    permissions: Optional[ChatPermissions] = None
+    can_send_paid_media: Optional[Literal[True]] = None
+    slow_mode_delay: Optional[int] = None
+    unrestrict_boost_count: Optional[int] = None
+    message_auto_delete_time: Optional[int] = None
+    has_aggressive_anti_spam_enabled: Optional[Literal[True]] = None
+    has_hidden_members: Optional[Literal[True]] = None
+    has_protected_content: Optional[Literal[True]] = None
+    has_visible_history: Optional[Literal[True]] = None
+    sticker_set_name: Optional[str] = None
+    can_set_sticker_set: Optional[Literal[True]] = None
+    custom_emoji_sticker_set_name: Optional[str] = None
+    linked_chat_id: Optional[int] = None
+    location: Optional[ChatLocation] = None
 
 
 class MessageId(BaseModel):
@@ -1160,18 +1160,18 @@ class MessageId(BaseModel):
 
 class ReplyParameters(BaseModel):
     message_id: int
-    chat_id: int | str | None = None
-    allow_sending_without_reply: bool | None = None
-    quote: str | None = None
-    quote_parse_mode: Literal["MarkdownV2", "HTML"] | None = None
-    quote_entities: list[MessageEntity] | None = None
-    quote_position: int | None = None
+    chat_id: Optional[Union[int, str]] = None
+    allow_sending_without_reply: Optional[bool] = None
+    quote: Optional[str] = None
+    quote_parse_mode: Optional[Literal["MarkdownV2", "HTML"]] = None
+    quote_entities: Optional[list[MessageEntity]] = None
+    quote_position: Optional[int] = None
 
 
 class InputPollOption(BaseModel):
     text: str
-    text_parse_mode: str | None = None
-    text_entities: list[MessageEntity] | None = None
+    text_parse_mode: Optional[str] = None
+    text_entities: Optional[list[MessageEntity]] = None
 
 
 class UserProfilePhotos(BaseModel):
@@ -1181,12 +1181,12 @@ class UserProfilePhotos(BaseModel):
 
 class KeyboardButtonRequestUsers(BaseModel):
     request_id: int
-    user_is_bot: bool | None = None
-    user_is_premium: bool | None = None
-    max_quantity: int | None = None
-    request_name: bool | None = None
-    request_username: bool | None = None
-    request_photo: bool | None = None
+    user_is_bot: Optional[bool] = None
+    user_is_premium: Optional[bool] = None
+    max_quantity: Optional[int] = None
+    request_name: Optional[bool] = None
+    request_username: Optional[bool] = None
+    request_photo: Optional[bool] = None
 
 
 class ChatAdministratorRights(BaseModel):
@@ -1201,65 +1201,65 @@ class ChatAdministratorRights(BaseModel):
     can_post_stories: bool
     can_edit_stories: bool
     can_delete_stories: bool
-    can_post_messages: bool | None = None
-    can_edit_messages: bool | None = None
-    can_pin_messages: bool | None = None
-    can_manage_topics: bool | None = None
+    can_post_messages: Optional[bool] = None
+    can_edit_messages: Optional[bool] = None
+    can_pin_messages: Optional[bool] = None
+    can_manage_topics: Optional[bool] = None
 
 
 class KeyboardButtonRequestChat(BaseModel):
     request_id: int
     chat_is_channel: bool
-    chat_is_forum: bool | None = None
-    chat_has_username: bool | None = None
-    chat_is_created: bool | None = None
-    user_administrator_rights: ChatAdministratorRights | None = None
-    bot_administrator_rights: ChatAdministratorRights | None = None
-    bot_is_member: bool | None = None
-    request_title: bool | None = None
-    request_username: bool | None = None
-    request_photo: bool | None = None
+    chat_is_forum: Optional[bool] = None
+    chat_has_username: Optional[bool] = None
+    chat_is_created: Optional[bool] = None
+    user_administrator_rights: Optional[ChatAdministratorRights] = None
+    bot_administrator_rights: Optional[ChatAdministratorRights] = None
+    bot_is_member: Optional[bool] = None
+    request_title: Optional[bool] = None
+    request_username: Optional[bool] = None
+    request_photo: Optional[bool] = None
 
 
 class KeyboardButtonPollType(BaseModel):
-    type: str | None = None
+    type: Optional[str] = None
 
 
 class KeyboardButton(BaseModel):
     text: str
-    request_users: KeyboardButtonRequestUsers | None = None
-    request_chat: KeyboardButtonRequestChat | None = None
-    request_contact: bool | None = None
-    request_location: bool | None = None
-    request_poll: KeyboardButtonPollType | None = None
-    web_app: WebAppInfo | None = None
+    request_users: Optional[KeyboardButtonRequestUsers] = None
+    request_chat: Optional[KeyboardButtonRequestChat] = None
+    request_contact: Optional[bool] = None
+    request_location: Optional[bool] = None
+    request_poll: Optional[KeyboardButtonPollType] = None
+    web_app: Optional[WebAppInfo] = None
 
 
 class ReplyKeyboardMarkup(BaseModel):
     keyboard: list[list[KeyboardButton]]
-    is_persistent: bool | None = None
-    resize_keyboard: bool | None = None
-    one_time_keyboard: bool | None = None
-    input_field_placeholder: str | None = None
-    selective: bool | None = None
+    is_persistent: Optional[bool] = None
+    resize_keyboard: Optional[bool] = None
+    one_time_keyboard: Optional[bool] = None
+    input_field_placeholder: Optional[str] = None
+    selective: Optional[bool] = None
 
 
 class ReplyKeyboardRemove(BaseModel):
     remove_keyboard: Literal[True]
-    selective: bool | None = None
+    selective: Optional[bool] = None
 
 
 class ForceReply(BaseModel):
     force_reply: Literal[True]
-    input_field_placeholder: str | None = None
-    selective: bool | None = None
+    input_field_placeholder: Optional[str] = None
+    selective: Optional[bool] = None
 
 
 class ForumTopic(BaseModel):
     message_thread_id: int
     name: str
     icon_color: int
-    icon_custom_emoji_id: str | None = None
+    icon_custom_emoji_id: Optional[str] = None
 
 
 class BotCommand(BaseModel):
@@ -1285,17 +1285,17 @@ class BotCommandScopeAllChatAdministrators(BaseModel):
 
 class BotCommandScopeChat(BaseModel):
     type: Literal["chat"] = "chat"
-    chat_id: int | str
+    chat_id: Union[int, str]
 
 
 class BotCommandScopeChatAdministrators(BaseModel):
     type: Literal["chat_administrators"] = "chat_administrators"
-    chat_id: int | str
+    chat_id: Union[int, str]
 
 
 class BotCommandScopeChatMember(BaseModel):
     type: Literal["chat_member"] = "chat_member"
-    chat_id: int | str
+    chat_id: Union[int, str]
     user_id: int
 
 
@@ -1344,8 +1344,8 @@ class UserChatBoosts(BaseModel):
 
 
 class ResponseParameters(BaseModel):
-    migrate_to_chat_id: int | None = None
-    retry_after: int | None = None
+    migrate_to_chat_id: Optional[int] = None
+    retry_after: Optional[int] = None
 
 
 InputFile = Union[bytes, tuple[str, bytes]]
@@ -1353,62 +1353,62 @@ InputFile = Union[bytes, tuple[str, bytes]]
 
 class InputMediaAnimation(BaseModel):
     type: Literal["animation"] = "animation"
-    media: str | InputFile
-    thumbnail: str | InputFile | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    width: int | None = None
-    height: int | None = None
-    duration: int | None = None
-    has_spoiler: bool | None = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+    has_spoiler: Optional[bool] = None
 
 
 class InputMediaDocument(BaseModel):
     type: Literal["document"] = "document"
-    media: str | InputFile
-    thumbnail: str | InputFile | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    disable_content_type_detection: bool | None = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    disable_content_type_detection: Optional[bool] = None
 
 
 class InputMediaAudio(BaseModel):
     type: Literal["audio"] = "audio"
-    media: str | InputFile
-    thumbnail: str | InputFile | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    duration: int | None = None
-    performer: str | None = None
-    title: str | None = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    duration: Optional[int] = None
+    performer: Optional[str] = None
+    title: Optional[str] = None
 
 
 class InputMediaPhoto(BaseModel):
     type: Literal["photo"] = "photo"
-    media: str | InputFile
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    has_spoiler: bool | None = None
+    media: Union[str, InputFile]
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    has_spoiler: Optional[bool] = None
 
 
 class InputMediaVideo(BaseModel):
     type: Literal["video"] = "video"
-    media: str | InputFile
-    thumbnail: str | InputFile | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    width: int | None = None
-    height: int | None = None
-    duration: int | None = None
-    supports_streaming: bool | None = None
-    has_spoiler: bool | None = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+    supports_streaming: Optional[bool] = None
+    has_spoiler: Optional[bool] = None
 
 
 InputMedia = Union[
@@ -1422,17 +1422,17 @@ InputMedia = Union[
 
 class InputPaidMediaPhoto(BaseModel):
     type: Literal["photo"] = "photo"
-    media: str | InputFile
+    media: Union[str, InputFile]
 
 
 class InputPaidMediaVideo(BaseModel):
     type: Literal["video"] = "video"
-    media: str | InputFile
-    thumbnail: str | InputFile | None = None
-    width: int | None = None
-    height: int | None = None
-    duration: int | None = None
-    supports_streaming: bool | None = None
+    media: Union[str, InputFile]
+    thumbnail: Optional[Union[str, InputFile]] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
+    duration: Optional[int] = None
+    supports_streaming: Optional[bool] = None
 
 
 InputPaidMedia = Union[InputPaidMediaPhoto, InputPaidMediaVideo]
@@ -1443,37 +1443,37 @@ class StickerSet(BaseModel):
     title: str
     sticker_type: Literal["regular", "mask", "custom_emoji"]
     stickers: list[Sticker]
-    thumbnail: PhotoSize | None = None
+    thumbnail: Optional[PhotoSize] = None
 
 
 class InputSticker(BaseModel):
-    sticker: str | InputFile
+    sticker: Union[str, InputFile]
     format: Literal["static", "animated", "video"]
     emoji_list: list[str]
-    mask_position: MaskPosition | None = None
-    keywords: list[str] | None = None
+    mask_position: Optional[MaskPosition] = None
+    keywords: Optional[list[str]] = None
 
 
 class InlineQueryResultsButton(BaseModel):
     text: str
-    web_app: WebAppInfo | None = None
-    start_parameter: str | None = None
+    web_app: Optional[WebAppInfo] = None
+    start_parameter: Optional[str] = None
 
 
 class InputTextMessageContent(BaseModel):
     message_text: str
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    entities: list[MessageEntity] | None = None
-    link_preview_options: LinkPreviewOptions | None = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    entities: Optional[list[MessageEntity]] = None
+    link_preview_options: Optional[LinkPreviewOptions] = None
 
 
 class InputLocationMessageContent(BaseModel):
     latitude: float
     longitude: float
-    horizontal_accuracy: float | None = None
-    live_period: int | None = None
-    heading: int | None = None
-    proximity_alert_radius: int | None = None
+    horizontal_accuracy: Optional[float] = None
+    live_period: Optional[int] = None
+    heading: Optional[int] = None
+    proximity_alert_radius: Optional[int] = None
 
 
 class InputVenueMessageContent(BaseModel):
@@ -1481,17 +1481,17 @@ class InputVenueMessageContent(BaseModel):
     longitude: float
     title: str
     address: str
-    foursquare_id: str | None = None
-    foursquare_type: str | None = None
-    google_place_id: str | None = None
-    google_place_type: str | None = None
+    foursquare_id: Optional[str] = None
+    foursquare_type: Optional[str] = None
+    google_place_id: Optional[str] = None
+    google_place_type: Optional[str] = None
 
 
 class InputContactMessageContent(BaseModel):
     phone_number: str
     first_name: str
-    last_name: str | None = None
-    vcard: str | None = None
+    last_name: Optional[str] = None
+    vcard: Optional[str] = None
 
 
 class LabeledPrice(BaseModel):
@@ -1503,23 +1503,23 @@ class InputInvoiceMessageContent(BaseModel):
     title: str
     description: str
     payload: str
-    provider_token: str | None = None
+    provider_token: Optional[str] = None
     currency: str
     prices: list[LabeledPrice]
-    max_tip_amount: int | None = None
-    suggested_tip_amounts: list[int] | None = None
-    provider_data: str | None = None
-    photo_url: str | None = None
-    photo_size: int | None = None
-    photo_width: int | None = None
-    photo_height: int | None = None
-    need_name: bool | None = None
-    need_phone_number: bool | None = None
-    need_email: bool | None = None
-    need_shipping_address: bool | None = None
-    send_phone_number_to_provider: bool | None = None
-    send_email_to_provider: bool | None = None
-    is_flexible: bool | None = None
+    max_tip_amount: Optional[int] = None
+    suggested_tip_amounts: Optional[list[int]] = None
+    provider_data: Optional[str] = None
+    photo_url: Optional[str] = None
+    photo_size: Optional[int] = None
+    photo_width: Optional[int] = None
+    photo_height: Optional[int] = None
+    need_name: Optional[bool] = None
+    need_phone_number: Optional[bool] = None
+    need_email: Optional[bool] = None
+    need_shipping_address: Optional[bool] = None
+    send_phone_number_to_provider: Optional[bool] = None
+    send_email_to_provider: Optional[bool] = None
+    is_flexible: Optional[bool] = None
 
 
 InputMessageContent = Union[
@@ -1535,11 +1535,11 @@ class InlineQueryResultCachedAudio(BaseModel):
     type: Literal["audio"] = "audio"
     id: str
     audio_file_id: str
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedDocument(BaseModel):
@@ -1547,60 +1547,60 @@ class InlineQueryResultCachedDocument(BaseModel):
     id: str
     title: str
     document_file_id: str
-    description: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    description: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedGif(BaseModel):
     type: Literal["gif"] = "gif"
     id: str
     gif_file_id: str
-    title: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    title: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedMpeg4Gif(BaseModel):
     type: Literal["mpeg4_gif"] = "mpeg4_gif"
     id: str
     mpeg4_file_id: str
-    title: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    title: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedPhoto(BaseModel):
     type: Literal["photo"] = "photo"
     id: str
     photo_file_id: str
-    title: str | None = None
-    description: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedSticker(BaseModel):
     type: Literal["sticker"] = "sticker"
     id: str
     sticker_file_id: str
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedVideo(BaseModel):
@@ -1608,13 +1608,13 @@ class InlineQueryResultCachedVideo(BaseModel):
     id: str
     video_file_id: str
     title: str
-    description: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    description: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultCachedVoice(BaseModel):
@@ -1622,11 +1622,11 @@ class InlineQueryResultCachedVoice(BaseModel):
     id: str
     voice_file_id: str
     title: str
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultArticle(BaseModel):
@@ -1634,13 +1634,13 @@ class InlineQueryResultArticle(BaseModel):
     id: str
     title: str
     input_message_content: InputMessageContent
-    reply_markup: InlineKeyboardMarkup | None = None
-    url: str | None = None
-    hide_url: bool | None = None
-    description: str | None = None
-    thumbnail_url: str | None = None
-    thumbnail_width: int | None = None
-    thumbnail_height: int | None = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    url: Optional[str] = None
+    hide_url: Optional[bool] = None
+    description: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultAudio(BaseModel):
@@ -1648,13 +1648,13 @@ class InlineQueryResultAudio(BaseModel):
     id: str
     audio_url: str
     title: str
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    performer: str | None = None
-    audio_duration: int | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    performer: Optional[str] = None
+    audio_duration: Optional[int] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultContact(BaseModel):
@@ -1662,55 +1662,55 @@ class InlineQueryResultContact(BaseModel):
     id: str
     phone_number: str
     first_name: str
-    last_name: str | None = None
-    vcard: str | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
-    thumbnail_url: str | None = None
-    thumbnail_width: int | None = None
-    thumbnail_height: int | None = None
+    last_name: Optional[str] = None
+    vcard: Optional[str] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultGame(BaseModel):
     type: Literal["game"] = "game"
     id: str
     game_short_name: str
-    reply_markup: InlineKeyboardMarkup | None = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
 
 
 class InlineQueryResultDocument(BaseModel):
     type: Literal["document"] = "document"
     id: str
     title: str
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
     document_url: str
     mime_type: str
-    description: str | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
-    thumbnail_url: str | None = None
-    thumbnail_width: int | None = None
-    thumbnail_height: int | None = None
+    description: Optional[str] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultGif(BaseModel):
     type: Literal["gif"] = "gif"
     id: str
     gif_url: str
-    gif_width: int | None = None
-    gif_height: int | None = None
-    gif_duration: int | None = None
+    gif_width: Optional[int] = None
+    gif_height: Optional[int] = None
+    gif_duration: Optional[int] = None
     thumbnail_url: str
-    thumbnail_mime_type: str | None = None
-    title: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    thumbnail_mime_type: Optional[str] = None
+    title: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultLocation(BaseModel):
@@ -1719,33 +1719,33 @@ class InlineQueryResultLocation(BaseModel):
     latitude: float
     longitude: float
     title: str
-    horizontal_accuracy: float | None = None
-    live_period: int | None = None
-    heading: int | None = None
-    proximity_alert_radius: int | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
-    thumbnail_url: str | None = None
-    thumbnail_width: int | None = None
-    thumbnail_height: int | None = None
+    horizontal_accuracy: Optional[float] = None
+    live_period: Optional[int] = None
+    heading: Optional[int] = None
+    proximity_alert_radius: Optional[int] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultMpeg4Gif(BaseModel):
     type: Literal["mpeg4_gif"] = "mpeg4_gif"
     id: str
     mpeg4_url: str
-    mpeg4_width: int | None = None
-    mpeg4_height: int | None = None
-    mpeg4_duration: int | None = None
+    mpeg4_width: Optional[int] = None
+    mpeg4_height: Optional[int] = None
+    mpeg4_duration: Optional[int] = None
     thumbnail_url: str
-    thumbnail_mime_type: str | None = None
-    title: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    thumbnail_mime_type: Optional[str] = None
+    title: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultPhoto(BaseModel):
@@ -1753,16 +1753,16 @@ class InlineQueryResultPhoto(BaseModel):
     id: str
     photo_url: str
     thumbnail_url: str
-    photo_width: int | None = None
-    photo_height: int | None = None
-    title: str | None = None
-    description: str | None = None
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    photo_width: Optional[int] = None
+    photo_height: Optional[int] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultVenue(BaseModel):
@@ -1772,15 +1772,15 @@ class InlineQueryResultVenue(BaseModel):
     longitude: float
     title: str
     address: str
-    foursquare_id: str | None = None
-    foursquare_type: str | None = None
-    google_place_id: str | None = None
-    google_place_type: str | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
-    thumbnail_url: str | None = None
-    thumbnail_width: int | None = None
-    thumbnail_height: int | None = None
+    foursquare_id: Optional[str] = None
+    foursquare_type: Optional[str] = None
+    google_place_id: Optional[str] = None
+    google_place_type: Optional[str] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
+    thumbnail_url: Optional[str] = None
+    thumbnail_width: Optional[int] = None
+    thumbnail_height: Optional[int] = None
 
 
 class InlineQueryResultVideo(BaseModel):
@@ -1790,16 +1790,16 @@ class InlineQueryResultVideo(BaseModel):
     mime_type: str
     thumbnail_url: str
     title: str
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    show_caption_above_media: bool | None = None
-    video_width: int | None = None
-    video_height: int | None = None
-    video_duration: int | None = None
-    description: str | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    show_caption_above_media: Optional[bool] = None
+    video_width: Optional[int] = None
+    video_height: Optional[int] = None
+    video_duration: Optional[int] = None
+    description: Optional[str] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 class InlineQueryResultVoice(BaseModel):
@@ -1807,12 +1807,12 @@ class InlineQueryResultVoice(BaseModel):
     id: str
     voice_url: str
     title: str
-    caption: str | None = None
-    parse_mode: Literal["MarkdownV2", "Markdown" "HTML"] | None = None
-    caption_entities: list[MessageEntity] | None = None
-    voice_duration: int | None = None
-    reply_markup: InlineKeyboardMarkup | None = None
-    input_message_content: InputMessageContent | None = None
+    caption: Optional[str] = None
+    parse_mode: Optional[Literal["MarkdownV2", "Markdown" "HTML"]] = None
+    caption_entities: Optional[list[MessageEntity]] = None
+    voice_duration: Optional[int] = None
+    reply_markup: Optional[InlineKeyboardMarkup] = None
+    input_message_content: Optional[InputMessageContent] = None
 
 
 InlineQueryResult = Union[
@@ -1840,7 +1840,7 @@ InlineQueryResult = Union[
 
 
 class SentWebAppMessage(BaseModel):
-    inline_message_id: str | None = None
+    inline_message_id: Optional[str] = None
 
 
 class ShippingOption(BaseModel):
@@ -1873,14 +1873,14 @@ RevenueWithdrawalState = Union[
 class TransactionPartnerUser(BaseModel):
     type: str
     user: User
-    invoice_payload: str | None = None
-    paid_media: list[PaidMedia] | None = None
-    paid_media_payload: str | None = None
+    invoice_payload: Optional[str] = None
+    paid_media: Optional[list[PaidMedia]] = None
+    paid_media_payload: Optional[str] = None
 
 
 class TransactionPartnerFragment(BaseModel):
     type: str
-    withdrawal_state: RevenueWithdrawalState | None = None
+    withdrawal_state: Optional[RevenueWithdrawalState] = None
 
 
 class TransactionPartnerTelegramAds(BaseModel):
@@ -1909,8 +1909,8 @@ class StarTransaction(BaseModel):
     id: str
     amount: int
     date: int
-    source: TransactionPartner | None = None
-    receiver: TransactionPartner | None = None
+    source: Optional[TransactionPartner] = None
+    receiver: Optional[TransactionPartner] = None
 
 
 class StarTransactions(BaseModel):

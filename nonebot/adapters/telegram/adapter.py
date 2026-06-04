@@ -1,8 +1,8 @@
 import json
 import asyncio
-from typing import Any, cast
 from collections.abc import Iterable
 from typing_extensions import override
+from typing import Any, Union, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
@@ -169,7 +169,7 @@ class Adapter(BaseAdapter):
         request_timeout = UNSET
         if api == "getUpdates":
             timeout = data.get("timeout")
-            if not isinstance(timeout, bool) and isinstance(timeout, int | float):
+            if not isinstance(timeout, bool) and isinstance(timeout, (int, float)):
                 # Telegram timeout is server-side long polling; the HTTP read
                 # timeout must be slightly longer.
                 request_timeout = Timeout(
@@ -183,7 +183,7 @@ class Adapter(BaseAdapter):
         files: dict[str, tuple[str, bytes]] = {}
         bytes_upload_count = 0
 
-        async def process_input_file(file: InputFile | str) -> str | None:
+        async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
             """处理传过来的文件，如果文件被添加到 files 列表则返回文件名"""
             nonlocal bytes_upload_count
             filename = None
@@ -232,7 +232,7 @@ class Adapter(BaseAdapter):
         ):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
-                value = cast(str | bytes | None, data.pop(key, None))
+                value = cast(Optional[Union[str, bytes]], data.pop(key, None))
                 if value:
                     filename = await process_input_file(value)
                     data[key] = f"attach://{filename}" if filename else value

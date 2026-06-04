@@ -1,8 +1,8 @@
 import inspect
 from uuid import uuid4
-from typing import Any, cast
 from functools import partial
 from typing_extensions import override
+from typing import Any, Union, Optional, cast
 
 from pydantic import TypeAdapter
 from nonebot.message import handle_event
@@ -34,13 +34,13 @@ class Bot(BaseBot, API):
         adapter: "Adapter",
         self_id: str,
         *,
-        config: BotConfig | None = None,
+        config: Optional[BotConfig] = None,
     ):
         if not config:
             raise ValueError("config is required")
 
         super().__init__(adapter, self_id)
-        self.username: str | None = None
+        self.username: Optional[str] = None
         self.bot_config = config
         self.secret_token = uuid4().hex
 
@@ -104,7 +104,7 @@ class Bot(BaseBot, API):
             )
         return await super().call_api(api, **kargs)
 
-    def __getattribute__(self, __name: str) -> Any:
+    def __getattribute__(self, __name: str, /) -> Any:
         if not __name.startswith("__") and hasattr(API, __name):
             return partial(self.call_api, __name)
         return object.__getattribute__(self, __name)
@@ -112,13 +112,13 @@ class Bot(BaseBot, API):
     # TODO 重构
     async def send_to(
         self,
-        chat_id: int | str,
-        message: str | Message | MessageSegment,
-        message_thread_id: int | None = None,
-        disable_notification: bool | None = None,
-        protect_content: bool | None = None,
-        reply_to_message_id: int | None = None,  # Deprecated
-        allow_sending_without_reply: bool | None = None,  # Deprecated
+        chat_id: Union[int, str],
+        message: Union[str, Message, MessageSegment],
+        message_thread_id: Optional[int] = None,
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
+        reply_to_message_id: Optional[int] = None,  # Deprecated
+        allow_sending_without_reply: Optional[bool] = None,  # Deprecated
         media_group_caption_index: int = 0,  # 非 Telegram 原生参数
         **kwargs,
     ):
@@ -273,9 +273,9 @@ class Bot(BaseBot, API):
     async def send(
         self,
         event: Event,
-        message: str | Message | MessageSegment,
-        disable_notification: bool | None = None,
-        protect_content: bool | None = None,
+        message: Union[str, Message, MessageSegment],
+        disable_notification: Optional[bool] = None,
+        protect_content: Optional[bool] = None,
         **kwargs,
     ) -> Any:
         if not isinstance(event, EventWithChat):
@@ -289,7 +289,7 @@ class Bot(BaseBot, API):
         )
 
         message_thread_id = cast(
-            int | None,
+            Optional[int],
             getattr(event, "message_thread_id", None),
         )
 

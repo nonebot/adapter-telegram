@@ -45,7 +45,7 @@ tests = [
 
 [tool.black]
 line-length = 88
-target-version = ["py310", "py311", "py312"]
+target-version = ["py39", "py310", "py311", "py312"]
 include = '\.pyi?$'
 extend-exclude = '''
 '''
@@ -61,7 +61,7 @@ extra_standard_library = ["typing_extensions"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py39"
 
 [tool.ruff.lint]
 select = [
@@ -96,7 +96,7 @@ addopts = "--cov nonebot/adapters/telegram --cov-report term-missing"
 
 [tool.pyright]
 reportShadowedImports = false
-pythonVersion = "3.10"
+pythonVersion = "3.9"
 pythonPlatform = "All"
 typeCheckingMode = "basic"
 ignore = ["./example", "./tests"]

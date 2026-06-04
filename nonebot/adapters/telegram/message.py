@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 from typing_extensions import override
-from typing import Any, Literal, TypeVar
+from typing import Any, Union, Literal, TypeVar, Optional
 
 from nonebot.adapters import Message as BaseMessage
 from nonebot.adapters import MessageSegment as BaseMessageSegment
@@ -50,10 +50,10 @@ class MessageSegment(BaseMessageSegment):
     def location(
         latitude: float,
         longitude: float,
-        horizontal_accuracy: float | None = None,
-        live_period: int | None = None,
-        heading: int | None = None,
-        proximity_alert_radius: int | None = None,
+        horizontal_accuracy: Optional[float] = None,
+        live_period: Optional[int] = None,
+        heading: Optional[int] = None,
+        proximity_alert_radius: Optional[int] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "location",
@@ -73,10 +73,10 @@ class MessageSegment(BaseMessageSegment):
         longitude: float,
         title: str,
         address: str,
-        foursquare_id: str | None = None,
-        foursquare_type: str | None = None,
-        google_place_id: str | None = None,
-        google_place_type: str | None = None,
+        foursquare_id: Optional[str] = None,
+        foursquare_type: Optional[str] = None,
+        google_place_id: Optional[str] = None,
+        google_place_type: Optional[str] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "venue",
@@ -96,13 +96,13 @@ class MessageSegment(BaseMessageSegment):
     def poll(
         question: str,
         options: list[str],
-        is_anonymous: bool | None = None,
-        type: str | None = None,
-        allows_multiple_answers: bool | None = None,
-        correct_option_id: int | None = None,
-        explanation: str | None = None,
-        open_period: int | None = None,
-        close_date: int | None = None,
+        is_anonymous: Optional[bool] = None,
+        type: Optional[str] = None,
+        allows_multiple_answers: Optional[bool] = None,
+        correct_option_id: Optional[int] = None,
+        explanation: Optional[str] = None,
+        open_period: Optional[int] = None,
+        close_date: Optional[int] = None,
     ) -> "MessageSegment":
         return MessageSegment(
             "poll",
@@ -166,10 +166,10 @@ class Reply(MessageSegment):
     @staticmethod
     def reply(
         message_id: int,
-        chat_id: int | str | None = None,
-        allow_sending_without_reply: bool | None = None,
-        quote: str | None = None,
-        quote_position: int | None = None,
+        chat_id: Optional[Union[int, str]] = None,
+        allow_sending_without_reply: Optional[bool] = None,
+        quote: Optional[str] = None,
+        quote_position: Optional[int] = None,
     ):
         return Reply(
             "reply",
@@ -353,19 +353,19 @@ class Entity(MessageSegment):
 class File(MessageSegment):
     @staticmethod
     def photo(
-        file: str | bytes | tuple[str, bytes], has_spoiler: bool | None = None
+        file: Union[str, bytes, tuple[str, bytes]], has_spoiler: Optional[bool] = None
     ) -> "MessageSegment":
         return File("photo", {"file": file, "has_spoiler": has_spoiler})
 
     @staticmethod
-    def voice(file: str | bytes | tuple[str, bytes]) -> "MessageSegment":
+    def voice(file: Union[str, bytes, tuple[str, bytes]]) -> "MessageSegment":
         return File("voice", {"file": file})
 
     @staticmethod
     def animation(
-        file: str | bytes | tuple[str, bytes],
-        thumbnail: None | str | bytes = None,
-        has_spoiler: bool | None = None,
+        file: Union[str, bytes, tuple[str, bytes]],
+        thumbnail: Union[None, str, bytes] = None,
+        has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
         return File(
             "animation",
@@ -374,23 +374,23 @@ class File(MessageSegment):
 
     @staticmethod
     def audio(
-        file: str | bytes | tuple[str, bytes],
-        thumbnail: None | str | bytes = None,
+        file: Union[str, bytes, tuple[str, bytes]],
+        thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         return File("audio", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def document(
-        file: str | bytes | tuple[str, bytes],
-        thumbnail: None | str | bytes = None,
+        file: Union[str, bytes, tuple[str, bytes]],
+        thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         return File("document", {"file": file, "thumbnail": thumbnail})
 
     @staticmethod
     def video(
-        file: str | bytes | tuple[str, bytes],
-        thumbnail: None | str | bytes = None,
-        has_spoiler: bool | None = None,
+        file: Union[str, bytes, tuple[str, bytes]],
+        thumbnail: Union[None, str, bytes] = None,
+        has_spoiler: Optional[bool] = None,
     ) -> "MessageSegment":
         return File(
             "video",
@@ -400,13 +400,13 @@ class File(MessageSegment):
 
 class UnCombinFile(File):
     @staticmethod
-    def sticker(file: str | bytes | tuple[str, bytes]) -> "MessageSegment":
+    def sticker(file: Union[str, bytes, tuple[str, bytes]]) -> "MessageSegment":
         return File("sticker", {"file": file})
 
     @staticmethod
     def video_note(
-        file: str | bytes | tuple[str, bytes],
-        thumbnail: None | str | bytes = None,
+        file: Union[str, bytes, tuple[str, bytes]],
+        thumbnail: Union[None, str, bytes] = None,
     ) -> "MessageSegment":
         """
         不支持 URL

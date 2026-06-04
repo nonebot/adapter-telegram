@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import Field, BaseModel, ConfigDict
 
 
@@ -28,9 +30,9 @@ class AdapterConfig(BaseModel):
       - ``telegram_webhook_url``: 自定义 webhook url
     """
 
-    proxy: str | None = Field(default=None, alias="telegram_proxy")
+    proxy: Optional[str] = Field(default=None, alias="telegram_proxy")
     telegram_bots: list["BotConfig"] = []
-    telegram_webhook_url: str | None = None
+    telegram_webhook_url: Optional[str] = None
     model_config: ConfigDict = ConfigDict(
         extra="ignore",
         populate_by_name=True,
