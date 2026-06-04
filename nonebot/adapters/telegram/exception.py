@@ -1,5 +1,3 @@
-from typing import Optional
-
 from nonebot.exception import AdapterException
 from nonebot.exception import ActionFailed as BaseActionFailed
 from nonebot.exception import NetworkError as BaseNetworkError
@@ -22,7 +20,7 @@ class ActionFailed(BaseActionFailed, TelegramAdapterException):
       API 请求返回错误信息。
     """
 
-    def __init__(self, description: Optional[str] = None):
+    def __init__(self, description: str | None = None):
         super().__init__()
         self.description = description
 
@@ -39,7 +37,7 @@ class NetworkError(BaseNetworkError, TelegramAdapterException):
       网络错误。
     """
 
-    def __init__(self, msg: Optional[str] = None):
+    def __init__(self, msg: str | None = None):
         super().__init__()
         self.msg = msg
 

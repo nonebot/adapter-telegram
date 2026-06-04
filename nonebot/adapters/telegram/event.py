@@ -129,16 +129,16 @@ class MessageEvent(Event):
     message_id: int
     date: int
     chat: Chat
-    forward_from: Optional[User] = None
-    forward_from_chat: Optional[Chat] = None
-    forward_from_message_id: Optional[int] = None
-    forward_signature: Optional[str] = None
-    forward_sender_name: Optional[str] = None
-    forward_date: Optional[int] = None
-    via_bot: Optional[User] = None
-    has_protected_content: Optional[Literal[True]] = None
-    media_group_id: Optional[str] = None
-    author_signature: Optional[str] = None
+    forward_from: User | None = None
+    forward_from_chat: Chat | None = None
+    forward_from_message_id: int | None = None
+    forward_signature: str | None = None
+    forward_sender_name: str | None = None
+    forward_date: int | None = None
+    via_bot: User | None = None
+    has_protected_content: Literal[True] | None = None
+    media_group_id: str | None = None
+    author_signature: str | None = None
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
     original_message: Message = Message()
@@ -227,7 +227,7 @@ class GroupMessageEvent(MessageEvent):
         return event
 
     from_: User = Field(alias="from")
-    sender_chat: Optional[Chat] = None
+    sender_chat: Chat | None = None
 
     @override
     def get_event_name(self) -> str:
@@ -269,7 +269,7 @@ class ForumTopicMessageEvent(GroupMessageEvent):
 
 
 class ChannelPostEvent(MessageEvent):
-    sender_chat: Optional[Chat] = None
+    sender_chat: Chat | None = None
 
     @override
     def get_event_name(self) -> str:
@@ -284,10 +284,10 @@ class EditedMessageEvent(Event):
     message_id: int
     date: int
     chat: Chat
-    via_bot: Optional[User] = None
+    via_bot: User | None = None
     edit_date: int
-    media_group_id: Optional[str] = None
-    author_signature: Optional[str] = None
+    media_group_id: str | None = None
+    author_signature: str | None = None
     reply_to_message: Optional["MessageEvent"] = None
     message: Message = Message()
 
@@ -335,7 +335,7 @@ class EditedMessageEvent(Event):
 
 class PrivateEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(alias="from")
-    sender_chat: Optional[Chat] = None
+    sender_chat: Chat | None = None
 
     @override
     def get_event_name(self) -> str:
@@ -363,7 +363,7 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 
 class GroupEditedMessageEvent(EditedMessageEvent):
     from_: User = Field(default=None, alias="from")
-    sender_chat: Optional[Chat] = None
+    sender_chat: Chat | None = None
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
@@ -414,7 +414,7 @@ class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
 
 
 class EditedChannelPostEvent(EditedMessageEvent):
-    sender_chat: Optional[Chat] = None
+    sender_chat: Chat | None = None
 
     @override
     def get_event_name(self) -> str:
@@ -466,8 +466,8 @@ class NoticeEvent(Event):
 
 class PinnedMessageEvent(NoticeEvent):
     message_id: int
-    from_: Optional[User] = Field(alias="from")
-    sender_chat: Optional[Chat] = None
+    from_: User | None = Field(alias="from")
+    sender_chat: Chat | None = None
     chat: Chat
     date: int
     pinned_message: MessageEvent = Field(default=None)
@@ -497,7 +497,7 @@ class PinnedMessageEvent(NoticeEvent):
 
 class NewChatMemberEvent(NoticeEvent):
     message_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     new_chat_members: list[User]
@@ -509,7 +509,7 @@ class NewChatMemberEvent(NoticeEvent):
 
 class LeftChatMemberEvent(NoticeEvent):
     message_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     left_chat_member: User
@@ -539,7 +539,7 @@ class PollAnswerEvent(NoticeEvent, PollAnswer):
 
 class NewChatTitleEvent(NoticeEvent):
     date: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     new_chat_title: str
 
@@ -550,7 +550,7 @@ class NewChatTitleEvent(NoticeEvent):
 
 class NewChatPhotoEvent(NoticeEvent):
     date: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     new_chat_photo: list[PhotoSize]
 
@@ -561,7 +561,7 @@ class NewChatPhotoEvent(NoticeEvent):
 
 class DeleteChatPhotoEvent(NoticeEvent):
     date: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     delete_chat_photo: Literal[True]
 
@@ -572,7 +572,7 @@ class DeleteChatPhotoEvent(NoticeEvent):
 
 class ForumTopicCreatedEvent(NoticeEvent):
     message_thread_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     forum_topic_created: ForumTopicCreated
@@ -584,7 +584,7 @@ class ForumTopicCreatedEvent(NoticeEvent):
 
 class ForumTopicEditedEvent(NoticeEvent):
     message_thread_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     forum_topic_edited: ForumTopicEdited
@@ -596,7 +596,7 @@ class ForumTopicEditedEvent(NoticeEvent):
 
 class ForumTopicClosedEvent(NoticeEvent):
     message_thread_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     forum_topic_closed: ForumTopicClosed
@@ -608,7 +608,7 @@ class ForumTopicClosedEvent(NoticeEvent):
 
 class ForumTopicReopenedEvent(NoticeEvent):
     message_thread_id: int
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     forum_topic_reopened: ForumTopicReopened
@@ -619,7 +619,7 @@ class ForumTopicReopenedEvent(NoticeEvent):
 
 
 class GeneralForumTopicHiddenEvent(NoticeEvent):
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     general_forum_topic_hidden: GeneralForumTopicHidden
@@ -630,7 +630,7 @@ class GeneralForumTopicHiddenEvent(NoticeEvent):
 
 
 class GeneralForumTopicUnhiddenEvent(NoticeEvent):
-    from_: Optional[User] = Field(default=None, alias="from")
+    from_: User | None = Field(default=None, alias="from")
     chat: Chat
     date: int
     general_forum_topic_unhidden: GeneralForumTopicUnhidden
