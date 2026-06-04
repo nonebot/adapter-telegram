@@ -1,14 +1,22 @@
 import json
 import asyncio
+from typing import Any, cast
 from collections.abc import Iterable
 from typing_extensions import override
-from typing import Any, Union, Optional, cast
 
 import anyio
 from pydantic.main import BaseModel
 from pydantic.json import pydantic_encoder
-from nonebot.utils import escape_tag, logger_wrapper
-from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
+from nonebot.utils import UNSET, escape_tag, logger_wrapper
+from nonebot.drivers import (
+    URL,
+    DEFAULT_TIMEOUT,
+    Driver,
+    Request,
+    Timeout,
+    Response,
+    HTTPServerSetup,
+)
 
 from nonebot.adapters import Adapter as BaseAdapter
 
@@ -152,12 +160,24 @@ class Adapter(BaseAdapter):
             s.capitalize() for s in api.split("_")[1:]
         )
         data = _escape_none(data)
+        request_timeout = UNSET
+        if api == "getUpdates":
+            timeout = data.get("timeout")
+            if not isinstance(timeout, bool) and isinstance(timeout, int | float):
+                # Telegram timeout is server-side long polling; the HTTP read
+                # timeout must be slightly longer.
+                request_timeout = Timeout(
+                    total=DEFAULT_TIMEOUT.total,
+                    connect=DEFAULT_TIMEOUT.connect,
+                    read=float(timeout) + 5,
+                    close=DEFAULT_TIMEOUT.close,
+                )
 
         # 分离文件到 files
         files: dict[str, tuple[str, bytes]] = {}
         bytes_upload_count = 0
 
-        async def process_input_file(file: Union[InputFile, str]) -> Optional[str]:
+        async def process_input_file(file: InputFile | str) -> str | None:
             """处理传过来的文件，如果文件被添加到 files 列表则返回文件名"""
             nonlocal bytes_upload_count
             filename = None
@@ -206,7 +226,7 @@ class Adapter(BaseAdapter):
         ):
             type = api[4:].lower()
             for key in (type, "thumbnail"):
-                value = cast(Optional[Union[str, bytes]], data.pop(key, None))
+                value = cast(str | bytes | None, data.pop(key, None))
                 if value:
                     filename = await process_input_file(value)
                     data[key] = f"attach://{filename}" if filename else value
@@ -233,6 +253,7 @@ class Adapter(BaseAdapter):
             data=data if files else None,
             json=data if not files else None,
             files=files,  # type: ignore
+            timeout=request_timeout,
             proxy=self.adapter_config.proxy,
         )
         try:
