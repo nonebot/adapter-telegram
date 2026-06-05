@@ -176,7 +176,6 @@ class Adapter(BaseAdapter):
                     total=DEFAULT_TIMEOUT.total,
                     connect=DEFAULT_TIMEOUT.connect,
                     read=float(timeout) + 5,
-                    close=DEFAULT_TIMEOUT.close,
                 )
 
         # 分离文件到 files

@@ -13,6 +13,7 @@ bot_config = BotConfig(token="1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI")
 
 @pytest.mark.asyncio
 async def test_get_updates_sets_driver_read_timeout(app: App):
+    from nonebot.utils import UNSET
     from nonebot.drivers import DEFAULT_TIMEOUT, Timeout, Response
 
     import nonebot
@@ -45,6 +46,7 @@ async def test_get_updates_sets_driver_read_timeout(app: App):
     assert timeout.read == 35.0
     assert timeout.connect == DEFAULT_TIMEOUT.connect
     assert timeout.total == DEFAULT_TIMEOUT.total
+    assert timeout.close is UNSET
 
 
 @pytest.mark.asyncio
