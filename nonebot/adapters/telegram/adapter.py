@@ -7,8 +7,16 @@ from typing import Any, Union, Optional, cast
 import anyio
 from pydantic.main import BaseModel
 from pydantic.json import pydantic_encoder
-from nonebot.utils import escape_tag, logger_wrapper
-from nonebot.drivers import URL, Driver, Request, Response, HTTPServerSetup
+from nonebot.utils import UNSET, escape_tag, logger_wrapper
+from nonebot.drivers import (
+    URL,
+    DEFAULT_TIMEOUT,
+    Driver,
+    Request,
+    Timeout,
+    Response,
+    HTTPServerSetup,
+)
 
 from nonebot.adapters import Adapter as BaseAdapter
 
@@ -31,7 +39,7 @@ class Adapter(BaseAdapter):
     def __init__(self, driver: Driver, **kwargs: Any):
         super().__init__(driver, **kwargs)
         self.adapter_config = AdapterConfig(**self.config.model_dump())
-        self.tasks: list[asyncio.Task] = []
+        self.tasks: set[asyncio.Task] = set()
         self.setup()
 
     @classmethod
@@ -90,11 +98,13 @@ class Adapter(BaseAdapter):
                 if update_offset is not None:
                     for update in updates:
                         update_offset = update.update_id + 1
-                        asyncio.create_task(
+                        task = asyncio.create_task(
                             self.__handle_update(
                                 bot, update.model_dump(by_alias=True, exclude_none=True)
                             )
                         )
+                        self.tasks.add(task)
+                        task.add_done_callback(self.tasks.discard)
                 elif updates:
                     update_offset = updates[0].update_id
             except Exception as e:
@@ -104,7 +114,9 @@ class Adapter(BaseAdapter):
     def setup_polling(self, bot: Bot):
         @self.on_ready
         async def _():
-            self.tasks.append(asyncio.create_task(self.poll(bot)))
+            task = asyncio.create_task(self.poll(bot))
+            self.tasks.add(task)
+            task.add_done_callback(self.tasks.discard)
 
         @self.driver.on_shutdown
         async def _():
@@ -120,7 +132,9 @@ class Adapter(BaseAdapter):
             if bot.secret_token == token:
                 if request.content:
                     update: dict = json.loads(request.content)
-                    asyncio.create_task(self.__handle_update(bot, update))
+                    task = asyncio.create_task(self.__handle_update(bot, update))
+                    self.tasks.add(task)
+                    task.add_done_callback(self.tasks.discard)
                 return Response(204)
         return Response(401)
 
@@ -152,6 +166,17 @@ class Adapter(BaseAdapter):
             s.capitalize() for s in api.split("_")[1:]
         )
         data = _escape_none(data)
+        request_timeout = UNSET
+        if api == "getUpdates":
+            timeout = data.get("timeout")
+            if not isinstance(timeout, bool) and isinstance(timeout, (int, float)):
+                # Telegram timeout is server-side long polling; the HTTP read
+                # timeout must be slightly longer.
+                request_timeout = Timeout(
+                    total=DEFAULT_TIMEOUT.total,
+                    connect=DEFAULT_TIMEOUT.connect,
+                    read=float(timeout) + 5,
+                )
 
         # 分离文件到 files
         files: dict[str, tuple[str, bytes]] = {}
@@ -233,6 +258,7 @@ class Adapter(BaseAdapter):
             data=data if files else None,
             json=data if not files else None,
             files=files,  # type: ignore
+            timeout=request_timeout,
             proxy=self.adapter_config.proxy,
         )
         try:

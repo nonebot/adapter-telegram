@@ -104,7 +104,7 @@ class Bot(BaseBot, API):
             )
         return await super().call_api(api, **kargs)
 
-    def __getattribute__(self, __name: str) -> Any:
+    def __getattribute__(self, __name: str, /) -> Any:
         if not __name.startswith("__") and hasattr(API, __name):
             return partial(self.call_api, __name)
         return object.__getattribute__(self, __name)

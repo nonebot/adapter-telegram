@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 from nonebug import App
 
@@ -8,8 +11,40 @@ from nonebot.adapters.telegram.event import GroupMessageEvent
 bot_config = BotConfig(token="1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI")
 
 
-import json
-from pathlib import Path
+@pytest.mark.asyncio
+async def test_get_updates_sets_driver_read_timeout(app: App):
+    from nonebot.drivers import DEFAULT_TIMEOUT, Timeout, Response
+
+    import nonebot
+    from nonebot.adapters.telegram.bot import Bot
+
+    captured_request = None
+
+    async def request(setup):
+        nonlocal captured_request
+        captured_request = setup
+        return Response(
+            200,
+            content=b'{"ok": true, "result": []}',
+            request=setup,
+        )
+
+    adapter = Adapter(nonebot.get_driver())
+    adapter.request = request  # type: ignore[method-assign]
+    bot = Bot(
+        adapter,
+        Bot.get_bot_id_by_token(bot_config.token),
+        config=bot_config,
+    )
+
+    await bot.get_updates(timeout=30)
+
+    assert captured_request is not None
+    timeout = captured_request.timeout
+    assert isinstance(timeout, Timeout)
+    assert timeout.read == 35.0
+    assert timeout.connect == DEFAULT_TIMEOUT.connect
+    assert timeout.total == DEFAULT_TIMEOUT.total
 
 
 @pytest.mark.asyncio

@@ -37,7 +37,7 @@ class EventWithChat(Protocol):
 
 
 class Event(BaseEvent):
-    telegram_model: Update = Field(default=None)
+    telegram_model: Optional[Update] = Field(default=None)
 
     @classmethod
     def __parse_event(cls, obj: dict) -> "Event":
@@ -362,7 +362,7 @@ class PrivateEditedMessageEvent(EditedMessageEvent):
 
 
 class GroupEditedMessageEvent(EditedMessageEvent):
-    from_: User = Field(default=None, alias="from")
+    from_: Optional[User] = Field(default=None, alias="from")
     sender_chat: Optional[Chat] = None
 
     @classmethod
@@ -380,14 +380,17 @@ class GroupEditedMessageEvent(EditedMessageEvent):
 
     @override
     def get_user_id(self) -> str:
+        assert self.from_ is not None
         return str(self.from_.id)
 
     @override
     def get_session_id(self) -> str:
+        assert self.from_ is not None
         return f"group_{self.chat.id}_{self.from_.id}"
 
     @override
     def get_event_description(self) -> str:
+        assert self.from_ is not None
         return (
             f"EditedMessage {self.message_id} from {self.from_.id}"
             f"@[Chat {self.chat.id}]: {self.get_message_description()}"
@@ -403,10 +406,12 @@ class ForumTopicEditedMessageEvent(GroupEditedMessageEvent):
 
     @override
     def get_session_id(self) -> str:
+        assert self.from_ is not None
         return f"group_{self.chat.id}_thread{self.message_thread_id}_{self.from_.id}"
 
     @override
     def get_event_description(self) -> str:
+        assert self.from_ is not None
         return (
             f"EditedMessage {self.message_id} from {self.from_.id}@[Chat {self.chat.id}"
             f" Thread {self.message_thread_id}]: {self.get_message_description()}"
@@ -470,7 +475,7 @@ class PinnedMessageEvent(NoticeEvent):
     sender_chat: Optional[Chat] = None
     chat: Chat
     date: int
-    pinned_message: MessageEvent = Field(default=None)
+    pinned_message: Optional[MessageEvent] = Field(default=None)
 
     @classmethod
     def __parse_event(cls, obj: dict):
@@ -485,10 +490,12 @@ class PinnedMessageEvent(NoticeEvent):
 
     @override
     def get_message(self) -> Message:
+        assert self.pinned_message is not None
         return self.pinned_message.get_message()
 
     @override
     def get_event_description(self) -> str:
+        assert self.pinned_message is not None
         return (
             f"PinnedMessage {self.pinned_message.message_id} "
             f"@[Chat {self.pinned_message.chat.id}]: {self.get_message_description()}"
@@ -705,7 +712,7 @@ class ChosenInlineResultEvent(InlineEvent, ChosenInlineResult):
 
 
 class CallbackQueryEvent(InlineEvent, CallbackQuery):
-    chat: Chat = Field(default=None)
+    chat: Optional[Chat] = Field(default=None)
 
     @override
     def get_event_name(self) -> str:
