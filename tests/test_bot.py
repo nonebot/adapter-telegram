@@ -127,9 +127,12 @@ async def test_send_to(app: App):
                 ).model_dump(),
             ],
         )
+        message = Message(
+            [File.photo("test.jpg", has_spoiler=True), File.audio("test.ogg")]
+        )
         await bot.send_to(
             chat_id=1234567890,
-            message=Message(
-                [File.photo("test.jpg", has_spoiler=True), File.audio("test.ogg")]
-            ),
+            message=message,
         )
+        assert message[0].data.get("file") == "test.jpg"
+        assert message[1].data.get("file") == "test.ogg"
