@@ -252,9 +252,10 @@ class Adapter(BaseAdapter):
 
         log("DEBUG", f"Calling API <y>{api}</y>")
         log("DEBUG", f"Calling API <y>{escape_tag(str(data))}</y>")
+        test = "/test" if bot.bot_config.is_test else ""
         request = Request(
             "POST",
-            f"{bot.bot_config.api_server}bot{bot.bot_config.token}/{api}",
+            f"{bot.bot_config.api_server}bot{bot.bot_config.token}{test}/{api}",
             data=data if files else None,
             json=data if not files else None,
             files=files,  # type: ignore

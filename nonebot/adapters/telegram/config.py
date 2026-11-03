@@ -10,12 +10,14 @@ class BotConfig(BaseModel):
     :配置项:
       - ``token``: telegram bot token
       - ``api_server``: 自定义 API 服务器
+      - ``is_test``: 是否为 Telegram 测试服务器中的机器人
       - ``is_webhook``: 是否使用 webhook
 
     """
 
     token: str
     api_server: str = "https://api.telegram.org/"
+    is_test: bool = False
     is_webhook: bool = False
 
 
