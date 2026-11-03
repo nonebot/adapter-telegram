@@ -4,22 +4,32 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to publish
+        required: true
+        type: string
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: refs/tags/${{ inputs.tag || github.ref_name }}
 
       - name: Setup Python environment
         uses: ./.github/actions/setup-python
 
       - name: Get Version
         id: version
+        env:
+          TAG_NAME: ${{ inputs.tag || github.ref_name }}
         run: |
           echo "VERSION=$(pdm show --version)" >> $GITHUB_OUTPUT
-          echo "TAG_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "TAG_VERSION=${TAG_NAME#v}" >> $GITHUB_OUTPUT
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_OUTPUT
 
       - name: Check Version
         if: steps.version.outputs.VERSION != steps.version.outputs.TAG_VERSION
@@ -28,7 +38,12 @@ jobs:
       - name: Build and Publish Package
         run: |
           pdm build
-          pdm publish -u __token__ -P ${{ secrets.PYPI_TOKEN }}
+          # Older tags use pdm-pep517, which emits non-normalized sdist names.
+          if [ -f "dist/nonebot-adapter-telegram-${VERSION}.tar.gz" ]; then
+            mv "dist/nonebot-adapter-telegram-${VERSION}.tar.gz" "dist/nonebot_adapter_telegram-${VERSION}.tar.gz"
+          fi
+          pdm publish --no-build --skip-existing -u __token__ -P ${{ secrets.PYPI_TOKEN }}
           gh release upload --clobber ${{ steps.version.outputs.TAG_NAME }} dist/*.tar.gz dist/*.whl
         env:
+          VERSION: ${{ steps.version.outputs.VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
