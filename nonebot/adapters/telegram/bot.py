@@ -230,7 +230,6 @@ class Bot(BaseBot, API):
             medias = [
                 TypeAdapter(InputMedia).validate_python(
                     {
-                        **{k: v for k, v in file.data.items() if k != "file"},
                         "type": file.type,
                         "media": file.data["file"],
                         **file.get("data", {}),
