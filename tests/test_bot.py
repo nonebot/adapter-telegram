@@ -74,10 +74,9 @@ async def test_check_tome(app: App):
 @pytest.mark.asyncio
 async def test_send_to(app: App):
     from nonebot.adapters.telegram.bot import Bot
-    from nonebot.adapters.telegram.model import Chat
     from nonebot.adapters.telegram.message import File, Message
     from nonebot.adapters.telegram.model import Message as ReturnMessage
-    from nonebot.adapters.telegram.model import InputMediaAudio, InputMediaPhoto
+    from nonebot.adapters.telegram.model import Chat, InputMediaAudio, InputMediaPhoto
 
     with (Path(__file__).parent / "updates.json").open("r", encoding="utf8") as f:
         test_updates = json.load(f)
